@@ -21,8 +21,12 @@ cp .env.example .env
 # Edit .env: set DB_PASSWORD and generate two secrets:
 #   openssl rand -hex 32   # -> JWT_SECRET
 #   openssl rand -hex 32   # -> JWT_REFRESH_SECRET
-docker compose -f docker/docker-compose.yml up -d
+# Run from the repo root so --env-file picks up the root .env:
+docker compose --env-file .env -f docker/docker-compose.yml up -d --build
 ```
+
+> The container derives its database URL from `DB_HOST=db`; the `DATABASE_URL`
+> in `.env` (pointing at `localhost`) is only used for local, non-Docker development.
 
 The app is served on `http://localhost:5444`. The **first account you register becomes the
 admin**; afterwards registration is admin-gated.

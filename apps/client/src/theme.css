@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens ported from the Tabletop.dc.html handoff mockup.
+ * Light/dark themes switch via the `data-theme` attribute on a container.
+ */
+@layer base {
+  [data-theme='light'] {
+    --bg: #faf9f7;
+    --sidebar: #fff;
+    --card: #fff;
+    --border: rgba(28, 26, 23, 0.08);
+    --hairline: rgba(28, 26, 23, 0.06);
+    --text: #1c1a17;
+    --muted: #9a948a;
+    --muted2: #6f6a60;
+    --faint: #b6b0a4;
+    --accent: #c9852f;
+    --accent-soft: #f6efe2;
+    --accent-text: #9a6418;
+    --on-accent: #fff;
+    --track: #f1ece3;
+    --good: #3f7d5a;
+    --good-soft: #e7f0ea;
+    --ph1: #efe7da;
+    --ph2: #e4d8c1;
+    --av1: #e9dfcd;
+    --av2: #ddd0b6;
+    --chip: #f3efe8;
+    --input: #fff;
+    --topbar: rgba(250, 249, 247, 0.82);
+    --star: #d6a13e;
+  }
+
+  [data-theme='dark'] {
+    --bg: #14131c;
+    --sidebar: #1a1924;
+    --card: #1e1c29;
+    --border: #2a2838;
+    --hairline: #2a2838;
+    --text: #ece9f5;
+    --muted: #807c96;
+    --muted2: #b8b4c8;
+    --faint: #6a6680;
+    --accent: #e0a249;
+    --accent-soft: rgba(224, 162, 73, 0.14);
+    --accent-text: #e8b265;
+    --on-accent: #1c140a;
+    --track: #2a2838;
+    --good: #5fbf8e;
+    --good-soft: rgba(95, 191, 142, 0.14);
+    --ph1: #2c2a3a;
+    --ph2: #36344a;
+    --av1: #34323f;
+    --av2: #403d4d;
+    --chip: #23212f;
+    --input: #211f2d;
+    --topbar: rgba(20, 19, 28, 0.82);
+    --star: #e0a249;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  }
+}

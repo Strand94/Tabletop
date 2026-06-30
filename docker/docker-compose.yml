@@ -1,0 +1,54 @@
+# Local/self-hosted deployment: one app container + one Postgres container.
+# For production, replace `build` with a pinned image, e.g.
+#   image: ghcr.io/strand94/tabletop:0.1.0
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: tabletop:local
+    container_name: tabletop
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '5444:5444'
+    volumes:
+      - ./images:/app/images
+      - ./logs:/app/logs
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-bgtuser}
+      - DB_PASSWORD=${DB_PASSWORD:?set DB_PASSWORD in .env}
+      - DB_NAME=${DB_NAME:-boardgametracker}
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET in .env}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET in .env}
+      - PORT=5444
+      - TZ=${TZ:-Europe/Oslo}
+      - DEFAULT_CURRENCY=${DEFAULT_CURRENCY:-NOK}
+      - DEFAULT_LOCALE=${DEFAULT_LOCALE:-nb}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5444/api/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  db:
+    image: postgres:16-alpine
+    container_name: tabletop-db
+    restart: unless-stopped
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME:-boardgametracker}
+      - POSTGRES_USER=${DB_USER:-bgtuser}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?set DB_PASSWORD in .env}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-bgtuser} -d ${DB_NAME:-boardgametracker}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

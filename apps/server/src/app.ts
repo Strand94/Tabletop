@@ -1,8 +1,20 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import express, { type Express, Router } from 'express';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { logger } from './logger.js';
 import { errorHandler, notFound } from './middleware/error.js';
+
+/**
+ * Resolve where the built client lives. In containers this is set explicitly via
+ * CLIENT_DIST; in local builds it defaults to the workspace dist folder. Returns
+ * null when no build is present (e.g. during tests) so static serving is skipped.
+ */
+function resolveClientDist(): string | null {
+  const candidate = process.env.CLIENT_DIST ?? path.resolve(process.cwd(), 'apps/client/dist');
+  return existsSync(path.join(candidate, 'index.html')) ? candidate : null;
+}
 
 /**
  * Build the Express application. Pure factory with no side effects (no DB
@@ -25,6 +37,16 @@ export function createApp(): Express {
 
   app.use('/api', api);
   app.use('/api', notFound);
+
+  // Serve the built client (if present) with SPA fallback for non-/api routes.
+  const clientDist = resolveClientDist();
+  if (clientDist) {
+    app.use(express.static(clientDist));
+    app.get(/^(?!\/api).*/, (_req, res) => {
+      res.sendFile(path.join(clientDist, 'index.html'));
+    });
+  }
+
   app.use(errorHandler);
 
   return app;
