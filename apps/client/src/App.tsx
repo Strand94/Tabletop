@@ -5,6 +5,8 @@ import { ThemeProvider } from './lib/theme.js';
 import { AppShell } from './components/AppShell.js';
 import { ProtectedRoute } from './components/ProtectedRoute.js';
 import { Login } from './pages/Login.js';
+import { Collection } from './pages/Collection.js';
+import { GameDetail } from './pages/GameDetail.js';
 import { Placeholder } from './pages/Placeholder.js';
 import { t } from './lib/strings.js';
 
@@ -22,7 +24,8 @@ export function App(): JSX.Element {
               <Route element={<ProtectedRoute />}>
                 <Route element={<AppShell />}>
                   <Route index element={<Placeholder title={t.nav.dashboard} />} />
-                  <Route path="collection" element={<Placeholder title={t.nav.collection} />} />
+                  <Route path="collection" element={<Collection />} />
+                  <Route path="collection/:id" element={<GameDetail />} />
                   <Route path="sessions" element={<Placeholder title={t.nav.sessions} />} />
                   <Route path="players" element={<Placeholder title={t.nav.players} />} />
                   <Route path="settings" element={<Placeholder title={t.nav.settings} />} />
