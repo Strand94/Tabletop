@@ -1,0 +1,259 @@
+// Tabletop data model. See docs/design/boardgame-tracker-design-spec.md §3.
+// Prisma model names are PascalCase; table names are snake_case via @@map.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum GameType {
+  BOARD_GAME
+  CARD_GAME
+  DICE_GAME
+  MINIATURES
+  RPG
+  OTHER
+}
+
+enum CollectionStatus {
+  OWNED
+  WISHLIST
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+// ---------------------------------------------------------------------------
+// Core entities
+// ---------------------------------------------------------------------------
+
+model Game {
+  id               Int              @id @default(autoincrement())
+  title            String
+  imagePath        String?          @map("image_path")
+  releaseYear      Int?             @map("release_year")
+  minPlayers       Int?             @map("min_players")
+  maxPlayers       Int?             @map("max_players")
+  minPlaytime      Int?             @map("min_playtime")
+  maxPlaytime      Int?             @map("max_playtime")
+  minAge           Int?             @map("min_age")
+  weight           Decimal?         @db.Decimal(3, 2)
+  description      String?
+  type             GameType?
+  price            Decimal?         @db.Decimal(10, 2)
+  currency         String
+  collectionStatus CollectionStatus @default(OWNED) @map("collection_status")
+  dateAdded        DateTime?        @map("date_added") @db.Date
+  bggId            Int?             @map("bgg_id")
+  bggRating        Decimal?         @map("bgg_rating") @db.Decimal(4, 2)
+  bggRank          Int?             @map("bgg_rank")
+  bggSyncedAt      DateTime?        @map("bgg_synced_at") @db.Timestamptz(6)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  expansions  Expansion[]
+  sessions    Session[]
+  categories  GameCategory[]
+  userRatings UserGameRating[]
+
+  @@index([collectionStatus])
+  @@index([bggId])
+  @@map("game")
+}
+
+model Expansion {
+  id          Int       @id @default(autoincrement())
+  gameId      Int       @map("game_id")
+  title       String
+  imagePath   String?   @map("image_path")
+  releaseYear Int?      @map("release_year")
+  minPlayers  Int?      @map("min_players")
+  maxPlayers  Int?      @map("max_players")
+  minPlaytime Int?      @map("min_playtime")
+  maxPlaytime Int?      @map("max_playtime")
+  minAge      Int?      @map("min_age")
+  weight      Decimal?  @db.Decimal(3, 2)
+  description String?
+  price       Decimal?  @db.Decimal(10, 2)
+  dateAdded   DateTime? @map("date_added") @db.Date
+  bggId       Int?      @map("bgg_id")
+  bggRating   Decimal?  @map("bgg_rating") @db.Decimal(4, 2)
+  bggRank     Int?      @map("bgg_rank")
+  bggSyncedAt DateTime? @map("bgg_synced_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  game     Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  sessions ExpansionSession[]
+
+  @@index([gameId])
+  @@map("expansion")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String?  @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(MEMBER)
+  locale       String   @default("en")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Person.userId is the authoritative link (see spec §3.5).
+  person         Person?
+  gameRatings    UserGameRating[]
+  sessionRatings UserSessionRating[]
+
+  @@map("user")
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  imagePath String?  @map("image_path")
+  userId    Int?     @unique @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user     User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessions PlayerSession[]
+
+  @@map("person")
+}
+
+model Session {
+  id         Int       @id @default(autoincrement())
+  gameId     Int       @map("game_id")
+  locationId Int?      @map("location_id")
+  start      DateTime  @db.Timestamptz(6)
+  end        DateTime? @db.Timestamptz(6)
+  comment    String?
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  game       Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  location   Location?           @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  expansions ExpansionSession[]
+  players    PlayerSession[]
+  images     SessionImage[]
+  ratings    UserSessionRating[]
+
+  @@index([gameId])
+  @@index([locationId])
+  @@map("session")
+}
+
+// ---------------------------------------------------------------------------
+// Join tables
+// ---------------------------------------------------------------------------
+
+model ExpansionSession {
+  expansionId Int @map("expansion_id")
+  sessionId   Int @map("session_id")
+
+  expansion Expansion @relation(fields: [expansionId], references: [id], onDelete: Cascade)
+  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@id([expansionId, sessionId])
+  @@map("expansion_session")
+}
+
+model PlayerSession {
+  personId  Int     @map("person_id")
+  sessionId Int     @map("session_id")
+  score     Float?
+  won       Boolean @default(false)
+  firstPlay Boolean @default(false) @map("first_play")
+  color     String?
+
+  person  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@id([personId, sessionId])
+  @@map("player_session")
+}
+
+// ---------------------------------------------------------------------------
+// Ratings — two separate tables (headline feature, spec §3.9)
+// ---------------------------------------------------------------------------
+
+model UserGameRating {
+  userId    Int      @map("user_id")
+  gameId    Int      @map("game_id")
+  rating    Decimal  @db.Decimal(3, 1)
+  review    String?
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@id([userId, gameId])
+  @@map("user_game_rating")
+}
+
+model UserSessionRating {
+  userId    Int      @map("user_id")
+  sessionId Int      @map("session_id")
+  rating    Decimal  @db.Decimal(3, 1)
+  note      String?
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, sessionId])
+  @@map("user_session_rating")
+}
+
+// ---------------------------------------------------------------------------
+// Supporting entities
+// ---------------------------------------------------------------------------
+
+model Category {
+  id    Int            @id @default(autoincrement())
+  name  String         @unique
+  games GameCategory[]
+
+  @@map("category")
+}
+
+model GameCategory {
+  gameId     Int @map("game_id")
+  categoryId Int @map("category_id")
+
+  game     Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, categoryId])
+  @@map("game_category")
+}
+
+model Location {
+  id      Int     @id @default(autoincrement())
+  name    String
+  address String?
+
+  sessions Session[]
+
+  @@map("location")
+}
+
+model SessionImage {
+  id        Int    @id @default(autoincrement())
+  sessionId Int    @map("session_id")
+  imagePath String @map("image_path")
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("session_image")
+}
