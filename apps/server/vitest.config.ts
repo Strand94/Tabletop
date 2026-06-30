@@ -14,5 +14,8 @@ export default defineConfig({
     env: { LOG_LEVEL: 'silent' },
     include: runDbTests ? ['test/**/*.{test,int.test}.ts'] : ['test/**/*.test.ts'],
     exclude: runDbTests ? [] : ['test/**/*.int.test.ts'],
+    // Integration tests share one Postgres; run files serially so they don't
+    // truncate each other's data mid-test.
+    fileParallelism: !runDbTests,
   },
 });
