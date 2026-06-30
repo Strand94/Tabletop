@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Test / coverage artifacts
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data (mounted volumes)
+images/
+logs/
+postgres-data/
+
+# Prisma local
+prisma/*.db
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
