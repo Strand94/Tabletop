@@ -1,0 +1,19 @@
+# Gitleaks configuration. Extends the default ruleset and adds repo-specific
+# allowlists so placeholder values in example/config files are not flagged.
+title = "Tabletop gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow documented placeholders and example secrets"
+paths = [
+  '''\.env\.example$''',
+  '''docs/design/.*''',
+]
+regexes = [
+  '''replace_with_64_hex_chars''',
+  '''replace_with_a_different_64_hex_chars''',
+  '''__CHANGEME(_64_HEX)?__''',
+  '''changeme''',
+]
