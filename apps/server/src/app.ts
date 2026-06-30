@@ -5,6 +5,14 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { logger } from './logger.js';
 import { errorHandler, notFound } from './middleware/error.js';
+import { createAuthRouter } from './modules/auth/routes.js';
+import type { TokenService } from './modules/auth/service.js';
+
+/** Dependencies feature routers need. Omitted in unit tests that only hit /health. */
+export interface AppDeps {
+  tokens: TokenService;
+  defaultLocale: string;
+}
 
 /**
  * Resolve where the built client lives. In containers this is set explicitly via
@@ -21,7 +29,7 @@ function resolveClientDist(): string | null {
  * connection, no `listen`) so tests can import and exercise it directly.
  * Feature routers are mounted under `/api` as they are added.
  */
-export function createApp(): Express {
+export function createApp(deps?: AppDeps): Express {
   const app = express();
 
   app.use(helmet());
@@ -33,7 +41,9 @@ export function createApp(): Express {
     res.json({ status: 'ok' });
   });
 
-  // Future feature routers mount here: api.use('/auth', authRouter), etc.
+  if (deps) {
+    api.use('/auth', createAuthRouter(deps));
+  }
 
   app.use('/api', api);
   app.use('/api', notFound);

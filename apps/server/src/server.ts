@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createApp } from './app.js';
 import { loadConfig } from './config.js';
 import { logger } from './logger.js';
+import { tokenServiceFromConfig } from './modules/auth/routes.js';
 
 /**
  * Process entrypoint. Validates config (fail-fast), applies pending database
@@ -24,7 +25,10 @@ function main(): void {
     runMigrations(config.DATABASE_URL);
   }
 
-  const app = createApp();
+  const app = createApp({
+    tokens: tokenServiceFromConfig(config),
+    defaultLocale: config.DEFAULT_LOCALE,
+  });
   app.listen(config.PORT, () => {
     logger.info(`Tabletop server listening on port ${config.PORT}`);
   });
