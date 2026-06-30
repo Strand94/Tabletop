@@ -13,7 +13,7 @@
     "apps/*"
   ],
   "scripts": {
-    "lint": "eslint . --max-warnings=0",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
@@ -24,7 +24,9 @@
     "prepare": "husky || true"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
     "eslint": "^8.57.1",

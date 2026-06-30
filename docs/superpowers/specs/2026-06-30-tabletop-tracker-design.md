@@ -14,19 +14,19 @@ Status: Approved (design phase)
 
 ## 1. Decisions locked in
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| First MVP milestone | **Thin vertical slice** (Stages 0–3) | Fastest path to a runnable, clickable app; everything else layers on incrementally. |
-| App architecture | **Combined single app image** | Express serves the built React bundle + `/api`; deploys as one `app` + one `db` container, exactly as the product spec's compose file describes. |
-| Repo structure | **npm workspaces monorepo** | `apps/server`, `apps/client`, `packages/shared`. |
-| Testing stack | **Vitest + Supertest + Playwright** | Vitest for unit (FE+BE), Supertest for API integration against real Postgres, Playwright for E2E. TS-native and fast. |
-| CI/CD depth | **Full gauntlet** | Lint, typecheck, unit/integration/e2e, `npm audit`, Trivy image scan, CodeQL + Semgrep SAST, Gitleaks secret scan, Dependabot; build & push to GHCR on tag. |
-| Package manager | **npm** | Simplest; matches product spec assumptions. |
-| Person/User link | **`Person.user_id` is authoritative** | Per product spec §3.5 recommendation; `User.person_id` omitted/derived to avoid drift. |
-| Member permissions | Members add/edit games; **only admins delete** | Per product spec §6 recommendation. |
-| Password hashing | **argon2** | Modern default; spec allows argon2/bcrypt. |
-| Image storage | Local volume `/app/images` via multer | No S3 dependency by default. |
-| Logging | **pino** structured logs to `/app/logs` | Operability per spec §12. |
+| Decision            | Choice                                         | Rationale                                                                                                                                                   |
+| ------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| First MVP milestone | **Thin vertical slice** (Stages 0–3)           | Fastest path to a runnable, clickable app; everything else layers on incrementally.                                                                         |
+| App architecture    | **Combined single app image**                  | Express serves the built React bundle + `/api`; deploys as one `app` + one `db` container, exactly as the product spec's compose file describes.            |
+| Repo structure      | **npm workspaces monorepo**                    | `apps/server`, `apps/client`, `packages/shared`.                                                                                                            |
+| Testing stack       | **Vitest + Supertest + Playwright**            | Vitest for unit (FE+BE), Supertest for API integration against real Postgres, Playwright for E2E. TS-native and fast.                                       |
+| CI/CD depth         | **Full gauntlet**                              | Lint, typecheck, unit/integration/e2e, `npm audit`, Trivy image scan, CodeQL + Semgrep SAST, Gitleaks secret scan, Dependabot; build & push to GHCR on tag. |
+| Package manager     | **npm**                                        | Simplest; matches product spec assumptions.                                                                                                                 |
+| Person/User link    | **`Person.user_id` is authoritative**          | Per product spec §3.5 recommendation; `User.person_id` omitted/derived to avoid drift.                                                                      |
+| Member permissions  | Members add/edit games; **only admins delete** | Per product spec §6 recommendation.                                                                                                                         |
+| Password hashing    | **argon2**                                     | Modern default; spec allows argon2/bcrypt.                                                                                                                  |
+| Image storage       | Local volume `/app/images` via multer          | No S3 dependency by default.                                                                                                                                |
+| Logging             | **pino** structured logs to `/app/logs`        | Operability per spec §12.                                                                                                                                   |
 
 ---
 
@@ -92,6 +92,7 @@ the client imports the same inferred types — so the API contract cannot drift 
 ## 5. CI/CD pipeline
 
 **`ci.yml` (every pull request and push to main):**
+
 1. Install (npm ci, cached)
 2. Lint — ESLint + Prettier check
 3. Typecheck — `tsc --noEmit` across workspaces
@@ -103,7 +104,7 @@ the client imports the same inferred types — so the API contract cannot drift 
 9. **CodeQL** + **Semgrep** SAST
 10. **Gitleaks** secret scan
 11. **Playwright** E2E against the built image
-All gates required to merge. **Dependabot** + `npm audit` keep dependencies current.
+    All gates required to merge. **Dependabot** + `npm audit` keep dependencies current.
 
 **`release.yml` (on `v*` semver tag):** rebuild → scan → push semver-tagged image to **GHCR**
 (no reliance on `latest` in production; pin a version).
@@ -113,12 +114,14 @@ All gates required to merge. **Dependabot** + `npm audit` keep dependencies curr
 ## 6. Staged build plan — each sub-task is its own commit
 
 ### Stage 0 — Foundation & tooling
+
 - **0.1** npm workspace root, TS base configs, ESLint + Prettier, `.gitignore`, `.env.example`
 - **0.2** Vitest + Playwright config, one sample passing test, husky pre-commit (lint + typecheck)
 - **0.3** `ci.yml` skeleton (lint / typecheck / test), `dependabot.yml`, Gitleaks config
 - **0.4** README quick-start, CONTRIBUTING, issue templates
 
 ### Stage 1 — Data layer & scaffold
+
 - **1.1** Prisma schema: full model from product spec §3 — Game, Expansion, User, Person, Session,
   ExpansionSession, PlayerSession, UserGameRating, UserSessionRating, Category, GameCategory,
   Location, SessionImage, and enums (GameType, CollectionStatus, Role) — with relations & cascades
@@ -128,45 +131,54 @@ All gates required to merge. **Dependabot** + `npm audit` keep dependencies curr
   `prisma migrate deploy` on boot
 
 ### Stage 2 — Auth & users
+
 - **2.1** argon2 + JWT access/refresh service, auth middleware, role guards (unit-tested)
 - **2.2** `/api/auth` register / login / refresh / me + first-run admin bootstrap (integration-tested)
 - **2.3** Client auth: login page, token storage + silent refresh, protected routes, app shell
   (sidebar + topbar + theme toggle) matching the mockup
 
 ### Stage 3 — Games CRUD + Collection UI + basic Dashboard → first runnable MVP
+
 - **3.1** Games API: list (filter / sort / search), get, create, patch, delete, image upload; categories
 - **3.2** Collection grid + filter bar + Game detail page (mockup-faithful)
 - **3.3** Minimal `/api/stats/dashboard` + Dashboard screen wired to real data
 - **3.4** Playwright E2E: login → add game → see it in collection + dashboard. **Tag `v0.1.0-mvp`.**
 
 ### Stage 4 — Expansions
+
 - **4.1** Expansions API (CRUD, belongs-to-game validation)
 - **4.2** Game-detail expansions section UI (add / edit / delete)
 
 ### Stage 5 — People
+
 - **5.1** People API (CRUD, optional user-account link)
 - **5.2** Players page UI
 
 ### Stage 6 — Sessions (core flow)
+
 - **6.1** Sessions API: create (validate `expansionIds ∈ game`, ≥1 player, players[]),
   list / filter, get, patch, delete, session image upload
 - **6.2** "Log a play" 3-step modal + Sessions list + Session detail UI
 - **6.3** E2E: full log-a-play flow
 
 ### Stage 7 — Ratings
+
 - **7.1** `UserGameRating` + `UserSessionRating` upsert APIs (per-user, 1.0–10.0)
 - **7.2** Rating UI on game + session pages; average session-rating aggregation per game
 
 ### Stage 8 — Dashboard & stats (full)
+
 - **8.1** `/api/stats/dashboard | players | games/:id` (totals, collection value, most-played,
   top players by win share, sessions-per-day, recently added, owned/wishlist breakdown)
 - **8.2** Full dashboard widgets + players stats wired up
 
 ### Stage 9 — i18n & settings
+
 - **9.1** Externalize all strings, `nb` + `en` namespaces, language switcher persisted to user locale
 - **9.2** Settings page (theme, accent, currency, locale, export/import stub, BGG toggle)
 
 ### Stage 10 — v2 seams & polish
+
 - **10.1** `BggRatingProvider` interface + `CsvDumpProvider` stub + `/api/sync/bgg` (disabled by default)
 - **10.2** Shelf-of-shame + wishlist views; JSON / CSV export
 - **10.3** `release.yml` GHCR publish + full Trivy / CodeQL / Semgrep wired into CI

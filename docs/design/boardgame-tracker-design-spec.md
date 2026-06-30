@@ -10,16 +10,18 @@
 ## 1. Goals & Non-Goals
 
 ### Goals
+
 - Self-hosted, runs as two Docker containers (app + PostgreSQL) on a home NAS/server.
 - Track a **board game collection** with rich, BGG-like metadata — entered **manually**, no hard dependency on any external API.
 - Track **expansions** as first-class objects attached to a base game (never as standalone games).
 - Log **play sessions**: pick a game, pick which expansions were used, record players, scores, winner, duration, location.
-- Support **two kinds of personal rating**: a per-user rating of a *game* overall, and a per-user rating of an individual *session/play*.
+- Support **two kinds of personal rating**: a per-user rating of a _game_ overall, and a per-user rating of an individual _session/play_.
 - **Multi-user** with roles.
 - **i18n** — UI translatable to multiple languages.
 - Optional, pluggable **BGG rating sync** that can be wired up later without schema changes.
 
 ### Non-Goals (v1)
+
 - No live, mandatory BGG API integration. (BGG closed their XML API behind a registered Bearer token as of July 2025; see §9.)
 - No mobile native app (responsive web is sufficient).
 - No rulebook RAG / AI features.
@@ -29,18 +31,18 @@
 
 ## 2. Technology Stack
 
-| Layer       | Choice                                              | Rationale |
-|-------------|-----------------------------------------------------|-----------|
-| Frontend    | **React + Vite + TypeScript**                       | Type-safe, fast dev loop, large ecosystem. |
-| UI components | **Radix UI** (or Mantine) + Tailwind              | Accessible primitives; matches a clean dashboard aesthetic. |
-| i18n        | **react-i18next** + `i18next`                       | De-facto standard; JSON locale files, lazy-loaded namespaces. |
-| Backend     | **Node.js + Express + TypeScript**                  | Same language as frontend; simple, well-understood. |
-| ORM         | **Prisma**                                          | Type-safe schema + first-class migrations; schema maps cleanly to the model below. |
-| Database    | **PostgreSQL 16** (`postgres:16-alpine` image)      | Relational model fits; alpine keeps image small. |
-| Auth        | **JWT (access + refresh)**, bcrypt/argon2 password hashing | Stateless, standard. |
-| File storage | Local volume for uploaded images (`/app/images`)   | No S3 dependency by default; S3 optional later. |
-| Container   | **Docker + Docker Compose**                         | Two services: `app`, `db`. |
-| CI          | GitHub Actions → build & push image to GHCR         | For open-source release. |
+| Layer         | Choice                                                     | Rationale                                                                          |
+| ------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Frontend      | **React + Vite + TypeScript**                              | Type-safe, fast dev loop, large ecosystem.                                         |
+| UI components | **Radix UI** (or Mantine) + Tailwind                       | Accessible primitives; matches a clean dashboard aesthetic.                        |
+| i18n          | **react-i18next** + `i18next`                              | De-facto standard; JSON locale files, lazy-loaded namespaces.                      |
+| Backend       | **Node.js + Express + TypeScript**                         | Same language as frontend; simple, well-understood.                                |
+| ORM           | **Prisma**                                                 | Type-safe schema + first-class migrations; schema maps cleanly to the model below. |
+| Database      | **PostgreSQL 16** (`postgres:16-alpine` image)             | Relational model fits; alpine keeps image small.                                   |
+| Auth          | **JWT (access + refresh)**, bcrypt/argon2 password hashing | Stateless, standard.                                                               |
+| File storage  | Local volume for uploaded images (`/app/images`)           | No S3 dependency by default; S3 optional later.                                    |
+| Container     | **Docker + Docker Compose**                                | Two services: `app`, `db`.                                                         |
+| CI            | GitHub Actions → build & push image to GHCR                | For open-source release.                                                           |
 
 > Single combined app image (Express serves the built React static bundle + the API under `/api`) keeps deployment to **one app container + one db container**. A split frontend/backend image is allowed but not required.
 
@@ -68,30 +70,30 @@ Game ──(status)── Collection state (Owned | Wishlist)
 
 The central entity. Mirrors the fields BGG exposes, but all are user-editable and none require an API.
 
-| Field            | Type            | Notes |
-|------------------|-----------------|-------|
-| id               | int PK          | |
-| title            | text            | required |
-| image_path       | text nullable   | path/URL to uploaded cover image |
-| release_year     | int nullable    | |
-| min_players      | int nullable    | |
-| max_players      | int nullable    | |
-| min_playtime     | int nullable    | minutes |
-| max_playtime     | int nullable    | minutes |
-| min_age          | int nullable    | age rating (e.g. 10 → "10+") |
-| weight           | decimal(3,2) nullable | complexity, 1.00–5.00 (BGG-style) |
-| description      | text nullable   | |
-| type             | enum nullable   | see GameType (§3.9) |
-| price            | decimal(10,2) nullable | optional purchase price |
-| currency         | text            | ISO 4217 or symbol; instance default (e.g. `NOK`/`kr`) |
-| collection_status| enum            | `OWNED` \| `WISHLIST` (default `OWNED`) |
-| date_added       | date nullable   | date added to collection |
-| bgg_id           | int nullable    | optional link to BGG thing id (for future sync) |
-| bgg_rating       | decimal(4,2) nullable | populated by sync only; read-only in UI |
-| bgg_rank         | int nullable    | populated by sync only |
-| bgg_synced_at    | timestamptz nullable | last successful sync for this game |
-| created_at       | timestamptz     | |
-| updated_at       | timestamptz     | |
+| Field             | Type                   | Notes                                                  |
+| ----------------- | ---------------------- | ------------------------------------------------------ |
+| id                | int PK                 |                                                        |
+| title             | text                   | required                                               |
+| image_path        | text nullable          | path/URL to uploaded cover image                       |
+| release_year      | int nullable           |                                                        |
+| min_players       | int nullable           |                                                        |
+| max_players       | int nullable           |                                                        |
+| min_playtime      | int nullable           | minutes                                                |
+| max_playtime      | int nullable           | minutes                                                |
+| min_age           | int nullable           | age rating (e.g. 10 → "10+")                           |
+| weight            | decimal(3,2) nullable  | complexity, 1.00–5.00 (BGG-style)                      |
+| description       | text nullable          |                                                        |
+| type              | enum nullable          | see GameType (§3.9)                                    |
+| price             | decimal(10,2) nullable | optional purchase price                                |
+| currency          | text                   | ISO 4217 or symbol; instance default (e.g. `NOK`/`kr`) |
+| collection_status | enum                   | `OWNED` \| `WISHLIST` (default `OWNED`)                |
+| date_added        | date nullable          | date added to collection                               |
+| bgg_id            | int nullable           | optional link to BGG thing id (for future sync)        |
+| bgg_rating        | decimal(4,2) nullable  | populated by sync only; read-only in UI                |
+| bgg_rank          | int nullable           | populated by sync only                                 |
+| bgg_synced_at     | timestamptz nullable   | last successful sync for this game                     |
+| created_at        | timestamptz            |                                                        |
+| updated_at        | timestamptz            |                                                        |
 
 **Many-to-many:** `Game` ↔ `Category` (a game can have several categories).
 **One-to-many:** `Game` → `Expansion`, `Game` → `Session`.
@@ -102,28 +104,28 @@ An expansion belongs to exactly one base game. Carries the **same metadata field
 (an expansion can have its own player count, playtime, price, image, BGG id, etc.), but is never
 counted as a game and never appears in the games list as a standalone entry.
 
-| Field            | Type          | Notes |
-|------------------|---------------|-------|
-| id               | int PK        | |
-| game_id          | int FK → Game | required; `ON DELETE CASCADE` |
-| title            | text          | required |
-| image_path       | text nullable | |
-| release_year     | int nullable  | |
-| min_players      | int nullable  | |
-| max_players      | int nullable  | |
-| min_playtime     | int nullable  | |
-| max_playtime     | int nullable  | |
-| min_age          | int nullable  | |
-| weight           | decimal(3,2) nullable | |
-| description      | text nullable | |
-| price            | decimal(10,2) nullable | |
-| date_added       | date nullable | |
-| bgg_id           | int nullable  | |
-| bgg_rating       | decimal(4,2) nullable | sync-only |
-| bgg_rank         | int nullable  | sync-only |
-| bgg_synced_at    | timestamptz nullable | |
-| created_at       | timestamptz   | |
-| updated_at       | timestamptz   | |
+| Field         | Type                   | Notes                         |
+| ------------- | ---------------------- | ----------------------------- |
+| id            | int PK                 |                               |
+| game_id       | int FK → Game          | required; `ON DELETE CASCADE` |
+| title         | text                   | required                      |
+| image_path    | text nullable          |                               |
+| release_year  | int nullable           |                               |
+| min_players   | int nullable           |                               |
+| max_players   | int nullable           |                               |
+| min_playtime  | int nullable           |                               |
+| max_playtime  | int nullable           |                               |
+| min_age       | int nullable           |                               |
+| weight        | decimal(3,2) nullable  |                               |
+| description   | text nullable          |                               |
+| price         | decimal(10,2) nullable |                               |
+| date_added    | date nullable          |                               |
+| bgg_id        | int nullable           |                               |
+| bgg_rating    | decimal(4,2) nullable  | sync-only                     |
+| bgg_rank      | int nullable           | sync-only                     |
+| bgg_synced_at | timestamptz nullable   |                               |
+| created_at    | timestamptz            |                               |
+| updated_at    | timestamptz            |                               |
 
 > Implementation note: because Game and Expansion share almost all fields, the developer may
 > model shared columns via a common Prisma type/composition or simply duplicate the columns.
@@ -133,29 +135,29 @@ counted as a game and never appears in the games list as a standalone entry.
 
 ### 3.4 `User` (login account)
 
-| Field          | Type      | Notes |
-|----------------|-----------|-------|
-| id             | int PK    | |
-| username       | text uniq | |
-| email          | text uniq nullable | |
-| password_hash  | text      | argon2/bcrypt |
-| role           | enum      | `ADMIN` \| `MEMBER` (see §6) |
-| locale         | text      | preferred UI language, e.g. `en`, `nb` |
-| person_id      | int FK → Person nullable | optional link to the Person they play as |
-| created_at     | timestamptz | |
-| updated_at     | timestamptz | |
+| Field         | Type                     | Notes                                    |
+| ------------- | ------------------------ | ---------------------------------------- |
+| id            | int PK                   |                                          |
+| username      | text uniq                |                                          |
+| email         | text uniq nullable       |                                          |
+| password_hash | text                     | argon2/bcrypt                            |
+| role          | enum                     | `ADMIN` \| `MEMBER` (see §6)             |
+| locale        | text                     | preferred UI language, e.g. `en`, `nb`   |
+| person_id     | int FK → Person nullable | optional link to the Person they play as |
+| created_at    | timestamptz              |                                          |
+| updated_at    | timestamptz              |                                          |
 
 ### 3.5 `Person` (player, may or may not have an account)
 
 Separating Person from User lets you log sessions for friends/family who don't have logins.
 
-| Field      | Type    | Notes |
-|------------|---------|-------|
-| id         | int PK  | |
-| name       | text    | display name |
-| image_path | text nullable | avatar |
+| Field      | Type                   | Notes                                       |
+| ---------- | ---------------------- | ------------------------------------------- |
+| id         | int PK                 |                                             |
+| name       | text                   | display name                                |
+| image_path | text nullable          | avatar                                      |
 | user_id    | int FK → User nullable | set if this person also has a login account |
-| created_at | timestamptz | |
+| created_at | timestamptz            |                                             |
 
 > A `User` may optionally be linked to a `Person` (via `User.person_id`) and/or a `Person` may
 > reference back to a `User` (`Person.user_id`). Pick **one** direction to be authoritative to
@@ -164,25 +166,26 @@ Separating Person from User lets you log sessions for friends/family who don't h
 
 ### 3.6 `Session` (a single play of a game)
 
-| Field       | Type        | Notes |
-|-------------|-------------|-------|
-| id          | int PK      | |
-| game_id     | int FK → Game | required; `ON DELETE CASCADE` |
-| location_id | int FK → Location nullable | `ON DELETE SET NULL` |
-| start       | timestamptz | required |
-| end         | timestamptz nullable | duration derived from start/end |
-| comment     | text nullable | |
-| created_at  | timestamptz | |
+| Field       | Type                       | Notes                           |
+| ----------- | -------------------------- | ------------------------------- |
+| id          | int PK                     |                                 |
+| game_id     | int FK → Game              | required; `ON DELETE CASCADE`   |
+| location_id | int FK → Location nullable | `ON DELETE SET NULL`            |
+| start       | timestamptz                | required                        |
+| end         | timestamptz nullable       | duration derived from start/end |
+| comment     | text nullable              |                                 |
+| created_at  | timestamptz                |                                 |
 
 **Joins:**
+
 - `Session` ↔ `Expansion` via **`ExpansionSession`** (which expansions were used this play).
 - `Session` ↔ `Person` via **`PlayerSession`** (who played + their result).
 - `Session` → images via `SessionImage` (optional photos of the play).
 
 ### 3.7 `ExpansionSession` (join: expansions used in a session)
 
-| Field        | Type | Notes |
-|--------------|------|-------|
+| Field        | Type               | Notes                                  |
+| ------------ | ------------------ | -------------------------------------- |
 | expansion_id | int FK → Expansion | composite PK part; `ON DELETE CASCADE` |
 | session_id   | int FK → Session   | composite PK part; `ON DELETE CASCADE` |
 
@@ -192,14 +195,14 @@ Enforce in the API layer (and optionally a DB trigger).
 
 ### 3.8 `PlayerSession` (join: a person's participation & result in a session)
 
-| Field       | Type    | Notes |
-|-------------|---------|-------|
-| person_id   | int FK → Person  | composite PK part; `ON DELETE CASCADE` |
-| session_id  | int FK → Session | composite PK part; `ON DELETE CASCADE` |
-| score       | double precision nullable | points in this play |
-| won         | boolean | default false |
-| first_play  | boolean | default false — was this the person's first time playing this game |
-| color/seat  | text nullable | optional (faction/color/seat order) |
+| Field      | Type                      | Notes                                                              |
+| ---------- | ------------------------- | ------------------------------------------------------------------ |
+| person_id  | int FK → Person           | composite PK part; `ON DELETE CASCADE`                             |
+| session_id | int FK → Session          | composite PK part; `ON DELETE CASCADE`                             |
+| score      | double precision nullable | points in this play                                                |
+| won        | boolean                   | default false                                                      |
+| first_play | boolean                   | default false — was this the person's first time playing this game |
+| color/seat | text nullable             | optional (faction/color/seat order)                                |
 
 Composite primary key `(person_id, session_id)`.
 
@@ -209,30 +212,30 @@ The user explicitly wants both a per-user rating of a **game** and a per-user ra
 
 **`UserGameRating`** — how much a user likes a game overall:
 
-| Field     | Type    | Notes |
-|-----------|---------|-------|
-| user_id   | int FK → User | composite PK part |
-| game_id   | int FK → Game | composite PK part |
-| rating    | decimal(3,1) | 1.0–10.0 (BGG-style scale) |
-| review    | text nullable | optional written note |
-| updated_at| timestamptz | |
+| Field      | Type          | Notes                      |
+| ---------- | ------------- | -------------------------- |
+| user_id    | int FK → User | composite PK part          |
+| game_id    | int FK → Game | composite PK part          |
+| rating     | decimal(3,1)  | 1.0–10.0 (BGG-style scale) |
+| review     | text nullable | optional written note      |
+| updated_at | timestamptz   |                            |
 
 Composite PK `(user_id, game_id)` — one overall rating per user per game.
 
 **`UserSessionRating`** — how much a user enjoyed a specific play:
 
-| Field      | Type    | Notes |
-|------------|---------|-------|
+| Field      | Type             | Notes             |
+| ---------- | ---------------- | ----------------- |
 | user_id    | int FK → User    | composite PK part |
 | session_id | int FK → Session | composite PK part |
-| rating     | decimal(3,1) | 1.0–10.0 |
-| note       | text nullable | |
-| updated_at | timestamptz | |
+| rating     | decimal(3,1)     | 1.0–10.0          |
+| note       | text nullable    |                   |
+| updated_at | timestamptz      |                   |
 
 Composite PK `(user_id, session_id)`.
 
 > Rationale for both: the per-game rating drives collection sorting/filtering ("my favourites");
-> the per-session rating captures that a *particular* play was great or terrible (bad group,
+> the per-session rating captures that a _particular_ play was great or terrible (bad group,
 > learning game, etc.) independent of how you feel about the game in general. Aggregations can
 > show average session rating per game alongside the user's standing game rating.
 
@@ -253,6 +256,7 @@ Composite PK `(user_id, session_id)`.
 ## 4. Feature Set
 
 ### 4.1 v1 (MVP — build first)
+
 1. **Auth & users** — register (admin-gated), login, JWT sessions, role enforcement, per-user locale.
 2. **Games CRUD** — create/edit/delete games with all metadata fields; image upload; set OWNED/WISHLIST; assign categories.
 3. **Expansions** — add/edit/delete expansions on a game's detail page (the gap BGT's UI is missing). Same metadata form as games.
@@ -263,6 +267,7 @@ Composite PK `(user_id, session_id)`.
 8. **i18n** — all UI strings externalized; language switcher; ship at least `en` + one more (e.g. `nb` Norwegian Bokmål).
 
 ### 4.2 v2 (nice-to-have, design seams now)
+
 - **BGG rating sync** (pluggable — see §9). Disabled by default.
 - **Wishlist view** as its own page (distinct from owned collection).
 - **"Shelf of Shame"** — owned games with zero sessions (a derived view, no schema needed).
@@ -325,6 +330,7 @@ GET    /api/health
 ```
 
 **Session create payload example:**
+
 ```json
 {
   "gameId": 12,
@@ -334,7 +340,7 @@ GET    /api/health
   "comment": "Close game",
   "expansionIds": [5, 8],
   "players": [
-    { "personId": 1, "score": 92, "won": true,  "firstPlay": false },
+    { "personId": 1, "score": 92, "won": true, "firstPlay": false },
     { "personId": 4, "score": 88, "won": false, "firstPlay": true }
   ]
 }
@@ -370,45 +376,50 @@ API must validate that every id in `expansionIds` belongs to `gameId`.
 ## 8. Deployment
 
 ### 8.1 Container topology
+
 Two containers via Docker Compose:
+
 - **`app`** — combined Node/Express API + served React static bundle. Exposes one HTTP port (default **5444**, configurable).
 - **`db`** — `postgres:16-alpine`, data persisted to a named volume / bind mount.
 
 ### 8.2 Volumes
+
 - `./images:/app/images` — uploaded cover art & avatars & session photos.
 - `./logs:/app/logs` — app logs.
 - `./postgres-data:/var/lib/postgresql/data` — DB data.
 
 ### 8.3 Environment variables (`app`)
-| Var | Required | Default | Purpose |
-|-----|----------|---------|---------|
-| `DB_HOST` | yes | `db` | Postgres host (compose service name) |
-| `DB_PORT` | no | `5432` | |
-| `DB_USER` | yes | — | |
-| `DB_PASSWORD` | yes | — | |
-| `DB_NAME` | yes | `boardgametracker` | |
-| `JWT_SECRET` | **yes** | — | **fail fast if unset** |
-| `JWT_REFRESH_SECRET` | yes | — | |
-| `PORT` | no | `5444` | app HTTP port |
-| `TZ` | no | `UTC` | timezone |
-| `DEFAULT_CURRENCY` | no | `NOK` | instance currency code |
-| `DEFAULT_LOCALE` | no | `en` | fallback UI language |
-| `BGG_SYNC_ENABLED` | no | `false` | master switch for §9 |
-| `BGG_SYNC_PROVIDER` | no | `csv` | `csv` \| `xmlapi` |
-| `BGG_API_TOKEN` | no | — | only if provider=`xmlapi` |
+
+| Var                  | Required | Default            | Purpose                              |
+| -------------------- | -------- | ------------------ | ------------------------------------ |
+| `DB_HOST`            | yes      | `db`               | Postgres host (compose service name) |
+| `DB_PORT`            | no       | `5432`             |                                      |
+| `DB_USER`            | yes      | —                  |                                      |
+| `DB_PASSWORD`        | yes      | —                  |                                      |
+| `DB_NAME`            | yes      | `boardgametracker` |                                      |
+| `JWT_SECRET`         | **yes**  | —                  | **fail fast if unset**               |
+| `JWT_REFRESH_SECRET` | yes      | —                  |                                      |
+| `PORT`               | no       | `5444`             | app HTTP port                        |
+| `TZ`                 | no       | `UTC`              | timezone                             |
+| `DEFAULT_CURRENCY`   | no       | `NOK`              | instance currency code               |
+| `DEFAULT_LOCALE`     | no       | `en`               | fallback UI language                 |
+| `BGG_SYNC_ENABLED`   | no       | `false`            | master switch for §9                 |
+| `BGG_SYNC_PROVIDER`  | no       | `csv`              | `csv` \| `xmlapi`                    |
+| `BGG_API_TOKEN`      | no       | —                  | only if provider=`xmlapi`            |
 
 ### 8.4 Example `docker-compose.yml`
+
 ```yaml
 services:
   app:
-    image: ghcr.io/<owner>/boardgame-tracker:latest   # pin a version in production
+    image: ghcr.io/<owner>/boardgame-tracker:latest # pin a version in production
     container_name: boardgame-tracker
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "5444:5444"
+      - '5444:5444'
     volumes:
       - ./images:/app/images
       - ./logs:/app/logs
@@ -424,7 +435,7 @@ services:
       - DEFAULT_CURRENCY=NOK
       - DEFAULT_LOCALE=nb
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5444/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5444/api/health']
       interval: 30s
       timeout: 5s
       retries: 3
@@ -441,7 +452,7 @@ services:
       - POSTGRES_USER=bgtuser
       - POSTGRES_PASSWORD=__CHANGEME__
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bgtuser -d boardgametracker"]
+      test: ['CMD-SHELL', 'pg_isready -U bgtuser -d boardgametracker']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -449,6 +460,7 @@ services:
 ```
 
 ### 8.5 Migrations
+
 - Prisma migrations run automatically on app startup (`prisma migrate deploy`) before the server binds.
 - Seed script creates default categories and (on first run) prompts/admits the first admin.
 
@@ -459,6 +471,7 @@ services:
 **Context:** BoardGameGeek closed its XML API behind **registration + a Bearer token** (effective ~July 2025), with manual approval that can take a week or more. A personal tracker therefore should **not** hard-depend on it. This spec makes BGG sync optional and abstracted so it can be wired up later without touching the schema.
 
 ### 9.1 Design
+
 - Define a `BggRatingProvider` interface:
   ```ts
   interface BggRatingProvider {
@@ -475,6 +488,7 @@ services:
 - Selected via `BGG_SYNC_PROVIDER`. Master switch `BGG_SYNC_ENABLED=false` by default.
 
 ### 9.2 Behaviour
+
 - Sync writes only `bgg_rating`, `bgg_rank`, `bgg_synced_at` on Game/Expansion. These fields are
   **read-only in the UI** (clearly distinguished from the user's own rating).
 - Trigger: admin-initiated (`POST /api/sync/bgg`) and/or a scheduled job (cron-style, configurable).
@@ -483,6 +497,7 @@ services:
 - Rate-limit / back off politely; cache the CSV dump locally and refresh at most daily.
 
 ### 9.3 v1 scope
+
 - Ship the **schema fields**, the **provider interface**, the **`/api/sync/bgg` stub**, and a UI
   "BGG ID" input — but the actual fetch can be a no-op/`CsvDumpProvider` stub. This is the
   "seams in place, wire up later" approach the project owner requested.
@@ -530,4 +545,4 @@ services:
 
 ---
 
-*End of specification.*
+_End of specification._

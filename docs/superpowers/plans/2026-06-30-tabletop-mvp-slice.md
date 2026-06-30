@@ -71,12 +71,12 @@ docker/{Dockerfile,docker-compose.yml,.dockerignore}
 `.prettierignore`, `.gitignore`, `.env.example`.
 
 - [ ] Root `package.json` declares `"workspaces": ["packages/*", "apps/*"]`, `"private": true`,
-  Node engine `>=20`, and scripts: `lint`, `format`, `typecheck`, `test`, `build`, `dev`.
+      Node engine `>=20`, and scripts: `lint`, `format`, `typecheck`, `test`, `build`, `dev`.
 - [ ] `tsconfig.base.json`: `strict`, `target ES2022`, `module NodeNext`, `moduleResolution NodeNext`,
-  `esModuleInterop`, `skipLibCheck`, `composite` off, `declaration` for shared.
+      `esModuleInterop`, `skipLibCheck`, `composite` off, `declaration` for shared.
 - [ ] ESLint flat/legacy config with `@typescript-eslint`, `eslint-config-prettier`; Prettier defaults.
 - [ ] `.gitignore`: `node_modules`, `dist`, `.env`, `coverage`, `playwright-report`, `images/`, `logs/`,
-  `postgres-data/`, `*.tsbuildinfo`.
+      `postgres-data/`, `*.tsbuildinfo`.
 - [ ] `.env.example` with every var from product spec §8.3 (placeholders, no real secrets).
 - [ ] Commit: `chore(stage-0): scaffold npm workspace, typescript, eslint/prettier`
 
@@ -96,7 +96,7 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 **Files:** Create `.github/workflows/ci.yml`, `.github/dependabot.yml`, `.gitleaks.toml`.
 
 - [ ] `ci.yml` on `pull_request` + `push` to main: setup-node (cache npm), `npm ci`,
-  `npm run lint`, `npm run typecheck`, `npm test`. (Integration/e2e/scan jobs added in later stages.)
+      `npm run lint`, `npm run typecheck`, `npm test`. (Integration/e2e/scan jobs added in later stages.)
 - [ ] Gitleaks job using `gitleaks/gitleaks-action`.
 - [ ] `dependabot.yml`: npm (root) weekly + github-actions weekly.
 - [ ] Commit: `ci(stage-0): add CI skeleton, dependabot, gitleaks`
@@ -119,11 +119,11 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 **Files:** Create `prisma/schema.prisma`, add `prisma` + `@prisma/client` deps, `apps/server` package.
 
 - [ ] Model every entity from product spec §3: `Game`, `Expansion`, `User`, `Person`, `Session`,
-  `ExpansionSession` (composite PK), `PlayerSession` (composite PK), `UserGameRating` (composite PK),
-  `UserSessionRating` (composite PK), `Category`, `GameCategory` (composite PK), `Location`,
-  `SessionImage`. Enums: `GameType`, `CollectionStatus`, `Role`.
+      `ExpansionSession` (composite PK), `PlayerSession` (composite PK), `UserGameRating` (composite PK),
+      `UserSessionRating` (composite PK), `Category`, `GameCategory` (composite PK), `Location`,
+      `SessionImage`. Enums: `GameType`, `CollectionStatus`, `Role`.
 - [ ] Cascades per spec §10: Game→Expansion/Session/ratings `onDelete: Cascade`; Session.location
-  `onDelete: SetNull`; Person delete cascades PlayerSession but not Session.
+      `onDelete: SetNull`; Person delete cascades PlayerSession but not Session.
 - [ ] `Person.user_id` is the authoritative link (unique, nullable); omit `User.person_id`.
 - [ ] Commit: `feat(stage-1): add full Prisma data model`
 
@@ -141,10 +141,10 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 `apps/server/src/middleware/error.ts`, tests `apps/server/test/{config,health}.test.ts`.
 
 - [ ] **Test first:** `config.test.ts` — loading config with required env unset throws; with all set returns typed object.
-- [ ] `config.ts`: parse `process.env` through a zod schema (DB_*, JWT_SECRET, JWT_REFRESH_SECRET
-  required; PORT default 5444; DEFAULT_CURRENCY `NOK`; DEFAULT_LOCALE `en`; BGG_* defaults). Throw on invalid.
+- [ ] `config.ts`: parse `process.env` through a zod schema (DB__, JWT_SECRET, JWT_REFRESH_SECRET
+      required; PORT default 5444; DEFAULT_CURRENCY `NOK`; DEFAULT_LOCALE `en`; BGG__ defaults). Throw on invalid.
 - [ ] `app.ts`: express app factory (helmet, json, request logging, routes, error middleware),
-  exposes `GET /api/health` → `{ status: 'ok' }`. No `listen` here (so tests import the app).
+      exposes `GET /api/health` → `{ status: 'ok' }`. No `listen` here (so tests import the app).
 - [ ] **Test:** `health.test.ts` (Supertest) — `GET /api/health` returns 200 `{status:'ok'}`.
 - [ ] `server.ts`: run `prisma migrate deploy` then `app.listen(config.PORT)`.
 - [ ] Commit: `feat(stage-1): express skeleton, typed config, health endpoint`
@@ -155,11 +155,11 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 `docker/{Dockerfile,docker-compose.yml,.dockerignore}`; modify `app.ts` to serve static build.
 
 - [ ] Scaffold Vite React-TS; Tailwind configured; `theme.css` ports mockup CSS variables
-  (light/dark `data-theme`) and fonts (Space Grotesk, Hanken Grotesk).
+      (light/dark `data-theme`) and fonts (Space Grotesk, Hanken Grotesk).
 - [ ] `App.tsx` renders a placeholder shell proving the build is served.
 - [ ] `app.ts`: in production serve `apps/client/dist` statically and SPA-fallback non-`/api` routes.
 - [ ] Multi-stage `Dockerfile`: build client + server, run node serving both; `docker-compose.yml`
-  per product spec §8.4 (app + postgres:16-alpine, healthchecks, volumes); `migrate deploy` on boot.
+      per product spec §8.4 (app + postgres:16-alpine, healthchecks, volumes); `migrate deploy` on boot.
 - [ ] Verify `docker compose up` serves the app on `:5444` and `/api/health` passes.
 - [ ] Commit: `feat(stage-1): client skeleton served by express + docker compose`
 
@@ -174,11 +174,11 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 
 - [ ] `shared/src/auth.ts`: zod schemas `registerSchema`, `loginSchema`, token payload type, `Role` enum re-export.
 - [ ] **Test first:** hashing — `verifyPassword(hash(pw), pw)` true, wrong pw false; JWT sign/verify
-  round-trips payload; expired/invalid token rejected.
+      round-trips payload; expired/invalid token rejected.
 - [ ] `service.ts`: `hashPassword`, `verifyPassword` (argon2), `signAccess`/`signRefresh`/`verify*`
-  using `config` secrets.
+      using `config` secrets.
 - [ ] `middleware/auth.ts`: `requireAuth` (parses Bearer, sets `req.user`), `requireRole('ADMIN')`.
-  **Test:** middleware rejects missing/invalid token (401) and wrong role (403).
+      **Test:** middleware rejects missing/invalid token (401) and wrong role (403).
 - [ ] Commit: `feat(stage-2): argon2 + JWT auth primitives and guards`
 
 ### Task 2.2: Auth routes + first-run bootstrap — integration tested
@@ -187,10 +187,10 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 `apps/server/test/auth.int.test.ts` (Supertest + test Postgres).
 
 - [ ] Set up integration test harness: spin Postgres (Testcontainers) or use `DATABASE_URL` test db,
-  `migrate deploy`, truncate between tests.
+      `migrate deploy`, truncate between tests.
 - [ ] **Test first:** first `POST /api/auth/register` (no users) creates ADMIN; second register
-  without admin token → 403; `login` returns access+refresh; `refresh` issues new access;
-  `GET /api/auth/me` with token returns the user; admin-gated register with admin token succeeds.
+      without admin token → 403; `login` returns access+refresh; `refresh` issues new access;
+      `GET /api/auth/me` with token returns the user; admin-gated register with admin token succeeds.
 - [ ] Implement routes to pass: register, login, refresh, me. Validate bodies with shared zod schemas.
 - [ ] Commit: `feat(stage-2): auth routes with first-run admin bootstrap`
 
@@ -204,7 +204,7 @@ router setup in `App.tsx`. Add `react-router-dom`, a data layer (`@tanstack/reac
 - [ ] `auth-store.ts`: token storage (memory + localStorage refresh), `useAuth` hook.
 - [ ] `Login.tsx`: form posting to `/api/auth/login`, mockup styling, error display.
 - [ ] `AppShell.tsx`: sidebar (Dashboard/Samling/Partier/Spillere/Innstillinger), topbar with
-  title/subtitle, theme toggle writing `data-theme`, user chip — matching `Tabletop.dc.html`.
+      title/subtitle, theme toggle writing `data-theme`, user chip — matching `Tabletop.dc.html`.
 - [ ] Protected route wrapper redirects to `/login` when unauthenticated.
 - [ ] **Playwright smoke:** unauthenticated visit redirects to login; login renders shell.
 - [ ] Commit: `feat(stage-2): client auth, login page, app shell`
@@ -220,11 +220,11 @@ router setup in `App.tsx`. Add `react-router-dom`, a data layer (`@tanstack/reac
 test `apps/server/test/games.int.test.ts`.
 
 - [ ] `shared/src/game.ts`: `createGameSchema`/`updateGameSchema` (all §3.2 fields, correct
-  nullability + ranges: weight 1–5, `min_players ≤ max_players`, etc.), `gameQuerySchema`
-  (`status`, `category`, `sort`, `q`), Game response type.
+      nullability + ranges: weight 1–5, `min_players ≤ max_players`, etc.), `gameQuerySchema`
+      (`status`, `category`, `sort`, `q`), Game response type.
 - [ ] **Test first:** create game (member token) → 201; list filters by `status`/`category`/`q`
-  and sorts; get by id; patch updates; delete forbidden for member (403) but allowed for admin;
-  invalid weight/`min>max` → 400; categories assigned M:N.
+      and sorts; get by id; patch updates; delete forbidden for member (403) but allowed for admin;
+      invalid weight/`min>max` → 400; categories assigned M:N.
 - [ ] `service.ts`: validated CRUD via Prisma incl. category connect; enforce member-can't-delete.
 - [ ] `routes.ts`: wire endpoints from product spec §5 (`/api/games*`, `/api/categories`).
 - [ ] `image.ts`: multer upload to `/app/images`, `POST /api/games/:id/image`, served statically.
@@ -236,9 +236,9 @@ test `apps/server/test/games.int.test.ts`.
 (`GameCard`, `FilterBar`, `RatingBadge`, `MetaGrid`), query hooks in `src/lib/queries.ts`.
 
 - [ ] Collection page: status segmented control (Alle/Eid/Ønskeliste), category chips, sort control,
-  responsive card grid — pixel-faithful to mockup lines for the collection screen.
+      responsive card grid — pixel-faithful to mockup lines for the collection screen.
 - [ ] Game detail page: cover, action buttons, ratings row (placeholders until Stage 7), metadata
-  grid, description, expansions/history sections as empty-state placeholders (filled in Stages 4/6).
+      grid, description, expansions/history sections as empty-state placeholders (filled in Stages 4/6).
 - [ ] All strings via temporary `nb` constants module (full i18n externalization is Stage 9).
 - [ ] Commit: `feat(stage-3): collection grid and game detail UI`
 
@@ -248,10 +248,10 @@ test `apps/server/test/games.int.test.ts`.
 test `apps/server/test/stats.int.test.ts`; `apps/client/src/pages/Dashboard.tsx`.
 
 - [ ] **Test first:** `GET /api/stats/dashboard` returns `{ gamesOwned, sessions, players,
-  collectionValue, expansions, avgPrice }` computed from seeded data.
+collectionValue, expansions, avgPrice }` computed from seeded data.
 - [ ] `service.ts`: aggregate counts/sums via Prisma; `routes.ts` exposes the endpoint (auth required).
 - [ ] `Dashboard.tsx`: KPI stat cards + collection donut + recently-added wired to real data;
-  other widgets (charts, top players) as static placeholders until Stage 8.
+      other widgets (charts, top players) as static placeholders until Stage 8.
 - [ ] Commit: `feat(stage-3): basic dashboard stats endpoint and screen`
 
 ### Task 3.4: MVP E2E + tag
@@ -259,9 +259,9 @@ test `apps/server/test/stats.int.test.ts`; `apps/client/src/pages/Dashboard.tsx`
 **Files:** Create `e2e/mvp.spec.ts`; extend `ci.yml` with Postgres service + integration + e2e jobs.
 
 - [ ] **Playwright E2E:** first-run register admin → login → add a game via UI → game appears in
-  Collection → dashboard "Spill eid" count increments.
+      Collection → dashboard "Spill eid" count increments.
 - [ ] Extend CI: add `integration` job (Postgres service container, `migrate deploy`, Supertest) and
-  `e2e` job (build, start app, run Playwright).
+      `e2e` job (build, start app, run Playwright).
 - [ ] Verify full CI green locally (`npm test`, integration, e2e).
 - [ ] Commit: `test(stage-3): MVP end-to-end flow + CI integration/e2e jobs`
 - [ ] Tag: `git tag v0.1.0-mvp`
