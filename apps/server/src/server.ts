@@ -28,6 +28,7 @@ function main(): void {
   const app = createApp({
     tokens: tokenServiceFromConfig(config),
     defaultLocale: config.DEFAULT_LOCALE,
+    defaultCurrency: config.DEFAULT_CURRENCY,
   });
   app.listen(config.PORT, () => {
     logger.info(`Tabletop server listening on port ${config.PORT}`);

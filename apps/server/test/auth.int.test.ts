@@ -15,7 +15,7 @@ let app: Express;
 
 beforeAll(() => {
   applyMigrations();
-  app = createApp({ tokens, defaultLocale: 'en' });
+  app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
 });
 
 beforeEach(async () => {

@@ -6,12 +6,15 @@ import { pinoHttp } from 'pino-http';
 import { logger } from './logger.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import { createAuthRouter } from './modules/auth/routes.js';
+import { createCategoriesRouter, createGamesRouter } from './modules/games/routes.js';
+import { IMAGES_DIR } from './modules/uploads/image.js';
 import type { TokenService } from './modules/auth/service.js';
 
 /** Dependencies feature routers need. Omitted in unit tests that only hit /health. */
 export interface AppDeps {
   tokens: TokenService;
   defaultLocale: string;
+  defaultCurrency: string;
 }
 
 /**
@@ -43,9 +46,17 @@ export function createApp(deps?: AppDeps): Express {
 
   if (deps) {
     api.use('/auth', createAuthRouter(deps));
+    api.use(
+      '/games',
+      createGamesRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
+    );
+    api.use('/categories', createCategoriesRouter(deps.tokens));
   }
 
   app.use('/api', api);
+
+  // Serve uploaded images from the mounted volume.
+  app.use('/images', express.static(IMAGES_DIR));
   app.use('/api', notFound);
 
   // Serve the built client (if present) with SPA fallback for non-/api routes.
