@@ -7,6 +7,7 @@ export interface GamesFilter {
   category?: number;
   q?: string;
   sort?: string;
+  order?: 'asc' | 'desc';
 }
 
 function gamesQueryString(filter: GamesFilter): string {
@@ -15,6 +16,7 @@ function gamesQueryString(filter: GamesFilter): string {
   if (filter.category) params.set('category', String(filter.category));
   if (filter.q) params.set('q', filter.q);
   if (filter.sort) params.set('sort', filter.sort);
+  if (filter.order) params.set('order', filter.order);
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
