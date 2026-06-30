@@ -16,7 +16,8 @@ export default defineConfig({
           include: ['test/**/*.test.ts'],
         },
       },
-      // apps/server and apps/client register their projects as they are added.
+      './apps/server/vitest.config.ts',
+      // apps/client registers its project when added.
     ],
     coverage: {
       provider: 'v8',
