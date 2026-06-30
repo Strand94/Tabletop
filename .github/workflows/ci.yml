@@ -75,6 +75,52 @@ jobs:
       - name: Run integration tests
         run: npx vitest run --project server
 
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: bgtuser
+          POSTGRES_PASSWORD: bgtpass
+          POSTGRES_DB: boardgametracker_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bgtuser -d boardgametracker_e2e"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://bgtuser:bgtpass@localhost:5432/boardgametracker_e2e
+      JWT_SECRET: ci-e2e-access-secret-ci-e2e-access-secret
+      JWT_REFRESH_SECRET: ci-e2e-refresh-secret-ci-e2e-refresh-secret
+      DB_USER: bgtuser
+      DB_PASSWORD: bgtpass
+      DB_NAME: boardgametracker_e2e
+      DEFAULT_CURRENCY: NOK
+      DEFAULT_LOCALE: nb
+      CLIENT_DIST: ${{ github.workspace }}/apps/client/dist
+      PORT: '5444'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Build client and server
+        run: |
+          npm run build --workspace @tabletop/client
+          npm run build --workspace @tabletop/server
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Run e2e tests
+        run: npx playwright test
+
   secrets:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
