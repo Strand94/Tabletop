@@ -1,42 +1,38 @@
-import { useEffect, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './lib/auth.js';
+import { ThemeProvider } from './lib/theme.js';
+import { AppShell } from './components/AppShell.js';
+import { ProtectedRoute } from './components/ProtectedRoute.js';
+import { Login } from './pages/Login.js';
+import { Placeholder } from './pages/Placeholder.js';
+import { t } from './lib/strings.js';
 
-type Health = 'checking' | 'ok' | 'error';
+const queryClient = new QueryClient();
 
-/**
- * Placeholder application root. Proves the client build is served and can reach
- * the API. The real app shell (sidebar, routing, auth) lands in Stage 2.
- */
+/** Root component: providers + route table. */
 export function App(): JSX.Element {
-  const [health, setHealth] = useState<Health>('checking');
-
-  useEffect(() => {
-    let active = true;
-    fetch('/api/health')
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad status'))))
-      .then((body: { status?: string }) => {
-        if (active) setHealth(body.status === 'ok' ? 'ok' : 'error');
-      })
-      .catch(() => {
-        if (active) setHealth('error');
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-
   return (
-    <div
-      data-theme="light"
-      className="flex min-h-screen flex-col items-center justify-center gap-3 bg-bg text-text"
-    >
-      <div className="flex items-center gap-3">
-        <span className="text-3xl text-accent leading-none">⚄</span>
-        <span className="font-display text-2xl font-semibold tracking-tight">Tabletop</span>
-      </div>
-      <p className="text-sm text-muted">Self-hosted board game tracker</p>
-      <p className="text-xs text-faint" data-testid="health-status">
-        API: {health}
-      </p>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route element={<ProtectedRoute />}>
+                <Route element={<AppShell />}>
+                  <Route index element={<Placeholder title={t.nav.dashboard} />} />
+                  <Route path="collection" element={<Placeholder title={t.nav.collection} />} />
+                  <Route path="sessions" element={<Placeholder title={t.nav.sessions} />} />
+                  <Route path="players" element={<Placeholder title={t.nav.players} />} />
+                  <Route path="settings" element={<Placeholder title={t.nav.settings} />} />
+                </Route>
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

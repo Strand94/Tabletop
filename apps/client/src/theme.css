@@ -73,4 +73,18 @@
     color: var(--text);
     font-family: 'Hanken Grotesk', system-ui, sans-serif;
   }
+
+  /* Material Symbols Rounded icon base (from the design mockup). */
+  .ms {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
 }
