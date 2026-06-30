@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e8e6e1;font-family:'Hanken Grotesk',system-ui,sans-serif}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+.dv-turn{padding:40px 44px 36px;scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 22px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:4px 8px;background:#1a1a1a;color:#fff;border-radius:5px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 'Hanken Grotesk',system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:9px;font:400 12px/1.3 'Hanken Grotesk',system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-olabel b{font-weight:600;color:rgba(0,0,0,.82)}
+.dv-card{width:1200px;max-width:100%;border-radius:16px;box-shadow:0 12px 40px -12px rgba(0,0,0,.22),0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#c9852f;color:#fff}
+.dv-next{margin:26px 0 0;font:13px/1.6 'Hanken Grotesk',system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Three dashboard directions for Tabletop — board game tracker</span></div>
+<div class="dv-opts">
+
+<!-- ================= OPTION 1A — STUDIO ================= -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a><b>Studio</b> — clean neutral, restrained SaaS · light</div>
+<div class="dv-card" style="background:#faf9f7;display:flex;font-family:'Hanken Grotesk',sans-serif;color:#1c1a17">
+
+  <!-- sidebar -->
+  <aside style="width:216px;flex:none;background:#fff;border-right:1px solid rgba(28,26,23,.07);padding:22px 16px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 6px 22px">
+      <span style="font-size:26px;color:#c9852f;line-height:1">⚄</span>
+      <span style="font:600 17px 'Space Grotesk',sans-serif;letter-spacing:-.01em">Tabletop</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;background:#f6efe2;color:#9a6418;font-weight:600;font-size:13.5px"><span class="ms" style="font-size:19px">space_dashboard</span>Dashboard</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#6f6a60;font-size:13.5px"><span class="ms" style="font-size:19px">grid_view</span>Collection</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#6f6a60;font-size:13.5px"><span class="ms" style="font-size:19px">casino</span>Sessions</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#6f6a60;font-size:13.5px"><span class="ms" style="font-size:19px">group</span>Players</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#6f6a60;font-size:13.5px"><span class="ms" style="font-size:19px">bar_chart_4_bars</span>Statistics</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#6f6a60;font-size:13.5px"><span class="ms" style="font-size:19px">settings</span>Settings</div>
+    </div>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:9px 8px;border-top:1px solid rgba(28,26,23,.07)">
+      <div style="width:32px;height:32px;border-radius:50%;background:repeating-linear-gradient(135deg,#e9dfcd,#e9dfcd 4px,#ddd0b6 4px,#ddd0b6 8px);flex:none"></div>
+      <div style="min-width:0"><div style="font-weight:600;font-size:13px">Maya R.</div><div style="font-size:11px;color:#9a948a">Admin</div></div>
+      <span class="ms" style="font-size:18px;color:#b6b0a4;margin-left:auto">dark_mode</span>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <main style="flex:1;min-width:0;padding:24px 28px 30px">
+    <!-- topbar -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+      <div>
+        <h1 style="margin:0;font:600 23px 'Space Grotesk',sans-serif;letter-spacing:-.02em">Dashboard</h1>
+        <div style="font-size:13px;color:#9a948a;margin-top:2px">God kveld, Maya — her er samlingen din</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid rgba(28,26,23,.1);border-radius:9px;padding:8px 12px;width:200px;color:#9a948a"><span class="ms" style="font-size:18px">search</span><span style="font-size:13px">Søk i samling…</span></div>
+        <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid rgba(28,26,23,.1);border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;color:#6f6a60">🇳🇴 NO</div>
+        <div style="display:flex;align-items:center;gap:7px;background:#c9852f;color:#fff;border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(201,133,47,.35)"><span class="ms" style="font-size:18px">add</span>Logg et spill</div>
+      </div>
+    </div>
+
+    <!-- stat row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px">
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Spill eid</span><span class="ms" style="font-size:17px;color:#c9852f">grid_view</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">84</div><div style="font-size:11px;color:#3f7d5a;margin-top:5px;font-weight:500">+3 denne måneden</div></div>
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Partier</span><span class="ms" style="font-size:17px;color:#c9852f">casino</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">312</div><div style="font-size:11px;color:#3f7d5a;margin-top:5px;font-weight:500">+18 denne måneden</div></div>
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Spillere</span><span class="ms" style="font-size:17px;color:#c9852f">group</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">9</div><div style="font-size:11px;color:#9a948a;margin-top:5px;font-weight:500">husstand</div></div>
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Samlingsverdi</span><span class="ms" style="font-size:17px;color:#c9852f">payments</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">41 280</div><div style="font-size:11px;color:#9a948a;margin-top:5px;font-weight:500">kr</div></div>
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Utvidelser</span><span class="ms" style="font-size:17px;color:#c9852f">extension</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">37</div><div style="font-size:11px;color:#9a948a;margin-top:5px;font-weight:500">på 22 spill</div></div>
+      <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#9a948a;font-weight:500">Snittpris</span><span class="ms" style="font-size:17px;color:#c9852f">sell</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">491</div><div style="font-size:11px;color:#9a948a;margin-top:5px;font-weight:500">kr / spill</div></div>
+    </div>
+
+    <!-- content grid -->
+    <div style="display:grid;grid-template-columns:1.62fr 1fr;gap:18px">
+
+      <!-- LEFT col -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- plays chart -->
+        <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-weight:600;font-size:14px">Partier — siste 14 dager</div><div style="font-size:12px;color:#9a948a"><b style="font-family:'Space Grotesk';color:#1c1a17">29</b> partier</div></div>
+          <div style="display:flex;align-items:flex-end;gap:7px;height:118px;margin-top:18px">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#eee6d6;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:80%;background:#c9852f;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#eee6d6;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:100%;background:#c9852f;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ecd6ab;border-radius:4px 4px 0 0"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10.5px;color:#b6b0a4"><span>17. jun</span><span>24. jun</span><span>30. jun</span></div>
+        </div>
+
+        <!-- sub grid: most played + recent plays -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:16px">Mest spilt</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:6px;overflow:hidden"><div style="width:100%;height:100%;background:#c9852f"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">28</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:6px;overflow:hidden"><div style="width:86%;height:100%;background:#c9852f"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">24</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:6px;overflow:hidden"><div style="width:68%;height:100%;background:#c9852f"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">19</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:6px;overflow:hidden"><div style="width:61%;height:100%;background:#c9852f"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">17</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:6px;overflow:hidden"><div style="width:50%;height:100%;background:#c9852f"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">14</div></div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:10px">Siste partier</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(28,26,23,.06)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:11px;color:#9a948a">Maya vant · 2t 05m</div></div><div style="font-size:11px;color:#b6b0a4">tir</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(28,26,23,.06)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:11px;color:#9a948a">Theo vant · 48m</div></div><div style="font-size:11px;color:#b6b0a4">man</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(28,26,23,.06)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:11px;color:#9a948a">Alex vant · 1t 30m</div></div><div style="font-size:11px;color:#b6b0a4">søn</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:11px;color:#9a948a">Nora vant · 1t 12m</div></div><div style="font-size:11px;color:#b6b0a4">lør</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT col -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- collection donut -->
+        <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:6px">Samling</div>
+          <div style="display:flex;align-items:center;gap:18px">
+            <div style="position:relative;width:118px;height:118px;flex:none">
+              <div style="width:100%;height:100%;border-radius:50%;background:conic-gradient(#c9852f 0 87.5%,#e8e2d6 87.5% 100%)"></div>
+              <div style="position:absolute;inset:17px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:600 25px 'Space Grotesk';letter-spacing:-.02em">96</div><div style="font-size:10.5px;color:#9a948a">titler</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:13px">
+              <div><div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#c9852f"></span><span style="font-size:12px;color:#6f6a60">Eid</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">84</b></div></div>
+              <div><div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#e8e2d6"></span><span style="font-size:12px;color:#6f6a60">Ønskeliste</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">12</b></div></div>
+              <div style="border-top:1px solid rgba(28,26,23,.07);padding-top:11px"><div style="display:flex;align-items:center;gap:7px"><span class="ms" style="font-size:15px;color:#c9852f">payments</span><span style="font-size:12px;color:#6f6a60">Verdi</span><b style="margin-left:auto;font:600 13px 'Space Grotesk'">41 280 kr</b></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- top players -->
+        <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:15px">Toppspillere — seiersandel</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#e9dfcd,#e9dfcd 4px,#ddd0b6 4px,#ddd0b6 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Maya</span><span style="font:600 12px 'Space Grotesk';color:#9a6418">71%</span></div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:5px;overflow:hidden"><div style="width:71%;height:100%;background:#c9852f"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#e9dfcd,#e9dfcd 4px,#ddd0b6 4px,#ddd0b6 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Alex</span><span style="font:600 12px 'Space Grotesk';color:#9a6418">58%</span></div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:5px;overflow:hidden"><div style="width:58%;height:100%;background:#c9852f"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#e9dfcd,#e9dfcd 4px,#ddd0b6 4px,#ddd0b6 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Theo</span><span style="font:600 12px 'Space Grotesk';color:#9a6418">49%</span></div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:5px;overflow:hidden"><div style="width:49%;height:100%;background:#c9852f"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#e9dfcd,#e9dfcd 4px,#ddd0b6 4px,#ddd0b6 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Nora</span><span style="font:600 12px 'Space Grotesk';color:#9a6418">44%</span></div><div style="height:5px;border-radius:3px;background:#f1ece3;margin-top:5px;overflow:hidden"><div style="width:44%;height:100%;background:#c9852f"></div></div></div></div>
+          </div>
+        </div>
+        <!-- recently added -->
+        <div style="background:#fff;border:1px solid rgba(28,26,23,.07);border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:12px">Nylig lagt til</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Iron Banner <span style="color:#b6b0a4;font-weight:400">2024</span></div><div style="font-size:11px;color:#9a948a">2–4 spillere · 60–90 min</div></div><span style="font-size:10px;font-weight:600;color:#9a6418;background:#f6efe2;padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Meadow &amp; Mill <span style="color:#b6b0a4;font-weight:400">2023</span></div><div style="font-size:11px;color:#9a948a">1–5 spillere · 45 min</div></div><span style="font-size:10px;font-weight:600;color:#9a6418;background:#f6efe2;padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#efe7da,#efe7da 4px,#e4d8c1 4px,#e4d8c1 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Tidewater <span style="color:#b6b0a4;font-weight:400">2025</span></div><div style="font-size:11px;color:#9a948a">2–4 spillere · 90 min</div></div><span style="font-size:10px;font-weight:600;color:#7a756a;background:#f0ece4;padding:3px 7px;border-radius:5px">ØNSKE</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</div>
+<!-- =============== END 1A =============== -->
+
+<!-- ================= OPTION 1B — TABLETOP ================= -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a><b>Tabletop</b> — warm paper, tactile, serif display · cream</div>
+<div class="dv-card" style="background:#e7d9bd;display:flex;font-family:'Hanken Grotesk',sans-serif;color:#2e2417">
+
+  <!-- sidebar -->
+  <aside style="width:216px;flex:none;background:#f3ead4;border-right:1px solid rgba(60,45,20,.12);padding:22px 16px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 6px 22px">
+      <span style="font-size:27px;color:#b9742a;line-height:1">⚄</span>
+      <span style="font:400 23px 'Instrument Serif',serif;letter-spacing:.01em">Tabletop</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;background:#e6d6b3;color:#8a4e16;font-weight:600;font-size:13.5px;box-shadow:inset 0 0 0 1px rgba(185,116,42,.25)"><span class="ms" style="font-size:19px">space_dashboard</span>Dashboard</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#7a6a4d;font-size:13.5px"><span class="ms" style="font-size:19px">grid_view</span>Collection</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#7a6a4d;font-size:13.5px"><span class="ms" style="font-size:19px">casino</span>Sessions</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#7a6a4d;font-size:13.5px"><span class="ms" style="font-size:19px">group</span>Players</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#7a6a4d;font-size:13.5px"><span class="ms" style="font-size:19px">bar_chart_4_bars</span>Statistics</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#7a6a4d;font-size:13.5px"><span class="ms" style="font-size:19px">settings</span>Settings</div>
+    </div>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid rgba(60,45,20,.12)">
+      <div style="width:32px;height:32px;border-radius:50%;background:repeating-linear-gradient(135deg,#dcc99e,#dcc99e 4px,#cdb787 4px,#cdb787 8px);flex:none"></div>
+      <div style="min-width:0"><div style="font-weight:600;font-size:13px">Maya R.</div><div style="font-size:11px;color:#9a865f">Admin</div></div>
+      <span class="ms" style="font-size:18px;color:#b09a6e;margin-left:auto">dark_mode</span>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <main style="flex:1;min-width:0;padding:24px 28px 30px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+      <div>
+        <h1 style="margin:0;font:400 34px 'Instrument Serif',serif;letter-spacing:.01em;line-height:1">Spillkvelden venter</h1>
+        <div style="font-size:13px;color:#9a865f;margin-top:4px">God kveld, Maya — 84 spill på hylla</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px;background:#f7f1e3;border:1px solid rgba(60,45,20,.14);border-radius:9px;padding:8px 12px;width:190px;color:#9a865f"><span class="ms" style="font-size:18px">search</span><span style="font-size:13px">Søk…</span></div>
+        <div style="display:flex;align-items:center;gap:6px;background:#f7f1e3;border:1px solid rgba(60,45,20,.14);border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;color:#7a6a4d">🇳🇴 NO</div>
+        <div style="display:flex;align-items:center;gap:7px;background:#b9742a;color:#fff;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:600;box-shadow:0 3px 0 rgba(138,78,22,.4)"><span class="ms" style="font-size:18px">add</span>Logg et spill</div>
+      </div>
+    </div>
+
+    <!-- stat row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px">
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Spill eid</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">84</div><div style="font-size:11px;color:#355c47;margin-top:6px;font-weight:600">+3 mnd</div></div>
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Partier</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">312</div><div style="font-size:11px;color:#355c47;margin-top:6px;font-weight:600">+18 mnd</div></div>
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Spillere</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">9</div><div style="font-size:11px;color:#9a865f;margin-top:6px;font-weight:500">husstand</div></div>
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Verdi</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">41 280</div><div style="font-size:11px;color:#9a865f;margin-top:6px;font-weight:500">kr</div></div>
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Utvidelser</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">37</div><div style="font-size:11px;color:#9a865f;margin-top:6px;font-weight:500">på 22 spill</div></div>
+      <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:13px;padding:15px 16px;box-shadow:0 2px 0 rgba(60,45,20,.05)"><div style="font-size:11.5px;color:#9a865f;font-weight:500">Snittpris</div><div style="font:400 33px 'Instrument Serif',serif;margin-top:6px;line-height:1">491</div><div style="font-size:11px;color:#9a865f;margin-top:6px;font-weight:500">kr / spill</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.62fr 1fr;gap:18px">
+      <!-- LEFT -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font:400 19px 'Instrument Serif',serif">Partier — siste 14 dager</div><div style="font-size:12px;color:#9a865f"><b style="color:#2e2417">29</b> partier</div></div>
+          <div style="display:flex;align-items:flex-end;gap:7px;height:118px;margin-top:18px">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#e6d8bd;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:80%;background:#b9742a;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#e6d8bd;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:100%;background:#b9742a;border-radius:3px 3px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#ddc290;border-radius:3px 3px 0 0"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10.5px;color:#b09a6e"><span>17. jun</span><span>24. jun</span><span>30. jun</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+            <div style="font:400 19px 'Instrument Serif',serif;margin-bottom:16px">Mest spilt</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:6px;overflow:hidden"><div style="width:100%;height:100%;background:#b9742a"></div></div></div><div style="font:400 18px 'Instrument Serif';flex:none">28</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:6px;overflow:hidden"><div style="width:86%;height:100%;background:#b9742a"></div></div></div><div style="font:400 18px 'Instrument Serif';flex:none">24</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:6px;overflow:hidden"><div style="width:68%;height:100%;background:#b9742a"></div></div></div><div style="font:400 18px 'Instrument Serif';flex:none">19</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:6px;overflow:hidden"><div style="width:61%;height:100%;background:#b9742a"></div></div></div><div style="font:400 18px 'Instrument Serif';flex:none">17</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:6px;overflow:hidden"><div style="width:50%;height:100%;background:#b9742a"></div></div></div><div style="font:400 18px 'Instrument Serif';flex:none">14</div></div>
+            </div>
+          </div>
+          <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+            <div style="font:400 19px 'Instrument Serif',serif;margin-bottom:10px">Siste partier</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(60,45,20,.08)"><div style="width:32px;height:32px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:11px;color:#9a865f">Maya vant · 2t 05m</div></div><div style="font-size:11px;color:#b09a6e">tir</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(60,45,20,.08)"><div style="width:32px;height:32px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:11px;color:#9a865f">Theo vant · 48m</div></div><div style="font-size:11px;color:#b09a6e">man</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(60,45,20,.08)"><div style="width:32px;height:32px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:11px;color:#9a865f">Alex vant · 1t 30m</div></div><div style="font-size:11px;color:#b09a6e">søn</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0"><div style="width:32px;height:32px;border-radius:6px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:11px;color:#9a865f">Nora vant · 1t 12m</div></div><div style="font-size:11px;color:#b09a6e">lør</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+          <div style="font:400 19px 'Instrument Serif',serif;margin-bottom:8px">Samling</div>
+          <div style="display:flex;align-items:center;gap:18px">
+            <div style="position:relative;width:118px;height:118px;flex:none">
+              <div style="width:100%;height:100%;border-radius:50%;background:conic-gradient(#b9742a 0 87.5%,#e2d4b6 87.5% 100%)"></div>
+              <div style="position:absolute;inset:17px;background:#f7f1e3;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:400 30px 'Instrument Serif';line-height:1">96</div><div style="font-size:10.5px;color:#9a865f">titler</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:13px">
+              <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#b9742a"></span><span style="font-size:12px;color:#7a6a4d">Eid</span><b style="margin-left:auto;font:400 18px 'Instrument Serif'">84</b></div>
+              <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#e2d4b6"></span><span style="font-size:12px;color:#7a6a4d">Ønskeliste</span><b style="margin-left:auto;font:400 18px 'Instrument Serif'">12</b></div>
+              <div style="border-top:1px solid rgba(60,45,20,.1);padding-top:11px;display:flex;align-items:center;gap:7px"><span class="ms" style="font-size:15px;color:#b9742a">payments</span><span style="font-size:12px;color:#7a6a4d">Verdi</span><b style="margin-left:auto;font:600 13px 'Hanken Grotesk'">41 280 kr</b></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+          <div style="font:400 19px 'Instrument Serif',serif;margin-bottom:15px">Toppspillere</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#dcc99e,#dcc99e 4px,#cdb787 4px,#cdb787 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Maya</span><span style="font:400 16px 'Instrument Serif';color:#8a4e16">71%</span></div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:4px;overflow:hidden"><div style="width:71%;height:100%;background:#b9742a"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#dcc99e,#dcc99e 4px,#cdb787 4px,#cdb787 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Alex</span><span style="font:400 16px 'Instrument Serif';color:#8a4e16">58%</span></div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:4px;overflow:hidden"><div style="width:58%;height:100%;background:#b9742a"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#dcc99e,#dcc99e 4px,#cdb787 4px,#cdb787 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Theo</span><span style="font:400 16px 'Instrument Serif';color:#8a4e16">49%</span></div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:4px;overflow:hidden"><div style="width:49%;height:100%;background:#b9742a"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#dcc99e,#dcc99e 4px,#cdb787 4px,#cdb787 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Nora</span><span style="font:400 16px 'Instrument Serif';color:#8a4e16">44%</span></div><div style="height:5px;border-radius:3px;background:#e9dcc0;margin-top:4px;overflow:hidden"><div style="width:44%;height:100%;background:#b9742a"></div></div></div></div>
+          </div>
+        </div>
+        <div style="background:#f7f1e3;border:1px solid rgba(60,45,20,.1);border-radius:14px;padding:18px 20px;box-shadow:0 2px 0 rgba(60,45,20,.05)">
+          <div style="font:400 19px 'Instrument Serif',serif;margin-bottom:12px">Nylig lagt til</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:4px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Iron Banner <span style="color:#b09a6e;font-weight:400">2024</span></div><div style="font-size:11px;color:#9a865f">2–4 spillere · 60–90 min</div></div><span style="font-size:10px;font-weight:700;color:#fff;background:#355c47;padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:4px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Meadow &amp; Mill <span style="color:#b09a6e;font-weight:400">2023</span></div><div style="font-size:11px;color:#9a865f">1–5 spillere · 45 min</div></div><span style="font-size:10px;font-weight:700;color:#fff;background:#355c47;padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:4px;background:repeating-linear-gradient(135deg,#e4d4b1,#e4d4b1 4px,#d6c195 4px,#d6c195 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Tidewater <span style="color:#b09a6e;font-weight:400">2025</span></div><div style="font-size:11px;color:#9a865f">2–4 spillere · 90 min</div></div><span style="font-size:10px;font-weight:700;color:#8a4e16;background:#ecdcae;padding:3px 7px;border-radius:5px">ØNSKE</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+<!-- =============== END 1B =============== -->
+<!-- ================= OPTION 1C — MIDNIGHT ================= -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a><b>Midnight</b> — dark, cozy, premium with amber glow · dark</div>
+<div class="dv-card" style="background:#14131c;background-image:radial-gradient(900px 380px at 78% -8%,rgba(224,162,73,.10),transparent 70%);display:flex;font-family:'Hanken Grotesk',sans-serif;color:#ece9f5">
+
+  <!-- sidebar -->
+  <aside style="width:216px;flex:none;background:#1a1924;border-right:1px solid #2a2838;padding:22px 16px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 6px 22px">
+      <span style="font-size:26px;color:#e0a249;line-height:1;text-shadow:0 0 14px rgba(224,162,73,.5)">⚄</span>
+      <span style="font:600 17px 'Space Grotesk',sans-serif;letter-spacing:-.01em">Tabletop</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;background:rgba(224,162,73,.14);color:#e8b265;font-weight:600;font-size:13.5px"><span class="ms" style="font-size:19px">space_dashboard</span>Dashboard</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#908ca6;font-size:13.5px"><span class="ms" style="font-size:19px">grid_view</span>Collection</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#908ca6;font-size:13.5px"><span class="ms" style="font-size:19px">casino</span>Sessions</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#908ca6;font-size:13.5px"><span class="ms" style="font-size:19px">group</span>Players</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#908ca6;font-size:13.5px"><span class="ms" style="font-size:19px">bar_chart_4_bars</span>Statistics</div>
+      <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:#908ca6;font-size:13.5px"><span class="ms" style="font-size:19px">settings</span>Settings</div>
+    </div>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid #2a2838">
+      <div style="width:32px;height:32px;border-radius:50%;background:repeating-linear-gradient(135deg,#34323f,#34323f 4px,#403d4d 4px,#403d4d 8px);flex:none"></div>
+      <div style="min-width:0"><div style="font-weight:600;font-size:13px">Maya R.</div><div style="font-size:11px;color:#807c96">Admin</div></div>
+      <span class="ms" style="font-size:18px;color:#e0a249;margin-left:auto">light_mode</span>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <main style="flex:1;min-width:0;padding:24px 28px 30px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+      <div>
+        <h1 style="margin:0;font:600 23px 'Space Grotesk',sans-serif;letter-spacing:-.02em">Dashboard</h1>
+        <div style="font-size:13px;color:#908ca6;margin-top:2px">God kveld, Maya — spillkvelden venter</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px;background:#1e1c29;border:1px solid #2e2c3d;border-radius:9px;padding:8px 12px;width:190px;color:#807c96"><span class="ms" style="font-size:18px">search</span><span style="font-size:13px">Søk…</span></div>
+        <div style="display:flex;align-items:center;gap:6px;background:#1e1c29;border:1px solid #2e2c3d;border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;color:#b8b4c8">🇳🇴 NO</div>
+        <div style="display:flex;align-items:center;gap:7px;background:#e0a249;color:#1c140a;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:700;box-shadow:0 0 22px rgba(224,162,73,.35)"><span class="ms" style="font-size:18px">add</span>Logg et spill</div>
+      </div>
+    </div>
+
+    <!-- stat row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px">
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Spill eid</span><span class="ms" style="font-size:17px;color:#e0a249">grid_view</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">84</div><div style="font-size:11px;color:#5fbf8e;margin-top:5px;font-weight:500">+3 denne måneden</div></div>
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Partier</span><span class="ms" style="font-size:17px;color:#e0a249">casino</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">312</div><div style="font-size:11px;color:#5fbf8e;margin-top:5px;font-weight:500">+18 denne måneden</div></div>
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Spillere</span><span class="ms" style="font-size:17px;color:#e0a249">group</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">9</div><div style="font-size:11px;color:#807c96;margin-top:5px;font-weight:500">husstand</div></div>
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Verdi</span><span class="ms" style="font-size:17px;color:#e0a249">payments</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">41 280</div><div style="font-size:11px;color:#807c96;margin-top:5px;font-weight:500">kr</div></div>
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Utvidelser</span><span class="ms" style="font-size:17px;color:#e0a249">extension</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">37</div><div style="font-size:11px;color:#807c96;margin-top:5px;font-weight:500">på 22 spill</div></div>
+      <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:#908ca6;font-weight:500">Snittpris</span><span class="ms" style="font-size:17px;color:#e0a249">sell</span></div><div style="font:600 27px 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin-top:9px">491</div><div style="font-size:11px;color:#807c96;margin-top:5px;font-weight:500">kr / spill</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.62fr 1fr;gap:18px">
+      <!-- LEFT -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-weight:600;font-size:14px">Partier — siste 14 dager</div><div style="font-size:12px;color:#908ca6"><b style="font-family:'Space Grotesk';color:#ece9f5">29</b> partier</div></div>
+          <div style="display:flex;align-items:flex-end;gap:7px;height:118px;margin-top:18px">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#3a3548;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:80%;background:#e0a249;border-radius:4px 4px 0 0;box-shadow:0 0 14px rgba(224,162,73,.45)"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:6%;background:#3a3548;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:100%;background:#e0a249;border-radius:4px 4px 0 0;box-shadow:0 0 14px rgba(224,162,73,.45)"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:#5a4a30;border-radius:4px 4px 0 0"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10.5px;color:#6a6680"><span>17. jun</span><span>24. jun</span><span>30. jun</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:16px">Mest spilt</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:6px;overflow:hidden"><div style="width:100%;height:100%;background:#e0a249"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">28</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:6px;overflow:hidden"><div style="width:86%;height:100%;background:#e0a249"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">24</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:6px;overflow:hidden"><div style="width:68%;height:100%;background:#e0a249"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">19</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:6px;overflow:hidden"><div style="width:61%;height:100%;background:#e0a249"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">17</div></div>
+              <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:6px;overflow:hidden"><div style="width:50%;height:100%;background:#e0a249"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">14</div></div>
+            </div>
+          </div>
+          <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:10px">Siste partier</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #2a2838"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:11px;color:#908ca6">Maya vant · 2t 05m</div></div><div style="font-size:11px;color:#6a6680">tir</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #2a2838"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:11px;color:#908ca6">Theo vant · 48m</div></div><div style="font-size:11px;color:#6a6680">man</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #2a2838"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:11px;color:#908ca6">Alex vant · 1t 30m</div></div><div style="font-size:11px;color:#6a6680">søn</div></div>
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:11px;color:#908ca6">Nora vant · 1t 12m</div></div><div style="font-size:11px;color:#6a6680">lør</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:6px">Samling</div>
+          <div style="display:flex;align-items:center;gap:18px">
+            <div style="position:relative;width:118px;height:118px;flex:none">
+              <div style="width:100%;height:100%;border-radius:50%;background:conic-gradient(#e0a249 0 87.5%,#2f2c3e 87.5% 100%)"></div>
+              <div style="position:absolute;inset:17px;background:#1e1c29;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:600 25px 'Space Grotesk';letter-spacing:-.02em">96</div><div style="font-size:10.5px;color:#908ca6">titler</div></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:13px">
+              <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#e0a249"></span><span style="font-size:12px;color:#b8b4c8">Eid</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">84</b></div>
+              <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:#2f2c3e"></span><span style="font-size:12px;color:#b8b4c8">Ønskeliste</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">12</b></div>
+              <div style="border-top:1px solid #2a2838;padding-top:11px;display:flex;align-items:center;gap:7px"><span class="ms" style="font-size:15px;color:#e0a249">payments</span><span style="font-size:12px;color:#b8b4c8">Verdi</span><b style="margin-left:auto;font:600 13px 'Space Grotesk'">41 280 kr</b></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:15px">Toppspillere — seiersandel</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#34323f,#34323f 4px,#403d4d 4px,#403d4d 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Maya</span><span style="font:600 12px 'Space Grotesk';color:#e8b265">71%</span></div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:5px;overflow:hidden"><div style="width:71%;height:100%;background:#e0a249"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#34323f,#34323f 4px,#403d4d 4px,#403d4d 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Alex</span><span style="font:600 12px 'Space Grotesk';color:#e8b265">58%</span></div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:5px;overflow:hidden"><div style="width:58%;height:100%;background:#e0a249"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#34323f,#34323f 4px,#403d4d 4px,#403d4d 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Theo</span><span style="font:600 12px 'Space Grotesk';color:#e8b265">49%</span></div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:5px;overflow:hidden"><div style="width:49%;height:100%;background:#e0a249"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,#34323f,#34323f 4px,#403d4d 4px,#403d4d 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Nora</span><span style="font:600 12px 'Space Grotesk';color:#e8b265">44%</span></div><div style="height:5px;border-radius:3px;background:#2a2838;margin-top:5px;overflow:hidden"><div style="width:44%;height:100%;background:#e0a249"></div></div></div></div>
+          </div>
+        </div>
+        <div style="background:#1e1c29;border:1px solid #2a2838;border-radius:14px;padding:18px 20px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:12px">Nylig lagt til</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Iron Banner <span style="color:#6a6680;font-weight:400">2024</span></div><div style="font-size:11px;color:#908ca6">2–4 spillere · 60–90 min</div></div><span style="font-size:10px;font-weight:600;color:#e8b265;background:rgba(224,162,73,.14);padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Meadow &amp; Mill <span style="color:#6a6680;font-weight:400">2023</span></div><div style="font-size:11px;color:#908ca6">1–5 spillere · 45 min</div></div><span style="font-size:10px;font-weight:600;color:#e8b265;background:rgba(224,162,73,.14);padding:3px 7px;border-radius:5px">EID</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,#2c2a3a,#2c2a3a 4px,#36344a 4px,#36344a 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Tidewater <span style="color:#6a6680;font-weight:400">2025</span></div><div style="font-size:11px;color:#908ca6">2–4 spillere · 90 min</div></div><span style="font-size:10px;font-weight:600;color:#b8b4c8;background:#2a2838;padding:3px 7px;border-radius:5px">ØNSKE</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+<!-- =============== END 1C =============== -->
+
+</div>
+<p class="dv-next">Try next: "build out the full app in <a class="dv-oid" href="#1a">1a</a>" · "<a class="dv-oid" href="#1c">1c</a> but warmer" · "show the Collection grid + Log-a-play screens" · "new directions"</p>
+</section>
+</x-dc>
+</body>
+</html>

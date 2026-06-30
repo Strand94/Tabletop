@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e7e5e0;font-family:'Hanken Grotesk',system-ui,sans-serif}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+[data-theme=light]{--bg:#faf9f7;--sidebar:#fff;--card:#fff;--border:rgba(28,26,23,.08);--hairline:rgba(28,26,23,.06);--text:#1c1a17;--muted:#9a948a;--muted2:#6f6a60;--faint:#b6b0a4;--accent:#c9852f;--accent-soft:#f6efe2;--accent-text:#9a6418;--on-accent:#fff;--track:#f1ece3;--good:#3f7d5a;--good-soft:#e7f0ea;--ph1:#efe7da;--ph2:#e4d8c1;--av1:#e9dfcd;--av2:#ddd0b6;--chip:#f3efe8;--input:#fff;--topbar:rgba(250,249,247,.82);--star:#d6a13e}
+[data-theme=dark]{--bg:#14131c;--sidebar:#1a1924;--card:#1e1c29;--border:#2a2838;--hairline:#2a2838;--text:#ece9f5;--muted:#807c96;--muted2:#b8b4c8;--faint:#6a6680;--accent:#e0a249;--accent-soft:rgba(224,162,73,.14);--accent-text:#e8b265;--on-accent:#1c140a;--track:#2a2838;--good:#5fbf8e;--good-soft:rgba(95,191,142,.14);--ph1:#2c2a3a;--ph2:#36344a;--av1:#34323f;--av2:#403d4d;--chip:#23212f;--input:#211f2d;--topbar:rgba(20,19,28,.82);--star:#e0a249}
+.scr{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.scr::-webkit-scrollbar{width:9px;height:9px}.scr::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}.scr::-webkit-scrollbar-track{background:transparent}
+.lbl{font:600 11px ui-monospace,Menlo,monospace;letter-spacing:.12em;color:rgba(0,0,0,.4);text-transform:uppercase}
+@keyframes pop{from{transform:translateY(8px) scale(.99)}to{transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.screen{animation:pop .28s cubic-bezier(.2,.7,.3,1) both}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:32px 32px 48px;display:flex;flex-direction:column;gap:30px;align-items:center">
+
+<!-- =========================== DESKTOP APP =========================== -->
+<div style="width:1280px;max-width:100%">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><span class="lbl">Desktop</span><span style="height:1px;flex:1;background:rgba(0,0,0,.1)"></span><span style="font:500 11px 'Hanken Grotesk';color:rgba(0,0,0,.4)">Click the nav · toggle light/dark · “Logg et spill”</span></div>
+
+  <div data-theme="{{ theme }}" style="position:relative;width:100%;height:840px;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.08);background:var(--bg);color:var(--text);display:flex">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside style="width:224px;flex:none;background:var(--sidebar);border-right:1px solid var(--hairline);padding:22px 16px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:10px;padding:0 6px 22px">
+        <span style="font-size:26px;color:var(--accent);line-height:1">⚄</span>
+        <span style="font:600 17px 'Space Grotesk',sans-serif;letter-spacing:-.01em">Tabletop</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div onClick="{{ navGo.dashboard }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;background:{{ navBg.dashboard }};color:{{ navColor.dashboard }}"><span class="ms" style="font-size:19px">space_dashboard</span>Dashboard</div>
+        <div onClick="{{ navGo.collection }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;background:{{ navBg.collection }};color:{{ navColor.collection }}"><span class="ms" style="font-size:19px">grid_view</span>Samling</div>
+        <div onClick="{{ navGo.sessions }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;background:{{ navBg.sessions }};color:{{ navColor.sessions }}"><span class="ms" style="font-size:19px">casino</span>Partier</div>
+        <div onClick="{{ navGo.players }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;background:{{ navBg.players }};color:{{ navColor.players }}"><span class="ms" style="font-size:19px">group</span>Spillere</div>
+        <div onClick="{{ navGo.settings }}" style="display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:600;background:{{ navBg.settings }};color:{{ navColor.settings }}"><span class="ms" style="font-size:19px">settings</span>Innstillinger</div>
+      </div>
+      <div style="margin-top:18px;padding:13px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--border)">
+        <div style="font-size:11.5px;color:var(--accent-text);font-weight:600;margin-bottom:3px">Hylle uten spill</div>
+        <div style="font-size:11px;color:var(--muted2);line-height:1.45">7 spill er aldri spilt. Plan en spillkveld?</div>
+      </div>
+      <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 6px 4px;border-top:1px solid var(--hairline)">
+        <div style="width:32px;height:32px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div>
+        <div style="min-width:0"><div style="font-weight:600;font-size:13px">Maya R.</div><div style="font-size:11px;color:var(--muted)">Admin</div></div>
+        <div onClick="{{ toggleTheme }}" title="Bytt tema" style="margin-left:auto;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted2);border:1px solid var(--border)"><span class="ms" style="font-size:18px">{{ themeIcon }}</span></div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="scr" style="flex:1;min-width:0;overflow-y:auto;position:relative">
+      <!-- topbar -->
+      <div style="position:sticky;top:0;z-index:5;backdrop-filter:blur(8px);background:var(--topbar);border-bottom:1px solid var(--hairline);padding:16px 28px;display:flex;align-items:center;gap:16px">
+        <div style="min-width:0">
+          <h1 style="margin:0;font:600 21px 'Space Grotesk',sans-serif;letter-spacing:-.02em">{{ pageTitle }}</h1>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:2px">{{ pageSub }}</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:9px">
+          <div style="display:flex;align-items:center;gap:8px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:8px 12px;width:188px;color:var(--muted)"><span class="ms" style="font-size:18px">search</span><span style="font-size:13px">Søk i samling…</span></div>
+          <div style="display:flex;align-items:center;gap:6px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer">🇳🇴 NO</div>
+          <div onClick="{{ openLog }}" style="display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--on-accent);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px -2px var(--accent)"><span class="ms" style="font-size:18px">add</span>Logg et spill</div>
+        </div>
+      </div>
+
+      <!-- ============ DASHBOARD ============ -->
+      <sc-if value="{{ show.dashboard }}" hint-placeholder-val="{{ true }}">
+      <div class="screen" style="padding:22px 28px 32px">
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Spill eid</span><span class="ms" style="font-size:17px;color:var(--accent)">grid_view</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">84</div><div style="font-size:11px;color:var(--good);margin-top:5px;font-weight:500">+3 denne måneden</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Partier</span><span class="ms" style="font-size:17px;color:var(--accent)">casino</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">312</div><div style="font-size:11px;color:var(--good);margin-top:5px;font-weight:500">+18 denne måneden</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Spillere</span><span class="ms" style="font-size:17px;color:var(--accent)">group</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">9</div><div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:500">husstand</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Samlingsverdi</span><span class="ms" style="font-size:17px;color:var(--accent)">payments</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">41 280</div><div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:500">kr</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Utvidelser</span><span class="ms" style="font-size:17px;color:var(--accent)">extension</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">37</div><div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:500">på 22 spill</div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11.5px;color:var(--muted);font-weight:500">Snittpris</span><span class="ms" style="font-size:17px;color:var(--accent)">sell</span></div><div style="font:600 27px 'Space Grotesk';letter-spacing:-.02em;margin-top:9px">491</div><div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:500">kr / spill</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.62fr 1fr;gap:18px">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-weight:600;font-size:14px">Partier — siste 14 dager</div><div style="font-size:12px;color:var(--muted)"><b style="font-family:'Space Grotesk';color:var(--text)">29</b> partier</div></div>
+              <div style="display:flex;align-items:flex-end;gap:7px;height:118px;margin-top:18px">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:8%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:80%;background:var(--accent);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:8%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:20%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:40%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:100%;background:var(--accent);border-radius:4px 4px 0 0"></div></div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="height:60%;background:var(--track);border-radius:4px 4px 0 0"></div></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10.5px;color:var(--faint)"><span>17. jun</span><span>24. jun</span><span>30. jun</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+                <div style="font-weight:600;font-size:14px;margin-bottom:16px">Mest spilt</div>
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden"><div style="width:100%;height:100%;background:var(--accent)"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">28</div></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden"><div style="width:86%;height:100%;background:var(--accent)"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">24</div></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden"><div style="width:68%;height:100%;background:var(--accent)"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">19</div></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden"><div style="width:61%;height:100%;background:var(--accent)"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">17</div></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden"><div style="width:50%;height:100%;background:var(--accent)"></div></div></div><div style="font:600 13px 'Space Grotesk';flex:none">14</div></div>
+                </div>
+              </div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+                <div style="font-weight:600;font-size:14px;margin-bottom:10px">Siste partier</div>
+                <div onClick="{{ navGo.sessions }}" style="cursor:pointer">
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--hairline)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:11px;color:var(--muted)">Maya vant · 2t 05m</div></div><div style="font-size:11px;color:var(--faint)">tir</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--hairline)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:11px;color:var(--muted)">Theo vant · 48m</div></div><div style="font-size:11px;color:var(--faint)">man</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--hairline)"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:11px;color:var(--muted)">Alex vant · 1t 30m</div></div><div style="font-size:11px;color:var(--faint)">søn</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0"><div style="width:32px;height:32px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:11px;color:var(--muted)">Nora vant · 1t 12m</div></div><div style="font-size:11px;color:var(--faint)">lør</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+              <div style="font-weight:600;font-size:14px;margin-bottom:6px">Samling</div>
+              <div style="display:flex;align-items:center;gap:18px">
+                <div style="position:relative;width:118px;height:118px;flex:none">
+                  <div style="width:100%;height:100%;border-radius:50%;background:conic-gradient(var(--accent) 0 87.5%,var(--track) 87.5% 100%)"></div>
+                  <div style="position:absolute;inset:17px;background:var(--card);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:600 25px 'Space Grotesk';letter-spacing:-.02em">96</div><div style="font-size:10.5px;color:var(--muted)">titler</div></div>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:13px">
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:var(--accent)"></span><span style="font-size:12px;color:var(--muted2)">Eid</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">84</b></div>
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:var(--track)"></span><span style="font-size:12px;color:var(--muted2)">Ønskeliste</span><b style="margin-left:auto;font:600 14px 'Space Grotesk'">12</b></div>
+                  <div style="border-top:1px solid var(--hairline);padding-top:11px;display:flex;align-items:center;gap:7px"><span class="ms" style="font-size:15px;color:var(--accent)">payments</span><span style="font-size:12px;color:var(--muted2)">Verdi</span><b style="margin-left:auto;font:600 13px 'Space Grotesk'">41 280 kr</b></div>
+                </div>
+              </div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+              <div style="font-weight:600;font-size:14px;margin-bottom:15px">Toppspillere — seiersandel</div>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Maya</span><span style="font:600 12px 'Space Grotesk';color:var(--accent-text)">71%</span></div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:5px;overflow:hidden"><div style="width:71%;height:100%;background:var(--accent)"></div></div></div></div>
+                <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Alex</span><span style="font:600 12px 'Space Grotesk';color:var(--accent-text)">58%</span></div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:5px;overflow:hidden"><div style="width:58%;height:100%;background:var(--accent)"></div></div></div></div>
+                <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Theo</span><span style="font:600 12px 'Space Grotesk';color:var(--accent-text)">49%</span></div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:5px;overflow:hidden"><div style="width:49%;height:100%;background:var(--accent)"></div></div></div></div>
+                <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">Nora</span><span style="font:600 12px 'Space Grotesk';color:var(--accent-text)">44%</span></div><div style="height:5px;border-radius:3px;background:var(--track);margin-top:5px;overflow:hidden"><div style="width:44%;height:100%;background:var(--accent)"></div></div></div></div>
+              </div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+              <div style="font-weight:600;font-size:14px;margin-bottom:12px">Nylig lagt til</div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <div onClick="{{ openGame }}" style="display:flex;align-items:center;gap:11px;cursor:pointer"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Iron Banner <span style="color:var(--faint);font-weight:400">2024</span></div><div style="font-size:11px;color:var(--muted)">2–4 spillere · 60–90 min</div></div><span style="font-size:10px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);padding:3px 7px;border-radius:5px">EID</span></div>
+                <div onClick="{{ openGame }}" style="display:flex;align-items:center;gap:11px;cursor:pointer"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Meadow &amp; Mill <span style="color:var(--faint);font-weight:400">2023</span></div><div style="font-size:11px;color:var(--muted)">1–5 spillere · 45 min</div></div><span style="font-size:10px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);padding:3px 7px;border-radius:5px">EID</span></div>
+                <div onClick="{{ openGame }}" style="display:flex;align-items:center;gap:11px;cursor:pointer"><div style="width:34px;height:44px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Tidewater <span style="color:var(--faint);font-weight:400">2025</span></div><div style="font-size:11px;color:var(--muted)">2–4 spillere · 90 min</div></div><span style="font-size:10px;font-weight:600;color:var(--muted2);background:var(--chip);padding:3px 7px;border-radius:5px">ØNSKE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ COLLECTION ============ -->
+<sc-if value="{{ show.collection }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:20px 28px 32px">
+  <!-- filter bar -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px">
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;background:var(--accent);color:var(--on-accent)">Alle 96</span>
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer">Eid 84</span>
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer">Ønskeliste 12</span>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <span style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--border)">Strategi</span>
+      <span style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Familie</span>
+      <span style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Co-op</span>
+      <span style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Kortspill</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12.5px;color:var(--muted2);cursor:pointer"><span class="ms" style="font-size:17px">swap_vert</span>Sortér: Min vurdering<span class="ms" style="font-size:16px">expand_more</span></div>
+  </div>
+  <!-- grid -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:16px">
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.6</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:11px;color:var(--muted);margin-top:3px">1–4 · 90m · <span style="color:var(--faint)">2021</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.2</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:11px;color:var(--muted);margin-top:3px">1–5 · 60m · <span style="color:var(--faint)">2019</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.9</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–4 · 75m · <span style="color:var(--faint)">2022</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>7.8</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2 · 45m · <span style="color:var(--faint)">2020</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.0</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–4 · 60m · <span style="color:var(--faint)">2018</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>7.5</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:11px;color:var(--muted);margin-top:3px">3–6 · 40m · <span style="color:var(--faint)">2023</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:var(--faint);background:rgba(0,0,0,.35);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px">star</span>—</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Iron Banner</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–4 · 90m · <span style="color:var(--faint)">2024</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.1</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Meadow &amp; Mill</div><div style="font-size:11px;color:var(--muted);margin-top:3px">1–5 · 45m · <span style="color:var(--faint)">2023</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--muted2);background:var(--chip);padding:3px 6px;border-radius:5px">ØNSKE</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Tidewater</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–4 · 90m · <span style="color:var(--faint)">2025</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>8.4</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Obsidian Court</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–4 · 120m · <span style="color:var(--faint)">2022</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--accent-text);background:var(--accent-soft);padding:3px 6px;border-radius:5px">EID</span><span style="position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:3px;font:600 11px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px"><span class="ms" style="font-size:13px;color:var(--star)">star</span>7.2</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Cobblestone</div><div style="font-size:11px;color:var(--muted);margin-top:3px">2–5 · 30m · <span style="color:var(--faint)">2017</span></div></div></div>
+    <div onClick="{{ openGame }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden"><div style="height:150px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;top:8px;left:8px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--muted2);background:var(--chip);padding:3px 6px;border-radius:5px">ØNSKE</span></div><div style="padding:11px 12px"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Verdant</div><div style="font-size:11px;color:var(--muted);margin-top:3px">1–4 · 70m · <span style="color:var(--faint)">2024</span></div></div></div>
+  </div>
+</div>
+</sc-if>
+<!--SCREEN-COLLECTION-->
+      <!-- ============ GAME DETAIL ============ -->
+<sc-if value="{{ show.game }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:18px 28px 32px">
+  <div onClick="{{ backCollection }}" style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer;margin-bottom:16px"><span class="ms" style="font-size:17px">arrow_back</span>Samling</div>
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:26px">
+    <!-- LEFT -->
+    <div>
+      <div style="width:100%;aspect-ratio:3/4;border-radius:14px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 6px,var(--ph2) 6px,var(--ph2) 12px);border:1px solid var(--border);display:flex;align-items:flex-end;padding:14px"><span style="font:500 10.5px ui-monospace,monospace;color:var(--muted2);background:var(--card);padding:4px 8px;border-radius:6px">cover · Crimson Frontier</span></div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+        <div onClick="{{ openLog }}" style="display:flex;align-items:center;justify-content:center;gap:7px;background:var(--accent);color:var(--on-accent);border-radius:10px;padding:11px;font-size:13.5px;font-weight:600;cursor:pointer"><span class="ms" style="font-size:18px">casino</span>Logg et parti</div>
+        <div style="display:flex;gap:9px">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer"><span class="ms" style="font-size:17px">edit</span>Rediger</div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer"><span class="ms" style="font-size:17px">add</span>Utvidelse</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:9px"><span class="ms" style="font-size:18px;color:var(--muted)">link</span><div style="min-width:0"><div style="font-size:10.5px;color:var(--muted)">BGG-ID</div><div style="font-size:12.5px;font-weight:600">#284083</div></div><span style="margin-left:auto;font-size:10px;font-weight:600;color:var(--good);background:var(--good-soft);padding:3px 7px;border-radius:5px">SYNK PÅ</span></div>
+    </div>
+    <!-- RIGHT -->
+    <div style="min-width:0">
+      <h2 style="margin:0;font:600 26px 'Space Grotesk';letter-spacing:-.02em">Crimson Frontier</h2>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px">
+        <span style="padding:5px 11px;border-radius:20px;font-size:11.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-text)">Strategi</span>
+        <span style="padding:5px 11px;border-radius:20px;font-size:11.5px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Områdekontroll</span>
+        <span style="padding:5px 11px;border-radius:20px;font-size:11.5px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Brettspill</span>
+      </div>
+      <!-- ratings row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-top:18px">
+        <div style="background:var(--card);border:1px solid var(--accent);border-radius:13px;padding:14px 16px"><div style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:7px">Din vurdering</div><div style="display:flex;align-items:baseline;gap:3px"><span style="font:600 26px 'Space Grotesk';color:var(--accent-text)">8.6</span><span style="font-size:12px;color:var(--muted)">/10</span></div><div style="display:flex;gap:1px;margin-top:6px"><span class="ms" style="font-size:15px;color:var(--star)">star</span><span class="ms" style="font-size:15px;color:var(--star)">star</span><span class="ms" style="font-size:15px;color:var(--star)">star</span><span class="ms" style="font-size:15px;color:var(--star)">star</span><span class="ms" style="font-size:15px;color:var(--track)">star</span></div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 16px"><div style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:7px">Snitt øktvurdering</div><div style="display:flex;align-items:baseline;gap:3px"><span style="font:600 26px 'Space Grotesk'">7.9</span><span style="font-size:12px;color:var(--muted)">/10</span></div><div style="font-size:11px;color:var(--muted);margin-top:8px">over 24 partier</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 16px;position:relative"><div style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:7px;display:flex;align-items:center;gap:5px">BGG <span class="ms" style="font-size:13px;color:var(--faint)">lock</span></div><div style="display:flex;align-items:baseline;gap:3px"><span style="font:600 26px 'Space Grotesk';color:var(--muted2)">8.1</span><span style="font-size:12px;color:var(--muted)">/10</span></div><div style="font-size:11px;color:var(--muted);margin-top:8px">rang #312 · synk i går</div></div>
+      </div>
+      <!-- metadata -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px 22px;margin-top:20px;padding:18px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px">
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Spillere</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">1–4</div></div>
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Spilletid</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">60–90 min</div></div>
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Alder</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">12+</div></div>
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Kompleksitet</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">3.4 / 5</div></div>
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Utgitt</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">2021</div></div>
+        <div><div style="font-size:11px;color:var(--muted);font-weight:500">Pris</div><div style="font:600 15px 'Space Grotesk';margin-top:3px">649 kr</div></div>
+      </div>
+      <p style="font-size:13px;line-height:1.6;color:var(--muted2);margin:16px 2px 0;text-wrap:pretty">Et stramt områdekontrollspill der hver spiller bygger ut en koloni på en fiendtlig grenseplanet. Press uthelding mot ekspansjon — kvelden avgjøres ofte i siste runde.</p>
+
+      <!-- expansions -->
+      <div style="margin-top:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Utvidelser <span style="color:var(--muted);font-weight:500">3</span></div><div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent-text);cursor:pointer"><span class="ms" style="font-size:16px">add</span>Legg til</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px"><div style="width:36px;height:46px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">Crimson Frontier: Frostmark</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">2022 · +1 spiller · +15 min · 249 kr</div></div><span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px"><span class="ms" style="font-size:15px;color:var(--accent)">casino</span>brukt i 11</span></div>
+          <div style="display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px"><div style="width:36px;height:46px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">Crimson Frontier: Tidewater Reach</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">2023 · 2–5 spillere · 199 kr</div></div><span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px"><span class="ms" style="font-size:15px;color:var(--accent)">casino</span>brukt i 6</span></div>
+          <div style="display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px"><div style="width:36px;height:46px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">Crimson Frontier: Promo-pakke</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">2024 · 89 kr</div></div><span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px"><span class="ms" style="font-size:15px;color:var(--accent)">casino</span>brukt i 2</span></div>
+        </div>
+      </div>
+
+      <!-- play history -->
+      <div style="margin-top:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Spillhistorikk <span style="color:var(--muted);font-weight:500">24 partier</span></div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+          <div onClick="{{ openSessionDetail }}" style="display:flex;align-items:center;gap:13px;padding:12px 16px;border-bottom:1px solid var(--hairline);cursor:pointer"><div style="width:42px;text-align:center;flex:none"><div style="font:600 15px 'Space Grotesk'">24</div><div style="font-size:10px;color:var(--muted)">jun</div></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Maya vant · 4 spillere</div><div style="font-size:11px;color:var(--muted)">m/ Frostmark · 2t 05m · Stua</div></div><div style="display:flex;align-items:center;gap:4px;font:600 12px 'Space Grotesk';color:var(--accent-text)"><span class="ms" style="font-size:14px;color:var(--star)">star</span>9.0</div></div>
+          <div onClick="{{ openSessionDetail }}" style="display:flex;align-items:center;gap:13px;padding:12px 16px;border-bottom:1px solid var(--hairline);cursor:pointer"><div style="width:42px;text-align:center;flex:none"><div style="font:600 15px 'Space Grotesk'">18</div><div style="font-size:10px;color:var(--muted)">jun</div></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Alex vant · 3 spillere</div><div style="font-size:11px;color:var(--muted)">m/ Frostmark · 1t 48m · Stua</div></div><div style="display:flex;align-items:center;gap:4px;font:600 12px 'Space Grotesk';color:var(--accent-text)"><span class="ms" style="font-size:14px;color:var(--star)">star</span>7.5</div></div>
+          <div onClick="{{ openSessionDetail }}" style="display:flex;align-items:center;gap:13px;padding:12px 16px;cursor:pointer"><div style="width:42px;text-align:center;flex:none"><div style="font:600 15px 'Space Grotesk'">09</div><div style="font-size:10px;color:var(--muted)">jun</div></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12.5px">Maya vant · 2 spillere</div><div style="font-size:11px;color:var(--muted)">grunnspill · 1t 20m · Hytta</div></div><div style="display:flex;align-items:center;gap:4px;font:600 12px 'Space Grotesk';color:var(--accent-text)"><span class="ms" style="font-size:14px;color:var(--star)">star</span>8.0</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+<!--SCREEN-GAME-->
+      <!-- ============ SESSIONS LIST ============ -->
+<sc-if value="{{ show.sessions }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:20px 28px 32px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px">
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;background:var(--accent);color:var(--on-accent)">Alle</span>
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer">Denne måneden</span>
+      <span style="padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer">Mine partier</span>
+    </div>
+    <div onClick="{{ openLog }}" style="margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--on-accent);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer"><span class="ms" style="font-size:18px">add</span>Logg et parti</div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+    <div style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:10.5px;font-weight:600;letter-spacing:.05em;color:var(--muted);text-transform:uppercase">
+      <span>Spill</span><span>Spillere</span><span>Vinner</span><span>Varighet</span><span>Sted</span><span style="text-align:right">Din ★</span>
+    </div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:10.5px;color:var(--muted)">24. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">4</span><span style="font-size:12px;font-weight:600">Maya</span><span style="font-size:12px;color:var(--muted2)">2t 05m</span><span style="font-size:12px;color:var(--muted2)">Stua</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">9.0</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Lantern Festival</div><div style="font-size:10.5px;color:var(--muted)">23. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">5</span><span style="font-size:12px;font-weight:600">Theo</span><span style="font-size:12px;color:var(--muted2)">48m</span><span style="font-size:12px;color:var(--muted2)">Stua</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">8.5</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Starfall Tactics</div><div style="font-size:10.5px;color:var(--muted)">22. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">2</span><span style="font-size:12px;font-weight:600">Alex</span><span style="font-size:12px;color:var(--muted2)">1t 30m</span><span style="font-size:12px;color:var(--muted2)">Hytta</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">7.0</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon Valley</div><div style="font-size:10.5px;color:var(--muted)">21. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">3</span><span style="font-size:12px;font-weight:600">Nora</span><span style="font-size:12px;color:var(--muted2)">1t 12m</span><span style="font-size:12px;color:var(--muted2)">Stua</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">8.0</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The Clockwork Guild</div><div style="font-size:10.5px;color:var(--muted)">19. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">4</span><span style="font-size:12px;font-weight:600">Maya</span><span style="font-size:12px;color:var(--muted2)">1t 15m</span><span style="font-size:12px;color:var(--muted2)">Stua</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">8.5</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="font-size:10.5px;color:var(--muted)">16. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">4</span><span style="font-size:12px;font-weight:600">Sam</span><span style="font-size:12px;color:var(--muted2)">58m</span><span style="font-size:12px;color:var(--muted2)">Stua</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">7.5</span></div>
+    <div onClick="{{ openSessionDetail }}" style="display:grid;grid-template-columns:1.6fr .9fr 1fr .8fr .9fr .7fr;gap:14px;padding:13px 18px;align-items:center;cursor:pointer"><div style="display:flex;align-items:center;gap:11px;min-width:0"><div style="width:30px;height:38px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="min-width:0"><div style="font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Obsidian Court</div><div style="font-size:10.5px;color:var(--muted)">14. jun</div></div></div><span style="font-size:12px;color:var(--muted2)">3</span><span style="font-size:12px;font-weight:600">Maya</span><span style="font-size:12px;color:var(--muted2)">2t 10m</span><span style="font-size:12px;color:var(--muted2)">Hytta</span><span style="text-align:right;font:600 12.5px 'Space Grotesk';color:var(--accent-text)">9.0</span></div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ SESSION DETAIL ============ -->
+<sc-if value="{{ show.sessionDetail }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:18px 28px 32px">
+  <div onClick="{{ backSessions }}" style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted2);cursor:pointer;margin-bottom:16px"><span class="ms" style="font-size:17px">arrow_back</span>Partier</div>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:22px">
+    <!-- left: players + result -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px">
+        <div style="width:54px;height:68px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);flex:none"></div>
+        <div><h2 style="margin:0;font:600 20px 'Space Grotesk';letter-spacing:-.02em">Crimson Frontier</h2><div style="font-size:12.5px;color:var(--muted);margin-top:4px">Tirsdag 24. juni 2026 · 18:00–20:05 · <b style="color:var(--muted2)">Stua</b></div><div style="display:flex;gap:6px;margin-top:9px"><span style="font-size:11px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);padding:3px 9px;border-radius:14px">+ Frostmark</span></div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1.4fr .9fr .7fr .9fr;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:10.5px;font-weight:600;letter-spacing:.05em;color:var(--muted);text-transform:uppercase"><span>Spiller</span><span>Farge</span><span style="text-align:right">Poeng</span><span style="text-align:right">Resultat</span></div>
+        <div style="display:grid;grid-template-columns:1.4fr .9fr .7fr .9fr;gap:12px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center;background:var(--accent-soft)"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12.5px">Maya</span></div><span style="font-size:12px;color:var(--muted2)">Rød</span><span style="text-align:right;font:600 14px 'Space Grotesk'">92</span><span style="text-align:right"><span style="font-size:10.5px;font-weight:700;color:var(--on-accent);background:var(--accent);padding:3px 9px;border-radius:14px">VANT</span></span></div>
+        <div style="display:grid;grid-template-columns:1.4fr .9fr .7fr .9fr;gap:12px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12.5px">Alex</span></div><span style="font-size:12px;color:var(--muted2)">Blå</span><span style="text-align:right;font:600 14px 'Space Grotesk'">88</span><span style="text-align:right;font-size:12px;color:var(--muted)">2.</span></div>
+        <div style="display:grid;grid-template-columns:1.4fr .9fr .7fr .9fr;gap:12px;padding:13px 18px;border-bottom:1px solid var(--hairline);align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12.5px">Theo</span><span style="font-size:9.5px;font-weight:700;color:var(--accent-text);background:var(--accent-soft);padding:2px 6px;border-radius:5px">1. GANG</span></div><span style="font-size:12px;color:var(--muted2)">Grønn</span><span style="text-align:right;font:600 14px 'Space Grotesk'">74</span><span style="text-align:right;font-size:12px;color:var(--muted)">3.</span></div>
+        <div style="display:grid;grid-template-columns:1.4fr .9fr .7fr .9fr;gap:12px;padding:13px 18px;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12.5px">Nora</span></div><span style="font-size:12px;color:var(--muted2)">Gul</span><span style="text-align:right;font:600 14px 'Space Grotesk'">69</span><span style="text-align:right;font-size:12px;color:var(--muted)">4.</span></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:7px">Kommentar</div><p style="margin:0;font-size:13px;line-height:1.6;color:var(--muted2)">Tett parti hele veien — Frostmark-stormene snudde det i siste runde. Theos første gang, lærte fort.</p></div>
+    </div>
+    <!-- right: your rating + photos -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:18px 20px">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px">Din vurdering av kvelden</div>
+        <div style="display:flex;align-items:baseline;gap:4px"><span style="font:600 34px 'Space Grotesk';color:var(--accent-text)">9.0</span><span style="font-size:13px;color:var(--muted)">/10</span></div>
+        <div style="display:flex;gap:2px;margin-top:10px"><span class="ms" style="font-size:22px;color:var(--star)">star</span><span class="ms" style="font-size:22px;color:var(--star)">star</span><span class="ms" style="font-size:22px;color:var(--star)">star</span><span class="ms" style="font-size:22px;color:var(--star)">star</span><span class="ms" style="font-size:22px;color:var(--star)">star_half</span></div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">Egen vurdering av <i>dette</i> partiet — uavhengig av spillvurderingen din (8.6).</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:11px">Bilder fra kvelden</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div style="aspect-ratio:4/3;border-radius:9px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px)"></div>
+          <div style="aspect-ratio:4/3;border-radius:9px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px)"></div>
+          <div style="aspect-ratio:4/3;border-radius:9px;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)"><span class="ms" style="font-size:22px">add_photo_alternate</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+<!--SCREEN-SESSIONS-->
+      <!-- ============ PLAYERS ============ -->
+<sc-if value="{{ show.players }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:20px 28px 32px">
+  <div style="display:flex;align-items:center;margin-bottom:16px">
+    <div style="font-size:12.5px;color:var(--muted)">9 spillere · 4 med innloggingskonto</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--on-accent);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer"><span class="ms" style="font-size:18px">person_add</span>Legg til spiller</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Maya</div><div style="font-size:11px;color:var(--accent-text);font-weight:600">Admin · konto</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">34</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">71%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">81</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">24</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Crimson Frontier</b></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Alex</div><div style="font-size:11px;color:var(--muted)">Medlem · konto</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">50</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">58%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">77</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">29</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Starfall Tactics</b></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Theo</div><div style="font-size:11px;color:var(--muted)">Medlem</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">37</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">49%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">72</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">18</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Lantern Festival</b></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Nora</div><div style="font-size:11px;color:var(--muted)">Medlem · konto</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">34</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">44%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">70</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">15</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Harvest Moon Valley</b></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Sam</div><div style="font-size:11px;color:var(--muted)">Medlem</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">28</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">39%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">68</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">11</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Spice Routes</b></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 5px,var(--av2) 5px,var(--av2) 10px);flex:none"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">Jonas</div><div style="font-size:11px;color:var(--muted)">Gjest</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:16px"><div><div style="font:600 18px 'Space Grotesk'">12</div><div style="font-size:10.5px;color:var(--muted)">partier</div></div><div><div style="font:600 18px 'Space Grotesk';color:var(--accent-text)">33%</div><div style="font-size:10.5px;color:var(--muted)">seiersandel</div></div><div><div style="font:600 18px 'Space Grotesk'">64</div><div style="font-size:10.5px;color:var(--muted)">snittpoeng</div></div><div><div style="font:600 18px 'Space Grotesk'">4</div><div style="font-size:10.5px;color:var(--muted)">seire</div></div></div><div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hairline);font-size:11.5px;color:var(--muted)">Favoritt · <b style="color:var(--muted2)">Cobblestone</b></div></div>
+  </div>
+</div>
+</sc-if>
+<!--SCREEN-PLAYERS-->
+      <!-- ============ SETTINGS ============ -->
+<sc-if value="{{ show.settings }}" hint-placeholder-val="{{ false }}">
+<div class="screen" style="padding:22px 28px 36px;max-width:760px">
+  <!-- appearance -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px 22px;margin-bottom:18px">
+    <div style="padding:16px 0;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Tema</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Bytt mellom lyst og mørkt grensesnitt</div></div>
+      <div style="display:flex;gap:4px;background:var(--chip);border-radius:9px;padding:3px">
+        <span onClick="{{ setLight }}" style="padding:6px 15px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;background:{{ seg.lightBg }};color:{{ seg.lightColor }}">Lyst</span>
+        <span onClick="{{ setDark }}" style="padding:6px 15px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;background:{{ seg.darkBg }};color:{{ seg.darkColor }}">Mørkt</span>
+      </div>
+    </div>
+    <div style="padding:16px 0;display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Aksentfarge</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Brukes på knapper, grafer og merker</div></div><div style="display:flex;gap:8px"><span style="width:24px;height:24px;border-radius:7px;background:#c9852f;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--accent)"></span><span style="width:24px;height:24px;border-radius:7px;background:#3f7d5a"></span><span style="width:24px;height:24px;border-radius:7px;background:#5b6ee1"></span><span style="width:24px;height:24px;border-radius:7px;background:#c8453a"></span></div></div>
+  </div>
+
+  <!-- general / locale -->
+  <div class="lbl" style="margin:0 2px 9px">Generelt</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px 22px;margin-bottom:18px">
+    <div style="padding:15px 0;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Instansnavn</div></div><div style="font-size:13px;color:var(--muted2);background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px 12px;width:200px">Hjemmehylla</div></div>
+    <div style="padding:15px 0;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Standardvaluta</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Pris og samlingsverdi</div></div><div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted2);background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px 12px;width:140px">NOK · kr<span class="ms" style="font-size:16px;margin-left:auto">expand_more</span></div></div>
+    <div style="padding:15px 0;display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Standardspråk</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Reservespråk for nye brukere</div></div><div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted2);background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px 12px;width:140px">🇳🇴 Norsk<span class="ms" style="font-size:16px;margin-left:auto">expand_more</span></div></div>
+  </div>
+
+  <!-- language -->
+  <div class="lbl" style="margin:0 2px 9px">Språk</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:18px">
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:12.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--accent)">🇳🇴 Norsk (bokmål)<span class="ms" style="font-size:15px">check</span></span>
+      <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:12.5px;font-weight:500;background:var(--input);color:var(--muted2);border:1px solid var(--border)">🇬🇧 English</span>
+      <span style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:12.5px;font-weight:500;background:var(--input);color:var(--muted);border:1px dashed var(--border)"><span class="ms" style="font-size:16px">add</span>Legg til språk</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:11px;line-height:1.5">Nye språk legges til ved å slippe inn en mappe med JSON-filer — ingen kodeendring nødvendig.</div>
+  </div>
+
+  <!-- BGG sync -->
+  <div class="lbl" style="margin:0 2px 9px">BGG-synkronisering</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px 22px;margin-bottom:18px">
+    <div style="padding:16px 0;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:8px">Aktivér synk<span style="font-size:9.5px;font-weight:700;color:var(--muted2);background:var(--chip);padding:2px 7px;border-radius:5px">AV SOM STANDARD</span></div><div style="font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5">Henter rangering &amp; rang fra BGG. Skriver kun skrivebeskyttede felt.</div></div><div style="width:44px;height:25px;border-radius:14px;background:var(--track);position:relative;flex:none;cursor:pointer"><span style="position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.2)"></span></div></div>
+    <div style="padding:16px 0;display:flex;align-items:center;gap:16px;opacity:.55"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Leverandør</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">CSV-dump krever ingen token</div></div><div style="display:flex;gap:4px;background:var(--chip);border-radius:9px;padding:3px"><span style="padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;background:var(--card);color:var(--text)">CSV-dump</span><span style="padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)">XML API</span></div></div>
+  </div>
+
+  <!-- data -->
+  <div class="lbl" style="margin:0 2px 9px">Data</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px">
+    <div style="display:flex;align-items:center;gap:16px"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">Eksporter samling</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Full sikkerhetskopi av spill, partier og vurderinger</div></div><div style="display:flex;gap:9px"><span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted2);background:var(--input);border:1px solid var(--border);border-radius:9px;padding:8px 13px;cursor:pointer"><span class="ms" style="font-size:16px">download</span>JSON</span><span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted2);background:var(--input);border:1px solid var(--border);border-radius:9px;padding:8px 13px;cursor:pointer"><span class="ms" style="font-size:16px">download</span>CSV</span></div></div>
+  </div>
+</div>
+</sc-if>
+<!--SCREEN-SETTINGS-->
+    </main>
+
+    <!-- ============ LOG-A-PLAY MODAL ============ -->
+    <sc-if value="{{ logOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:30;background:rgba(15,13,10,.42);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:30px;animation:fade .2s ease both">
+      <div style="width:580px;max-width:100%;max-height:100%;background:var(--bg);border:1px solid var(--border);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;animation:pop .26s cubic-bezier(.2,.7,.3,1)">
+        <!-- header -->
+        <div style="padding:18px 22px;border-bottom:1px solid var(--hairline);display:flex;align-items:center;gap:14px">
+          <div style="flex:1"><div style="font:600 17px 'Space Grotesk';letter-spacing:-.01em">Logg et parti</div></div>
+          <div onClick="{{ closeLog }}" style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted2);border:1px solid var(--border)"><span class="ms" style="font-size:18px">close</span></div>
+        </div>
+        <!-- stepper -->
+        <div style="display:flex;align-items:center;gap:8px;padding:15px 22px;border-bottom:1px solid var(--hairline)">
+          <div onClick="{{ logStep1 }}" style="display:flex;align-items:center;gap:8px;cursor:pointer"><span style="width:24px;height:24px;border-radius:50%;background:{{ stepDot.d1 }};color:{{ stepDot.t1 }};display:flex;align-items:center;justify-content:center;font:600 12px 'Space Grotesk'">1</span><span style="font-size:12.5px;font-weight:600;color:var(--muted2)">Spill</span></div>
+          <span style="flex:1;height:1px;background:var(--border)"></span>
+          <div onClick="{{ logStep2 }}" style="display:flex;align-items:center;gap:8px;cursor:pointer"><span style="width:24px;height:24px;border-radius:50%;background:{{ stepDot.d2 }};color:{{ stepDot.t2 }};display:flex;align-items:center;justify-content:center;font:600 12px 'Space Grotesk'">2</span><span style="font-size:12.5px;font-weight:600;color:var(--muted2)">Spillere</span></div>
+          <span style="flex:1;height:1px;background:var(--border)"></span>
+          <div onClick="{{ logStep3 }}" style="display:flex;align-items:center;gap:8px;cursor:pointer"><span style="width:24px;height:24px;border-radius:50%;background:{{ stepDot.d3 }};color:{{ stepDot.t3 }};display:flex;align-items:center;justify-content:center;font:600 12px 'Space Grotesk'">3</span><span style="font-size:12.5px;font-weight:600;color:var(--muted2)">Detaljer</span></div>
+        </div>
+        <!-- body -->
+        <div class="scr" style="padding:20px 22px;overflow-y:auto">
+          <!-- STEP 1 -->
+          <sc-if value="{{ stepShow.s1 }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-bottom:14px;color:var(--muted)"><span class="ms" style="font-size:18px">search</span><span style="font-size:13px">Søk etter spill…</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;border:1.5px solid var(--accent);background:var(--accent-soft);cursor:pointer"><div style="width:32px;height:40px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Crimson Frontier</div><div style="font-size:11px;color:var(--muted)">1–4 · 60–90 min · 3 utvidelser</div></div><span class="ms" style="font-size:20px;color:var(--accent)">check_circle</span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);cursor:pointer"><div style="width:32px;height:40px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Harvest Moon Valley</div><div style="font-size:11px;color:var(--muted)">1–5 · 60 min</div></div><span class="ms" style="font-size:20px;color:var(--faint)">radio_button_unchecked</span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);cursor:pointer"><div style="width:32px;height:40px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">The Clockwork Guild</div><div style="font-size:11px;color:var(--muted)">2–4 · 75 min</div></div><span class="ms" style="font-size:20px;color:var(--faint)">radio_button_unchecked</span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);cursor:pointer"><div style="width:32px;height:40px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px);flex:none"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Starfall Tactics</div><div style="font-size:11px;color:var(--muted)">2 · 45 min</div></div><span class="ms" style="font-size:20px;color:var(--faint)">radio_button_unchecked</span></div>
+            </div>
+          </div>
+          </sc-if>
+          <!-- STEP 2 -->
+          <sc-if value="{{ stepShow.s2 }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Utvidelser brukt</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+              <span style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;font-size:12.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--accent);cursor:pointer"><span class="ms" style="font-size:16px">check_box</span>Frostmark</span>
+              <span style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;font-size:12.5px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border);cursor:pointer"><span class="ms" style="font-size:16px">check_box_outline_blank</span>Tidewater Reach</span>
+              <span style="display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;font-size:12.5px;font-weight:500;background:var(--card);color:var(--muted2);border:1px solid var(--border);cursor:pointer"><span class="ms" style="font-size:16px">check_box_outline_blank</span>Promo-pakke</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Spillere &amp; resultat</div><div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent-text);cursor:pointer"><span class="ms" style="font-size:16px">person_add</span>Legg til</div></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--border);background:var(--card)"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><span style="font-weight:600;font-size:12.5px;width:54px">Maya</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10.5px;color:var(--muted)">Poeng</span><span style="font:600 13px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:7px;padding:5px 10px;min-width:42px;text-align:center">92</span></div><span style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--on-accent);background:var(--accent);padding:5px 10px;border-radius:8px;cursor:pointer"><span class="ms" style="font-size:14px">emoji_events</span>Vinner</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--border);background:var(--card)"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><span style="font-weight:600;font-size:12.5px;width:54px">Alex</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10.5px;color:var(--muted)">Poeng</span><span style="font:600 13px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:7px;padding:5px 10px;min-width:42px;text-align:center">88</span></div><span style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--muted2);background:var(--input);border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer"><span class="ms" style="font-size:14px">emoji_events</span>Vinner</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--border);background:var(--card)"><div style="width:28px;height:28px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px);flex:none"></div><span style="font-weight:600;font-size:12.5px;width:54px">Theo</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10.5px;color:var(--muted)">Poeng</span><span style="font:600 13px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:7px;padding:5px 10px;min-width:42px;text-align:center">74</span></div><span style="display:flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;color:var(--accent-text);background:var(--accent-soft);padding:4px 8px;border-radius:7px;cursor:pointer">1. GANG</span><span style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--muted2);background:var(--input);border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer"><span class="ms" style="font-size:14px">emoji_events</span>Vinner</span></div>
+            </div>
+          </div>
+          </sc-if>
+          <!-- STEP 3 -->
+          <sc-if value="{{ stepShow.s3 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+              <div><div style="font-size:11.5px;font-weight:600;color:var(--muted2);margin-bottom:6px">Start</div><div style="display:flex;align-items:center;gap:8px;font-size:13px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:9px 12px"><span class="ms" style="font-size:16px;color:var(--muted)">schedule</span>24. jun · 18:00</div></div>
+              <div><div style="font-size:11.5px;font-weight:600;color:var(--muted2);margin-bottom:6px">Slutt</div><div style="display:flex;align-items:center;gap:8px;font-size:13px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:9px 12px"><span class="ms" style="font-size:16px;color:var(--muted)">schedule</span>24. jun · 20:05</div></div>
+            </div>
+            <div style="background:var(--accent-soft);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--accent-text);font-weight:600;display:flex;align-items:center;gap:7px"><span class="ms" style="font-size:16px">hourglass_top</span>Varighet 2t 05m (regnes ut automatisk)</div>
+            <div><div style="font-size:11.5px;font-weight:600;color:var(--muted2);margin-bottom:6px">Sted</div><div style="display:flex;align-items:center;gap:8px;font-size:13px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--muted2)"><span class="ms" style="font-size:16px;color:var(--muted)">location_on</span>Stua<span class="ms" style="font-size:16px;margin-left:auto">expand_more</span></div></div>
+            <div><div style="font-size:11.5px;font-weight:600;color:var(--muted2);margin-bottom:6px">Kommentar</div><div style="font-size:13px;background:var(--input);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--muted);min-height:64px;line-height:1.5">Tett parti hele veien — Frostmark-stormene snudde det i siste runde…</div></div>
+          </div>
+          </sc-if>
+        </div>
+        <!-- footer -->
+        <div style="padding:15px 22px;border-top:1px solid var(--hairline);display:flex;align-items:center;gap:10px">
+          <div onClick="{{ logPrev }}" style="font-size:13px;font-weight:600;color:var(--muted2);padding:9px 14px;cursor:pointer">Tilbake</div>
+          <div onClick="{{ closeLog }}" style="margin-left:auto;font-size:13px;font-weight:600;color:var(--muted2);background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 16px;cursor:pointer">Avbryt</div>
+          <div onClick="{{ logPrimaryAction }}" style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--on-accent);background:var(--accent);border-radius:9px;padding:9px 18px;cursor:pointer">{{ logPrimaryLabel }}<span class="ms" style="font-size:17px">{{ logPrimaryIcon }}</span></div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+
+<!-- =========================== MOBILE =========================== -->
+<div style="width:1280px;max-width:100%">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="lbl">Mobile</span><span style="height:1px;flex:1;background:rgba(0,0,0,.1)"></span><span style="font:500 11px 'Hanken Grotesk';color:rgba(0,0,0,.4)">Responsivt web — samme app på telefon</span></div>
+  <div style="display:flex;gap:34px;flex-wrap:wrap;justify-content:center">
+
+    <!-- PHONE 1 — Dashboard -->
+    <div data-theme="light" style="width:300px;flex:none">
+      <div style="background:#1c1a17;border-radius:42px;padding:11px;box-shadow:0 22px 50px -16px rgba(0,0,0,.4)">
+        <div style="background:var(--bg);border-radius:32px;overflow:hidden;height:626px;position:relative;color:var(--text);font-family:'Hanken Grotesk',sans-serif">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px 4px;font-size:12px;font-weight:600"><span>20:14</span><span style="display:flex;gap:5px"><span class="ms" style="font-size:15px">signal_cellular_alt</span><span class="ms" style="font-size:15px">wifi</span><span class="ms" style="font-size:15px">battery_full</span></span></div>
+          <div class="scr" style="height:calc(100% - 28px);overflow-y:auto;padding:10px 16px 84px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px"><span style="font-size:22px;color:var(--accent)">⚄</span><span style="font:600 16px 'Space Grotesk'">Tabletop</span><div style="margin-left:auto;width:30px;height:30px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div></div>
+            <div style="font:600 19px 'Space Grotesk';letter-spacing:-.02em">God kveld, Maya</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;margin-bottom:14px">84 spill · 312 partier</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px"><div style="font-size:10.5px;color:var(--muted)">Spill eid</div><div style="font:600 22px 'Space Grotesk';margin-top:5px">84</div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px"><div style="font-size:10.5px;color:var(--muted)">Partier</div><div style="font:600 22px 'Space Grotesk';margin-top:5px">312</div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px"><div style="font-size:10.5px;color:var(--muted)">Verdi</div><div style="font:600 18px 'Space Grotesk';margin-top:5px">41 280<span style="font-size:11px;color:var(--muted)"> kr</span></div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px"><div style="font-size:10.5px;color:var(--muted)">Spillere</div><div style="font:600 22px 'Space Grotesk';margin-top:5px">9</div></div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px;margin-bottom:14px"><div style="font-size:12.5px;font-weight:600;margin-bottom:12px">Partier — 14 dager</div><div style="display:flex;align-items:flex-end;gap:4px;height:64px"><div style="flex:1;height:40%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:20%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:55%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:35%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:80%;background:var(--accent);border-radius:3px 3px 0 0"></div><div style="flex:1;height:30%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:50%;background:var(--track);border-radius:3px 3px 0 0"></div><div style="flex:1;height:100%;background:var(--accent);border-radius:3px 3px 0 0"></div><div style="flex:1;height:60%;background:var(--track);border-radius:3px 3px 0 0"></div></div></div>
+            <div style="font-size:12.5px;font-weight:600;margin-bottom:10px">Siste partier</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px)"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px">Crimson Frontier</div><div style="font-size:10.5px;color:var(--muted)">Maya vant · 2t 05m</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px)"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px">Lantern Festival</div><div style="font-size:10.5px;color:var(--muted)">Theo vant · 48m</div></div></div>
+            </div>
+          </div>
+          <!-- bottom tab -->
+          <div style="position:absolute;bottom:0;left:0;right:0;background:var(--topbar);backdrop-filter:blur(8px);border-top:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-around;padding:9px 14px 18px"><span class="ms" style="font-size:23px;color:var(--accent)">space_dashboard</span><span class="ms" style="font-size:23px;color:var(--muted)">grid_view</span><span style="width:42px;height:42px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -2px var(--accent)"><span class="ms" style="font-size:24px">add</span></span><span class="ms" style="font-size:23px;color:var(--muted)">group</span><span class="ms" style="font-size:23px;color:var(--muted)">settings</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 2 — Collection -->
+    <div data-theme="light" style="width:300px;flex:none">
+      <div style="background:#1c1a17;border-radius:42px;padding:11px;box-shadow:0 22px 50px -16px rgba(0,0,0,.4)">
+        <div style="background:var(--bg);border-radius:32px;overflow:hidden;height:626px;position:relative;color:var(--text);font-family:'Hanken Grotesk',sans-serif">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px 4px;font-size:12px;font-weight:600"><span>20:14</span><span style="display:flex;gap:5px"><span class="ms" style="font-size:15px">signal_cellular_alt</span><span class="ms" style="font-size:15px">wifi</span><span class="ms" style="font-size:15px">battery_full</span></span></div>
+          <div class="scr" style="height:calc(100% - 28px);overflow-y:auto;padding:10px 16px 84px">
+            <div style="font:600 19px 'Space Grotesk';letter-spacing:-.02em;margin-bottom:12px">Samling</div>
+            <div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:13px;color:var(--muted)"><span class="ms" style="font-size:17px">search</span><span style="font-size:12.5px">Søk…</span></div>
+            <div style="display:flex;gap:7px;margin-bottom:14px"><span style="padding:6px 12px;border-radius:18px;font-size:11.5px;font-weight:600;background:var(--accent);color:var(--on-accent)">Alle</span><span style="padding:6px 12px;border-radius:18px;font-size:11.5px;font-weight:600;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Eid</span><span style="padding:6px 12px;border-radius:18px;font-size:11.5px;font-weight:600;background:var(--card);color:var(--muted2);border:1px solid var(--border)">Ønske</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden"><div style="height:96px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;font:600 10px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:5px"><span class="ms" style="font-size:11px;color:var(--star)">star</span>8.6</span></div><div style="padding:8px 10px"><div style="font-weight:600;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Crimson Frontier</div><div style="font-size:10px;color:var(--muted);margin-top:2px">1–4 · 90m</div></div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden"><div style="height:96px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;font:600 10px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:5px"><span class="ms" style="font-size:11px;color:var(--star)">star</span>8.9</span></div><div style="padding:8px 10px"><div style="font-weight:600;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Clockwork Guild</div><div style="font-size:10px;color:var(--muted);margin-top:2px">2–4 · 75m</div></div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden"><div style="height:96px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;font:600 10px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:5px"><span class="ms" style="font-size:11px;color:var(--star)">star</span>8.2</span></div><div style="padding:8px 10px"><div style="font-weight:600;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Harvest Moon</div><div style="font-size:10px;color:var(--muted);margin-top:2px">1–5 · 60m</div></div></div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden"><div style="height:96px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 5px,var(--ph2) 5px,var(--ph2) 10px);position:relative"><span style="position:absolute;bottom:6px;right:6px;display:flex;align-items:center;gap:2px;font:600 10px 'Space Grotesk';color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:5px"><span class="ms" style="font-size:11px;color:var(--star)">star</span>8.0</span></div><div style="padding:8px 10px"><div style="font-weight:600;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Spice Routes</div><div style="font-size:10px;color:var(--muted);margin-top:2px">2–4 · 60m</div></div></div>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;background:var(--topbar);backdrop-filter:blur(8px);border-top:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-around;padding:9px 14px 18px"><span class="ms" style="font-size:23px;color:var(--muted)">space_dashboard</span><span class="ms" style="font-size:23px;color:var(--accent)">grid_view</span><span style="width:42px;height:42px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -2px var(--accent)"><span class="ms" style="font-size:24px">add</span></span><span class="ms" style="font-size:23px;color:var(--muted)">group</span><span class="ms" style="font-size:23px;color:var(--muted)">settings</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 3 — Log a play (sheet) -->
+    <div data-theme="light" style="width:300px;flex:none">
+      <div style="background:#1c1a17;border-radius:42px;padding:11px;box-shadow:0 22px 50px -16px rgba(0,0,0,.4)">
+        <div style="background:var(--bg);border-radius:32px;overflow:hidden;height:626px;position:relative;color:var(--text);font-family:'Hanken Grotesk',sans-serif">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 6px,var(--ph2) 6px,var(--ph2) 12px);opacity:.5"></div>
+          <div style="position:absolute;inset:0;background:rgba(28,26,23,.25)"></div>
+          <!-- sheet -->
+          <div style="position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 32px 32px;box-shadow:0 -10px 30px rgba(0,0,0,.18);height:530px;display:flex;flex-direction:column;overflow:hidden">
+            <div style="display:flex;justify-content:center;padding-top:9px"><span style="width:36px;height:4px;border-radius:3px;background:var(--track)"></span></div>
+            <div style="padding:12px 18px 10px;display:flex;align-items:center"><div style="font:600 16px 'Space Grotesk'">Logg et parti</div><span class="ms" style="margin-left:auto;font-size:20px;color:var(--muted)">close</span></div>
+            <div style="display:flex;align-items:center;gap:6px;padding:0 18px 12px"><span style="flex:1;height:4px;border-radius:3px;background:var(--accent)"></span><span style="flex:1;height:4px;border-radius:3px;background:var(--accent)"></span><span style="flex:1;height:4px;border-radius:3px;background:var(--track)"></span></div>
+            <div class="scr" style="flex:1;overflow-y:auto;padding:4px 18px 12px">
+              <div style="display:flex;align-items:center;gap:11px;padding:11px;border-radius:11px;background:var(--accent-soft);border:1px solid var(--accent);margin-bottom:16px"><div style="width:32px;height:40px;border-radius:5px;background:repeating-linear-gradient(135deg,var(--ph1),var(--ph1) 4px,var(--ph2) 4px,var(--ph2) 8px)"></div><div style="flex:1"><div style="font-weight:600;font-size:13px">Crimson Frontier</div><div style="font-size:10.5px;color:var(--accent-text)">+ Frostmark</div></div><span class="ms" style="font-size:19px;color:var(--accent)">check_circle</span></div>
+              <div style="font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px">Spillere</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:var(--card)"><div style="width:26px;height:26px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12px;flex:1">Maya</span><span style="font:600 12px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:6px;padding:4px 9px">92</span><span class="ms" style="font-size:19px;color:var(--accent)">emoji_events</span></div>
+                <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:var(--card)"><div style="width:26px;height:26px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12px;flex:1">Alex</span><span style="font:600 12px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:6px;padding:4px 9px">88</span><span class="ms" style="font-size:19px;color:var(--faint)">emoji_events</span></div>
+                <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:var(--card)"><div style="width:26px;height:26px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--av1),var(--av1) 4px,var(--av2) 4px,var(--av2) 8px)"></div><span style="font-weight:600;font-size:12px;flex:1">Theo</span><span style="font:600 12px 'Space Grotesk';background:var(--input);border:1px solid var(--border);border-radius:6px;padding:4px 9px">74</span><span class="ms" style="font-size:19px;color:var(--faint)">emoji_events</span></div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:10px;border:1px dashed var(--border);color:var(--muted);font-size:12px;font-weight:600"><span class="ms" style="font-size:17px">person_add</span>Legg til spiller</div>
+              </div>
+            </div>
+            <div style="padding:12px 18px 22px;border-top:1px solid var(--hairline);display:flex;gap:10px"><div style="flex:1;text-align:center;font-size:13px;font-weight:600;color:var(--muted2);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px">Tilbake</div><div style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--on-accent);background:var(--accent);border-radius:10px;padding:11px">Neste<span class="ms" style="font-size:16px">arrow_forward</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { route: 'dashboard', theme: 'light', logOpen: false, logStep: 1 };
+
+  renderVals() {
+    const r = this.state.route;
+    const routes = ['dashboard','collection','sessions','players','settings'];
+    const navBg = {}, navColor = {}, navGo = {};
+    routes.forEach(k => {
+      navBg[k] = r === k ? 'var(--accent-soft)' : 'transparent';
+      navColor[k] = r === k ? 'var(--accent-text)' : 'var(--muted2)';
+      navGo[k] = () => this.setState({ route: k });
+    });
+    // game detail keeps "collection" nav highlighted
+    if (r === 'game') { navBg.collection = 'var(--accent-soft)'; navColor.collection = 'var(--accent-text)'; }
+    if (r === 'sessionDetail') { navBg.sessions = 'var(--accent-soft)'; navColor.sessions = 'var(--accent-text)'; }
+
+    const titles = {
+      dashboard: ['Dashboard', 'God kveld, Maya — her er samlingen din'],
+      collection: ['Samling', '84 eide spill · 12 på ønskelisten'],
+      game: ['Crimson Frontier', 'Strategispill · lagt til 14. mars 2025'],
+      sessions: ['Partier', '312 loggede partier'],
+      players: ['Spillere', '9 i husstanden'],
+      settings: ['Innstillinger', 'Instans, språk og synkronisering'],
+      sessionDetail: ['Parti — Crimson Frontier', 'Tirsdag 24. juni 2026 · 2t 05m']
+    };
+    const t = titles[r] || titles.dashboard;
+
+    return {
+      theme: this.state.theme,
+      themeIcon: this.state.theme === 'light' ? 'dark_mode' : 'light_mode',
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
+      setLight: () => this.setState({ theme: 'light' }),
+      setDark: () => this.setState({ theme: 'dark' }),
+      seg: {
+        lightBg: this.state.theme === 'light' ? 'var(--card)' : 'transparent',
+        lightColor: this.state.theme === 'light' ? 'var(--text)' : 'var(--muted)',
+        darkBg: this.state.theme === 'dark' ? 'var(--card)' : 'transparent',
+        darkColor: this.state.theme === 'dark' ? 'var(--text)' : 'var(--muted)'
+      },
+      logOpen: this.state.logOpen,
+      logStep: this.state.logStep,
+      openLog: () => this.setState({ logOpen: true, logStep: 1 }),
+      closeLog: () => this.setState({ logOpen: false }),
+      logStep1: () => this.setState({ logStep: 1 }),
+      logStep2: () => this.setState({ logStep: 2 }),
+      logStep3: () => this.setState({ logStep: 3 }),
+      logNext: () => this.setState(s => ({ logStep: Math.min(3, s.logStep + 1) })),
+      logPrev: () => this.setState(s => ({ logStep: Math.max(1, s.logStep - 1) })),
+      stepShow: { s1: this.state.logStep === 1, s2: this.state.logStep === 2, s3: this.state.logStep === 3 },
+      stepDot: {
+        d1: this.state.logStep >= 1 ? 'var(--accent)' : 'var(--track)',
+        d2: this.state.logStep >= 2 ? 'var(--accent)' : 'var(--track)',
+        d3: this.state.logStep >= 3 ? 'var(--accent)' : 'var(--track)',
+        t1: this.state.logStep >= 1 ? 'var(--on-accent)' : 'var(--muted)',
+        t2: this.state.logStep >= 2 ? 'var(--on-accent)' : 'var(--muted)',
+        t3: this.state.logStep >= 3 ? 'var(--on-accent)' : 'var(--muted)'
+      },
+      logLastStep: this.state.logStep === 3,
+      logPrimaryLabel: this.state.logStep === 3 ? 'Lagre parti' : 'Neste',
+      logPrimaryAction: this.state.logStep === 3 ? (() => this.setState({ logOpen: false })) : (() => this.setState(s => ({ logStep: Math.min(3, s.logStep + 1) }))),
+      logPrimaryIcon: this.state.logStep === 3 ? 'check' : 'arrow_forward',
+      navBg, navColor, navGo,
+      openGame: () => this.setState({ route: 'game' }),
+      openSessionDetail: () => this.setState({ route: 'sessionDetail' }),
+      backCollection: () => this.setState({ route: 'collection' }),
+      backSessions: () => this.setState({ route: 'sessions' }),
+      pageTitle: t[0],
+      pageSub: t[1],
+      show: {
+        dashboard: r === 'dashboard',
+        collection: r === 'collection',
+        game: r === 'game',
+        sessions: r === 'sessions',
+        players: r === 'players',
+        settings: r === 'settings',
+        sessionDetail: r === 'sessionDetail'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
