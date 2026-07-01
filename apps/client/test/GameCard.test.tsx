@@ -26,6 +26,9 @@ const game: GameDto = {
   bggRank: null,
   bggSyncedAt: null,
   categories: [{ id: 1, name: 'Strategi' }],
+  myRating: null,
+  avgSessionRating: null,
+  sessionRatingCount: 0,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 };

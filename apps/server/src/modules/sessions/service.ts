@@ -24,7 +24,10 @@ function durationMinutes(start: Date, end: Date | null): number | null {
   return Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
 }
 
-export function toSessionDto(session: SessionWithRelations): SessionDto {
+export function toSessionDto(
+  session: SessionWithRelations,
+  myRating: number | null = null,
+): SessionDto {
   return {
     id: session.id,
     gameId: session.gameId,
@@ -47,6 +50,7 @@ export function toSessionDto(session: SessionWithRelations): SessionDto {
       color: ps.color,
     })),
     images: session.images.map((img) => ({ id: img.id, imagePath: img.imagePath })),
+    myRating,
     createdAt: session.createdAt.toISOString(),
   };
 }
@@ -107,7 +111,7 @@ export async function createSession(input: CreateSessionInput): Promise<SessionD
   return toSessionDto(session);
 }
 
-export async function listSessions(query: SessionQuery): Promise<SessionDto[]> {
+export async function listSessions(query: SessionQuery, userId: number): Promise<SessionDto[]> {
   const where: Prisma.SessionWhereInput = {};
   if (query.game) where.gameId = query.game;
   if (query.person) where.players = { some: { personId: query.person } };
@@ -121,13 +125,22 @@ export async function listSessions(query: SessionQuery): Promise<SessionDto[]> {
     include: sessionInclude,
     orderBy: { start: 'desc' },
   });
-  return sessions.map(toSessionDto);
+
+  const myRatings = await prisma.userSessionRating.findMany({
+    where: { userId, sessionId: { in: sessions.map((s) => s.id) } },
+  });
+  const ratingBySession = new Map(myRatings.map((r) => [r.sessionId, r.rating.toNumber()]));
+
+  return sessions.map((s) => toSessionDto(s, ratingBySession.get(s.id) ?? null));
 }
 
-export async function getSession(id: number): Promise<SessionDto> {
+export async function getSession(id: number, userId: number): Promise<SessionDto> {
   const session = await prisma.session.findUnique({ where: { id }, include: sessionInclude });
   if (!session) throw new HttpError(404, 'Session not found');
-  return toSessionDto(session);
+  const myRating = await prisma.userSessionRating.findUnique({
+    where: { userId_sessionId: { userId, sessionId: id } },
+  });
+  return toSessionDto(session, myRating?.rating.toNumber() ?? null);
 }
 
 export async function updateSession(id: number, input: UpdateSessionInput): Promise<SessionDto> {
@@ -175,9 +188,13 @@ export async function deleteSession(id: number): Promise<void> {
   await prisma.session.delete({ where: { id } });
 }
 
-export async function addSessionImage(id: number, imagePath: string): Promise<SessionDto> {
+export async function addSessionImage(
+  id: number,
+  imagePath: string,
+  userId: number,
+): Promise<SessionDto> {
   const existing = await prisma.session.findUnique({ where: { id }, select: { id: true } });
   if (!existing) throw new HttpError(404, 'Session not found');
   await prisma.sessionImage.create({ data: { sessionId: id, imagePath } });
-  return getSession(id);
+  return getSession(id, userId);
 }

@@ -1,11 +1,17 @@
 import path from 'node:path';
 import { Router } from 'express';
-import { createGameSchema, gameQuerySchema, updateGameSchema } from '@tabletop/shared';
+import {
+  createGameSchema,
+  gameQuerySchema,
+  updateGameSchema,
+  upsertGameRatingSchema,
+} from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 import type { TokenService } from '../auth/service.js';
 import { uploadImage, imageUrl } from '../uploads/image.js';
+import { upsertGameRating } from '../ratings/service.js';
 import { createGame, deleteGame, getGame, listGames, updateGame } from './service.js';
 
 export interface GamesDeps {
@@ -30,7 +36,7 @@ export function createGamesRouter(deps: GamesDeps): Router {
   router.get('/', (req, res, next) => {
     void (async () => {
       const query = gameQuerySchema.parse(req.query);
-      res.json(await listGames(query));
+      res.json(await listGames(query, req.user!.sub));
     })().catch(next);
   });
 
@@ -43,7 +49,14 @@ export function createGamesRouter(deps: GamesDeps): Router {
 
   router.get('/:id', (req, res, next) => {
     void (async () => {
-      res.json(await getGame(parseId(req.params.id)));
+      res.json(await getGame(parseId(req.params.id), req.user!.sub));
+    })().catch(next);
+  });
+
+  router.put('/:id/rating', (req, res, next) => {
+    void (async () => {
+      const input = upsertGameRatingSchema.parse(req.body);
+      res.json(await upsertGameRating(req.user!.sub, parseId(req.params.id), input));
     })().catch(next);
   });
 

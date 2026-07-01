@@ -96,6 +96,12 @@ export interface GameDto {
   bggRank: number | null;
   bggSyncedAt: string | null;
   categories: CategoryDto[];
+  /** The requesting user's overall rating of this game, if any (1.0–10.0). */
+  myRating: number | null;
+  /** Average of all users' per-session ratings for this game's sessions. */
+  avgSessionRating: number | null;
+  /** How many session ratings that average is based on. */
+  sessionRatingCount: number;
   createdAt: string;
   updatedAt: string;
 }
