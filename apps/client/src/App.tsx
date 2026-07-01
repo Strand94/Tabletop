@@ -8,6 +8,7 @@ import { Login } from './pages/Login.js';
 import { Dashboard } from './pages/Dashboard.js';
 import { Collection } from './pages/Collection.js';
 import { GameDetail } from './pages/GameDetail.js';
+import { Players } from './pages/Players.js';
 import { Placeholder } from './pages/Placeholder.js';
 import { t } from './lib/strings.js';
 
@@ -28,7 +29,7 @@ export function App(): JSX.Element {
                   <Route path="collection" element={<Collection />} />
                   <Route path="collection/:id" element={<GameDetail />} />
                   <Route path="sessions" element={<Placeholder title={t.nav.sessions} />} />
-                  <Route path="players" element={<Placeholder title={t.nav.players} />} />
+                  <Route path="players" element={<Players />} />
                   <Route path="settings" element={<Placeholder title={t.nav.settings} />} />
                 </Route>
               </Route>
