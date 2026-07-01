@@ -147,6 +147,29 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
 
+  image:
+    name: Build & scan production image (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: tabletop:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: tabletop:ci
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
   # CodeQL SAST is provided by GitHub's default code-scanning setup for this repo,
   # which cannot coexist with an advanced workflow job. Semgrep below adds a
   # second, workflow-controlled SAST pass.
