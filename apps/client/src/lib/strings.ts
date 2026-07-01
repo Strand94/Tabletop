@@ -77,6 +77,17 @@ export const t = {
     edit: 'Rediger',
     notFound: 'Fant ikke spillet',
   },
+  expansions: {
+    title: 'Utvidelser',
+    add: 'Legg til',
+    empty: 'Ingen utvidelser ennå.',
+    usedIn: 'brukt i',
+    createTitle: 'Ny utvidelse',
+    editTitle: 'Rediger utvidelse',
+    name: 'Tittel',
+    delete: 'Slett',
+    confirmDelete: 'Slette denne utvidelsen?',
+  },
   dashboard: {
     gamesOwned: 'Spill eid',
     sessions: 'Partier',

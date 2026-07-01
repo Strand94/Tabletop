@@ -9,6 +9,7 @@
 export * from './enums.js';
 export * from './auth.js';
 export * from './game.js';
+export * from './expansion.js';
 export * from './stats.js';
 
 /** Library marker (kept for the smoke test). */

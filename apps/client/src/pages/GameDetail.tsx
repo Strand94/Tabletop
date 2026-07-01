@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGame } from '../lib/games-api.js';
 import { GameFormModal } from '../components/GameFormModal.js';
+import { ExpansionsSection } from '../components/ExpansionsSection.js';
 import { Icon } from '../components/Icon.js';
 import { playersLabel, playtimeLabel, priceLabel } from '../lib/format.js';
 import { t } from '../lib/strings.js';
@@ -92,6 +93,8 @@ export function GameDetail(): JSX.Element {
               {game.description}
             </p>
           )}
+
+          <ExpansionsSection gameId={game.id} currency={game.currency} />
         </div>
       </div>
 
