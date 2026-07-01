@@ -1,5 +1,9 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
 import { defineConfig } from 'prisma/config';
+
+// Load .env explicitly with quiet:true — dotenv 17 prints a tips banner to
+// stderr on load by default, which would add noise to every Prisma CLI command.
+config({ quiet: true });
 
 /**
  * Prisma CLI configuration (Prisma 7+). Replaces the `prisma` block that used
