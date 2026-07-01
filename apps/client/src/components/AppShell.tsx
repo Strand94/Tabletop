@@ -1,5 +1,6 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon.js';
+import { useGames } from '../lib/games-api.js';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
 import { useLocale } from '../lib/i18n.js';
@@ -38,6 +39,7 @@ export function AppShell(): JSX.Element {
   const { theme, toggle } = useTheme();
   const { locale, setLocale } = useLocale();
   const { openLogPlay } = useLogPlay();
+  const { data: shelfGames = [] } = useGames({ neverPlayed: true });
   const location = useLocation();
   const active = NAV.find((n) =>
     n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to),
@@ -68,6 +70,20 @@ export function AppShell(): JSX.Element {
             </NavLink>
           ))}
         </nav>
+
+        {shelfGames.length > 0 && (
+          <Link
+            to="/collection?shelf=1"
+            className="mt-[18px] block rounded-xl border border-border bg-accent-soft p-3 no-underline"
+          >
+            <div className="text-[11.5px] font-semibold text-accent-text">
+              {t.shelfOfShame.title}
+            </div>
+            <div className="mt-0.5 text-[11px] leading-snug text-muted2">
+              <b>{shelfGames.length}</b> · {t.shelfOfShame.body}
+            </div>
+          </Link>
+        )}
 
         <div className="mt-auto flex items-center gap-2.5 border-t border-hairline px-1.5 pb-1 pt-2.5">
           <div className="h-8 w-8 flex-none rounded-full" style={avatarStyle()} />

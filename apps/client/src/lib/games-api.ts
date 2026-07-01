@@ -8,6 +8,7 @@ export interface GamesFilter {
   q?: string;
   sort?: string;
   order?: 'asc' | 'desc';
+  neverPlayed?: boolean;
 }
 
 function gamesQueryString(filter: GamesFilter): string {
@@ -17,6 +18,7 @@ function gamesQueryString(filter: GamesFilter): string {
   if (filter.q) params.set('q', filter.q);
   if (filter.sort) params.set('sort', filter.sort);
   if (filter.order) params.set('order', filter.order);
+  if (filter.neverPlayed) params.set('neverPlayed', 'true');
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }

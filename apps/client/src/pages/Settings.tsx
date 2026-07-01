@@ -76,6 +76,21 @@ async function persistLocale(locale: Locale, setLocale: LocaleSetter): Promise<v
   }
 }
 
+/** Download an authenticated export as a file. */
+async function downloadExport(format: 'json' | 'csv'): Promise<void> {
+  const data = await apiFetch<unknown>(`/api/export/${format}`);
+  const blob =
+    format === 'json'
+      ? new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      : new Blob([String(data)], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = format === 'json' ? 'tabletop-export.json' : 'tabletop-games.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 /** Settings: appearance, language, and v2 seams (BGG sync + export) as stubs. */
 export function Settings(): JSX.Element {
   const { user } = useAuth();
@@ -130,15 +145,16 @@ export function Settings(): JSX.Element {
         <Section title={t.settings.data}>
           <Row title={t.settings.exportCollection} hint={t.settings.exportHint} last>
             <div className="flex gap-2">
-              {['JSON', 'CSV'].map((fmt) => (
-                <span
+              {(['json', 'csv'] as const).map((fmt) => (
+                <button
                   key={fmt}
-                  title={t.settings.comingSoon}
-                  className="flex cursor-not-allowed items-center gap-1.5 rounded-lg border border-border bg-input px-3 py-2 text-[12.5px] font-semibold text-muted2 opacity-70"
+                  type="button"
+                  onClick={() => void downloadExport(fmt)}
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-input px-3 py-2 text-[12.5px] font-semibold text-muted2"
                 >
                   <Icon name="download" size={16} />
-                  {fmt}
-                </span>
+                  {fmt.toUpperCase()}
+                </button>
               ))}
             </div>
           </Row>

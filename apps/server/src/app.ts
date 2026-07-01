@@ -12,6 +12,7 @@ import { createPeopleRouter } from './modules/people/routes.js';
 import { createLocationsRouter, createSessionsRouter } from './modules/sessions/routes.js';
 import { createStatsRouter } from './modules/stats/routes.js';
 import { createBggRouter } from './modules/bgg/routes.js';
+import { createExportRouter } from './modules/export/routes.js';
 import { IMAGES_DIR } from './modules/uploads/image.js';
 import type { TokenService } from './modules/auth/service.js';
 
@@ -78,6 +79,7 @@ export function createApp(deps?: AppDeps): Express {
         apiToken: deps.bgg?.apiToken,
       }),
     );
+    api.use('/export', createExportRouter(deps.tokens));
   }
 
   app.use('/api', api);

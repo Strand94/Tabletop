@@ -64,6 +64,11 @@ export const gameQuerySchema = z.object({
   q: z.string().max(200).optional(),
   sort: z.enum(['title', 'releaseYear', 'dateAdded', 'createdAt']).default('title'),
   order: z.enum(['asc', 'desc']).default('asc'),
+  /** "Shelf of shame": owned games that have never been played (spec §4.2). */
+  neverPlayed: z
+    .union([z.literal('true'), z.literal('false')])
+    .optional()
+    .transform((v) => v === 'true'),
 });
 export type GameQuery = z.infer<typeof gameQuerySchema>;
 
