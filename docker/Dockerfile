@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build stage: install everything, generate Prisma client, build apps ----
-FROM node:20-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 
 # Toolchain for native deps (argon2) and Prisma engines.
@@ -21,7 +21,7 @@ RUN npm run build --workspace @tabletop/client
 RUN npm run build --workspace @tabletop/server
 
 # ---- Runtime stage: minimal image that serves API + client ----
-FROM node:20-alpine AS runtime
+FROM node:26-alpine AS runtime
 WORKDIR /app
 RUN apk add --no-cache openssl curl
 ENV NODE_ENV=production
