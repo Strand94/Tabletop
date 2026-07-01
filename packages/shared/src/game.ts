@@ -28,8 +28,9 @@ const gameWritableShape = {
 };
 
 /** Cross-field integrity checks shared by create and update (spec §10.6). */
-function withRangeChecks<T extends z.ZodTypeAny>(schema: T): z.ZodEffects<T> {
-  return schema.superRefine((val: Record<string, unknown>, ctx) => {
+function withRangeChecks<T extends z.ZodTypeAny>(schema: T): T {
+  return schema.superRefine((value, ctx) => {
+    const val = value as Record<string, unknown>;
     const min = val.minPlayers as number | null | undefined;
     const max = val.maxPlayers as number | null | undefined;
     if (min != null && max != null && min > max) {

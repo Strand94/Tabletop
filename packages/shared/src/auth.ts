@@ -5,7 +5,7 @@ import { Role } from './enums.js';
 export const registerSchema = z.object({
   username: z.string().min(3).max(50),
   password: z.string().min(8).max(200),
-  email: z.string().email().optional(),
+  email: z.email().optional(),
   locale: z.string().min(2).max(10).optional(),
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
