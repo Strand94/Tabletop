@@ -1,6 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../apps/server/generated/prisma/client.js';
+import { resolveDatabaseUrl } from '../apps/server/src/config.js';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: resolveDatabaseUrl() });
+const prisma = new PrismaClient({ adapter });
 
 /**
  * Default categories seeded on first run. Idempotent: re-running upserts by the

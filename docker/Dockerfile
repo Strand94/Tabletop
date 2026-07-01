@@ -7,8 +7,11 @@ WORKDIR /app
 # Toolchain for native deps (argon2) and Prisma engines.
 RUN apk add --no-cache python3 make g++ openssl
 
-# Install with full workspace context so npm resolves the workspaces.
-COPY package.json package-lock.json ./
+# Install with full workspace context so npm resolves the workspaces. The
+# Prisma schema + config are copied before `npm ci` because the postinstall
+# hook runs `prisma generate` (Prisma 7 emits the client to a source path).
+COPY package.json package-lock.json prisma.config.ts ./
+COPY prisma prisma/
 COPY packages/shared/package.json packages/shared/
 COPY apps/server/package.json apps/server/
 COPY apps/client/package.json apps/client/
@@ -16,7 +19,6 @@ RUN npm ci
 
 # Bring in the rest of the sources and build.
 COPY . .
-RUN npx prisma generate
 RUN npm run build --workspace @tabletop/client
 RUN npm run build --workspace @tabletop/server
 
@@ -31,6 +33,7 @@ ENV CLIENT_DIST=/app/client
 # Prisma CLI used for `migrate deploy` at boot.
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/apps/server/dist ./apps/server/dist
 COPY --from=build /app/apps/client/dist ./client

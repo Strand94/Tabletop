@@ -25,6 +25,9 @@ postgres-data/
 # Prisma local
 prisma/*.db
 
+# Generated Prisma client (Prisma 7 emits to a source path; regenerated on install/build)
+apps/server/generated/
+
 # Editor / OS
 .DS_Store
 .idea/

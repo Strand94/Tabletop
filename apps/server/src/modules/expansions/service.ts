@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '../../../generated/prisma/client.js';
 import type { CreateExpansionInput, ExpansionDto, UpdateExpansionInput } from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
