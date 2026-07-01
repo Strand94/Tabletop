@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon.js';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
+import { useLogPlay } from '../lib/log-play.js';
 import { t } from '../lib/strings.js';
 
 interface NavItem {
@@ -34,6 +35,7 @@ function avatarStyle(a = 'var(--av1)', b = 'var(--av2)'): React.CSSProperties {
 export function AppShell(): JSX.Element {
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
+  const { openLogPlay } = useLogPlay();
   const location = useLocation();
   const active = NAV.find((n) =>
     n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to),
@@ -93,6 +95,14 @@ export function AppShell(): JSX.Element {
             <div className="mt-0.5 text-[12.5px] text-muted">{active?.subtitle ?? ''}</div>
           </div>
           <div className="ml-auto flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => openLogPlay()}
+              className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[13px] font-semibold text-on-accent"
+            >
+              <Icon name="add" size={18} />
+              {t.topbar.logPlay}
+            </button>
             <button
               type="button"
               onClick={logout}

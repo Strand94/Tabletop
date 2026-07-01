@@ -21,6 +21,9 @@ test('add a player from the players page', async ({ page, baseURL }) => {
   await page.getByLabel('Navn').fill(name);
   await page.getByRole('button', { name: 'Lagre' }).click();
 
-  await expect(page.getByText(name)).toBeVisible();
-  await expect(page.getByText('Gjest')).toBeVisible();
+  // Scope the guest-label assertion to the new player's card (the shared e2e DB
+  // may contain other guest players from other specs).
+  const card = page.locator('[data-testid=person-card]', { hasText: name });
+  await expect(card).toBeVisible();
+  await expect(card.getByText('Gjest')).toBeVisible();
 });
