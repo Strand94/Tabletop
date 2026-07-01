@@ -1,5 +1,11 @@
 import { Router, type Request } from 'express';
-import { loginSchema, refreshSchema, registerSchema, type UserPublic } from '@tabletop/shared';
+import {
+  loginSchema,
+  refreshSchema,
+  registerSchema,
+  updateMeSchema,
+  type UserPublic,
+} from '@tabletop/shared';
 import type { User } from '@prisma/client';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
@@ -110,6 +116,17 @@ export function createAuthRouter(deps: AuthDeps): Router {
     void (async () => {
       const user = await prisma.user.findUnique({ where: { id: req.user!.sub } });
       if (!user) throw new HttpError(404, 'User not found');
+      res.json(toPublic(user));
+    })().catch(next);
+  });
+
+  router.patch('/me', requireAuth(tokens), (req, res, next) => {
+    void (async () => {
+      const input = updateMeSchema.parse(req.body);
+      const user = await prisma.user.update({
+        where: { id: req.user!.sub },
+        data: { locale: input.locale },
+      });
       res.json(toPublic(user));
     })().catch(next);
   });
