@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 /**
  * Vite config. In dev, /api is proxied to the Express server on :5470 so the
@@ -7,7 +8,7 @@ import react from '@vitejs/plugin-react';
  * server serves statically.
  */
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     port: 5173,
     proxy: {
