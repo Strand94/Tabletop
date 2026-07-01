@@ -44,5 +44,5 @@ RUN mkdir -p /app/images /app/logs && chown -R node:node /app
 # Drop privileges: run as the built-in non-root `node` user.
 USER node
 
-EXPOSE 5444
+EXPOSE 5470
 CMD ["node", "apps/server/dist/server.js"]

@@ -1,6 +1,6 @@
 # Tabletop Tracker — Build Design & Staged Plan
 
-> Companion to `boardgame-tracker-design-spec.md` (the product/data spec) and the
+> Companion to `tabletop-design-spec.md` (the product/data spec) and the
 > `Tabletop.dc.html` design handoff. This document records the **build-time decisions**
 > and the **staged task breakdown** that turn that spec into a working, tested,
 > CI/CD-gated application. The product spec remains authoritative for the data model,

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Tabletop is a self-hosted board game collection and play-session tracker. Runs as two
 containers (app + PostgreSQL). Node >=20, npm workspaces monorepo, TypeScript everywhere.
 
-Design spec: `docs/design/boardgame-tracker-design-spec.md` (authoritative data model / API
+Design spec: `docs/design/tabletop-design-spec.md` (authoritative data model / API
 design). Build plan: `docs/superpowers/plans/2026-06-30-tabletop-mvp-slice.md`. The project is
 built in stages (branch names follow `build/stage-N-*`); check the current branch name against
 the plan to see which stage is in progress.
@@ -16,7 +16,7 @@ the plan to see which stage is in progress.
 
 ```bash
 npm install                 # install all workspaces
-npm run dev                 # API + client in watch mode (tsx watch, port 5444)
+npm run dev                 # API + client in watch mode (tsx watch, port 5470)
 npm test                    # unit tests (Vitest), excludes *.int.test.ts
 npm run lint                # ESLint, zero warnings allowed
 npm run format               # Prettier write
@@ -36,7 +36,7 @@ Integration tests (`*.int.test.ts`, Supertest against a real Postgres) are exclu
 `npm test` by default. Run them with `RUN_DB_TESTS=1` and a reachable `DATABASE_URL`:
 
 ```bash
-RUN_DB_TESTS=1 DATABASE_URL=postgresql://bgtuser:changeme@localhost:5432/boardgametracker npx vitest run --project server
+RUN_DB_TESTS=1 DATABASE_URL=postgresql://tabletop:changeme@localhost:5432/tabletop npx vitest run --project server
 ```
 
 Integration test files run serially (`fileParallelism: false` when `RUN_DB_TESTS=1`) because
