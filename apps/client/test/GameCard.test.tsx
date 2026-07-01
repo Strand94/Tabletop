@@ -55,4 +55,15 @@ describe('GameCard', () => {
     renderCard({ ...game, collectionStatus: 'WISHLIST' });
     expect(screen.getByText('ØNSKE')).toBeInTheDocument();
   });
+
+  it('shows the user rating badge when present', () => {
+    renderCard({ ...game, myRating: 8.6 });
+    const badge = screen.getByTestId('card-rating');
+    expect(badge).toHaveTextContent('8.6');
+  });
+
+  it('hides the rating badge when unrated', () => {
+    renderCard({ ...game, myRating: null });
+    expect(screen.queryByTestId('card-rating')).not.toBeInTheDocument();
+  });
 });

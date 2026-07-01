@@ -1,6 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeleteSession, useSession } from '../lib/sessions-api.js';
+import { useRateSession } from '../lib/ratings-api.js';
 import { useAuth } from '../lib/auth.js';
+import { RatingCard } from '../components/RatingCard.js';
 import { Icon } from '../components/Icon.js';
 import { durationLabel, longDateTime } from '../lib/datetime.js';
 import { t } from '../lib/strings.js';
@@ -16,6 +18,7 @@ export function SessionDetail(): JSX.Element {
   const sessionId = Number(id);
   const { data: session, isLoading, isError } = useSession(sessionId);
   const del = useDeleteSession();
+  const rateSession = useRateSession(sessionId);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -142,10 +145,19 @@ export function SessionDetail(): JSX.Element {
           )}
         </div>
 
-        {/* Right column — rating placeholder (Stage 7) + photos */}
+        {/* Right column — your rating of this evening + photos */}
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-dashed border-border bg-card px-5 py-4 text-[12.5px] text-muted">
-            Din vurdering av kvelden kommer snart.
+          <div>
+            <RatingCard
+              label={t.rating.yourEveningRating}
+              value={session.myRating}
+              highlight
+              caption={t.rating.eveningHint}
+              testId="your-session-rating"
+              onSave={async (rating) => {
+                await rateSession.mutateAsync({ rating });
+              }}
+            />
           </div>
           {session.images.length > 0 && (
             <div className="rounded-2xl border border-border bg-card px-5 py-4">

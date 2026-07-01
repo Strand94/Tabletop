@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGame } from '../lib/games-api.js';
 import { useLogPlay } from '../lib/log-play.js';
+import { useRateGame } from '../lib/ratings-api.js';
 import { GameFormModal } from '../components/GameFormModal.js';
 import { ExpansionsSection } from '../components/ExpansionsSection.js';
+import { RatingCard } from '../components/RatingCard.js';
 import { Icon } from '../components/Icon.js';
 import { playersLabel, playtimeLabel, priceLabel } from '../lib/format.js';
 import { t } from '../lib/strings.js';
@@ -26,6 +28,7 @@ export function GameDetail(): JSX.Element {
   const gameId = Number(id);
   const { data: game, isLoading, isError } = useGame(gameId);
   const { openLogPlay } = useLogPlay();
+  const rateGame = useRateGame(gameId);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <p className="p-7 text-[13px] text-muted">{t.common.loading}</p>;
@@ -89,7 +92,35 @@ export function GameDetail(): JSX.Element {
             </div>
           )}
 
-          <div className="mt-5 grid grid-cols-3 gap-x-6 gap-y-3.5 rounded-2xl border border-border bg-card px-5 py-4">
+          {/* Ratings row: your rating (editable), avg session rating, BGG (read-only) */}
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            <RatingCard
+              label={t.rating.yourGameRating}
+              value={game.myRating}
+              highlight
+              testId="your-game-rating"
+              onSave={async (rating) => {
+                await rateGame.mutateAsync({ rating });
+              }}
+            />
+            <RatingCard
+              label={t.rating.avgSessionRating}
+              value={game.avgSessionRating}
+              caption={
+                game.sessionRatingCount > 0
+                  ? t.rating.overSessions.replace('{n}', String(game.sessionRatingCount))
+                  : undefined
+              }
+            />
+            <RatingCard
+              label={t.rating.bgg}
+              value={game.bggRating}
+              muted
+              caption={game.bggRank ? `rang #${game.bggRank}` : t.rating.readOnly}
+            />
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-x-6 gap-y-3.5 rounded-2xl border border-border bg-card px-5 py-4">
             <Meta label={t.gameDetail.players} value={playersLabel(game)} />
             <Meta label={t.gameDetail.playtime} value={playtimeLabel(game)} />
             <Meta label={t.gameDetail.age} value={game.minAge ? `${game.minAge}+` : ''} />
