@@ -1,205 +1,26 @@
+import { nb, type Strings } from './strings/nb.js';
+import { en } from './strings/en.js';
+
+export type Locale = 'nb' | 'en';
+
+const tables: Record<Locale, Strings> = { nb, en };
+
+/** The active string table. Swapped by the locale provider on language change. */
+let active: Strings = nb;
+
+export function setActiveTable(locale: Locale): void {
+  active = tables[locale];
+}
+
 /**
- * Temporary Norwegian Bokmål string table. Full react-i18next externalization
- * (with `en` + a language switcher) lands in Stage 9; until then these constants
- * keep UI text out of components so the later migration is mechanical.
+ * Locale-aware string accessor. Components read `t.section.key` at render time;
+ * when the locale changes the provider swaps the active table and remounts the
+ * tree, so every reference re-resolves to the new language.
  */
-export const t = {
-  appName: 'Tabletop',
-  tagline: 'Egendreven brettspillsporing',
-  nav: {
-    dashboard: 'Dashbord',
-    collection: 'Samling',
-    sessions: 'Partier',
-    players: 'Spillere',
-    settings: 'Innstillinger',
+export const t: Strings = new Proxy({} as Strings, {
+  get(_target, prop: string): unknown {
+    return (active as Record<string, unknown>)[prop];
   },
-  shelfOfShame: {
-    title: 'Hylle uten spill',
-    body: 'Spill som aldri er spilt. Planlegg en spillkveld?',
-  },
-  topbar: {
-    searchCollection: 'Søk i samling…',
-    logPlay: 'Logg et spill',
-  },
-  login: {
-    title: 'Logg inn',
-    subtitle: 'Velkommen tilbake til samlingen din',
-    username: 'Brukernavn',
-    password: 'Passord',
-    submit: 'Logg inn',
-    error: 'Feil brukernavn eller passord',
-    loading: 'Logger inn…',
-  },
-  roles: {
-    ADMIN: 'Admin',
-    MEMBER: 'Medlem',
-  },
-  collection: {
-    all: 'Alle',
-    owned: 'EID',
-    wishlist: 'ØNSKE',
-    ownedFilter: 'Eid',
-    wishlistFilter: 'Ønskeliste',
-    newGame: 'Nytt spill',
-    empty: 'Ingen spill ennå. Legg til ditt første!',
-    searchPlaceholder: 'Søk i samling…',
-  },
-  gameForm: {
-    createTitle: 'Nytt spill',
-    editTitle: 'Rediger spill',
-    title: 'Tittel',
-    releaseYear: 'Utgivelsesår',
-    players: 'Spillere',
-    minPlayers: 'Min. spillere',
-    maxPlayers: 'Maks spillere',
-    playtime: 'Spilletid (min)',
-    minPlaytime: 'Min. tid',
-    maxPlaytime: 'Maks tid',
-    minAge: 'Alder',
-    weight: 'Kompleksitet (1–5)',
-    price: 'Pris',
-    status: 'Status',
-    description: 'Beskrivelse',
-    categories: 'Kategorier',
-    save: 'Lagre',
-    saving: 'Lagrer…',
-    cancel: 'Avbryt',
-    required: 'Tittel er påkrevd',
-  },
-  gameDetail: {
-    back: 'Samling',
-    players: 'Spillere',
-    playtime: 'Spilletid',
-    age: 'Alder',
-    complexity: 'Kompleksitet',
-    released: 'Utgitt',
-    price: 'Pris',
-    edit: 'Rediger',
-    notFound: 'Fant ikke spillet',
-    playHistory: 'Spillhistorikk',
-    plays: 'partier',
-    noPlays: 'Ingen partier ennå.',
-  },
-  rating: {
-    yourGameRating: 'Din vurdering',
-    avgSessionRating: 'Snitt øktvurdering',
-    bgg: 'BGG',
-    yourEveningRating: 'Din vurdering av kvelden',
-    overSessions: 'over {n} partier',
-    notRated: 'Ikke vurdert ennå',
-    rate: 'Vurder',
-    save: 'Lagre',
-    cancel: 'Avbryt',
-    ofTen: '/10',
-    readOnly: 'skrivebeskyttet',
-    eveningHint: 'Egen vurdering av dette partiet — uavhengig av spillvurderingen din.',
-  },
-  expansions: {
-    title: 'Utvidelser',
-    add: 'Legg til',
-    empty: 'Ingen utvidelser ennå.',
-    usedIn: 'brukt i',
-    createTitle: 'Ny utvidelse',
-    editTitle: 'Rediger utvidelse',
-    name: 'Tittel',
-    delete: 'Slett',
-    confirmDelete: 'Slette denne utvidelsen?',
-  },
-  sessions: {
-    title: 'Partier',
-    logPlay: 'Logg et parti',
-    empty: 'Ingen partier ennå. Logg ditt første!',
-    colGame: 'Spill',
-    colPlayers: 'Spillere',
-    colWinner: 'Vinner',
-    colDuration: 'Varighet',
-    colLocation: 'Sted',
-    baseGame: 'grunnspill',
-    back: 'Partier',
-    players: 'Spillere & resultat',
-    comment: 'Kommentar',
-    won: 'VANT',
-    firstPlay: '1. gang',
-    score: 'Poeng',
-    color: 'Farge',
-    result: 'Resultat',
-    notFound: 'Fant ikke partiet',
-    photos: 'Bilder fra kvelden',
-  },
-  logPlay: {
-    title: 'Logg et parti',
-    step1: 'Spill',
-    step2: 'Spillere',
-    step3: 'Detaljer',
-    searchGame: 'Søk etter spill…',
-    expansionsUsed: 'Utvidelser brukt',
-    playersResult: 'Spillere & resultat',
-    addPlayer: 'Legg til',
-    winner: 'Vinner',
-    score: 'Poeng',
-    firstPlay: '1. gang',
-    start: 'Start',
-    end: 'Slutt',
-    location: 'Sted',
-    noLocation: 'Ingen',
-    comment: 'Kommentar',
-    next: 'Neste',
-    back: 'Tilbake',
-    cancel: 'Avbryt',
-    save: 'Lagre parti',
-    saving: 'Lagrer…',
-    pickGame: 'Velg et spill',
-    pickPlayers: 'Velg minst én spiller',
-    noGames: 'Ingen spill i samlingen. Legg til ett først.',
-    noPeople: 'Ingen spillere. Legg til noen på Spillere-siden.',
-  },
-  players: {
-    countSuffix: 'spillere',
-    withAccounts: 'med innloggingskonto',
-    add: 'Legg til spiller',
-    guest: 'Gjest',
-    account: 'konto',
-    noSessions: 'Ingen partier ennå',
-    plays: 'partier',
-    winRate: 'seiersandel',
-    avgScore: 'snittpoeng',
-    wins: 'seire',
-    favorite: 'Favoritt',
-    empty: 'Ingen spillere ennå. Legg til den første!',
-    createTitle: 'Ny spiller',
-    editTitle: 'Rediger spiller',
-    name: 'Navn',
-    delete: 'Slett',
-    confirmDelete: 'Slette denne spilleren?',
-  },
-  dashboard: {
-    gamesOwned: 'Spill eid',
-    sessions: 'Partier',
-    players: 'Spillere',
-    collectionValue: 'Samlingsverdi',
-    expansions: 'Utvidelser',
-    avgPrice: 'Snittpris',
-    perGame: 'kr / spill',
-    household: 'husstand',
-    collection: 'Samling',
-    titles: 'titler',
-    owned: 'Eid',
-    wishlist: 'Ønskeliste',
-    value: 'Verdi',
-    recentlyAdded: 'Nylig lagt til',
-    empty: 'Ingen data ennå. Legg til ditt første spill!',
-    sessions14d: 'Partier — siste 14 dager',
-    sessionsSuffix: 'partier',
-    mostPlayed: 'Mest spilt',
-    recentSessions: 'Siste partier',
-    topPlayers: 'Toppspillere — seiersandel',
-    won: 'vant',
-    noSessions: 'Ingen partier ennå.',
-  },
-  common: {
-    signOut: 'Logg ut',
-    toggleTheme: 'Bytt tema',
-    loading: 'Laster…',
-    error: 'Noe gikk galt',
-  },
-} as const;
+}) as Strings;
+
+export type { Strings };

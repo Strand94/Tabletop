@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon.js';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
+import { useLocale } from '../lib/i18n.js';
 import { useLogPlay } from '../lib/log-play.js';
 import { t } from '../lib/strings.js';
 
@@ -35,6 +36,7 @@ function avatarStyle(a = 'var(--av1)', b = 'var(--av2)'): React.CSSProperties {
 export function AppShell(): JSX.Element {
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
+  const { locale, setLocale } = useLocale();
   const { openLogPlay } = useLogPlay();
   const location = useLocation();
   const active = NAV.find((n) =>
@@ -95,6 +97,15 @@ export function AppShell(): JSX.Element {
             <div className="mt-0.5 text-[12.5px] text-muted">{active?.subtitle ?? ''}</div>
           </div>
           <div className="ml-auto flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setLocale(locale === 'nb' ? 'en' : 'nb')}
+              title={t.language.switcherLabel}
+              aria-label={t.language.switcherLabel}
+              className="rounded-lg border border-border px-2.5 py-2 text-[12.5px] font-semibold text-muted2"
+            >
+              {locale === 'nb' ? '🇳🇴 NO' : '🇬🇧 EN'}
+            </button>
             <button
               type="button"
               onClick={() => openLogPlay()}

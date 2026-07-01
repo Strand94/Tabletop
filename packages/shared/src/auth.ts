@@ -23,6 +23,12 @@ export const refreshSchema = z.object({
 });
 export type RefreshInput = z.infer<typeof refreshSchema>;
 
+/** Update the current user's own profile (currently just preferred locale). */
+export const updateMeSchema = z.object({
+  locale: z.string().min(2).max(10),
+});
+export type UpdateMeInput = z.infer<typeof updateMeSchema>;
+
 /** Public representation of a user (never includes the password hash). */
 export const userPublicSchema = z.object({
   id: z.number().int(),
