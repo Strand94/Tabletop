@@ -139,7 +139,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: fs
           scanners: vuln,secret,misconfig
@@ -147,20 +147,9 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
 
-  codeql:
-    name: SAST (CodeQL)
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
-        with:
-          languages: javascript-typescript
-          queries: security-extended
-      - uses: github/codeql-action/analyze@v3
+  # CodeQL SAST is provided by GitHub's default code-scanning setup for this repo,
+  # which cannot coexist with an advanced workflow job. Semgrep below adds a
+  # second, workflow-controlled SAST pass.
 
   semgrep:
     name: SAST (Semgrep)
