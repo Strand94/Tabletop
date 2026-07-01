@@ -7,6 +7,7 @@ import { logger } from './logger.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import { createAuthRouter } from './modules/auth/routes.js';
 import { createCategoriesRouter, createGamesRouter } from './modules/games/routes.js';
+import { createExpansionsRouter } from './modules/expansions/routes.js';
 import { createStatsRouter } from './modules/stats/routes.js';
 import { IMAGES_DIR } from './modules/uploads/image.js';
 import type { TokenService } from './modules/auth/service.js';
@@ -52,6 +53,7 @@ export function createApp(deps?: AppDeps): Express {
       createGamesRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
     );
     api.use('/categories', createCategoriesRouter(deps.tokens));
+    api.use(createExpansionsRouter(deps.tokens));
     api.use(
       '/stats',
       createStatsRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
