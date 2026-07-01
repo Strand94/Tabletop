@@ -31,6 +31,9 @@
     "schema": "prisma/schema.prisma",
     "seed": "tsx prisma/seed.ts"
   },
+  "dependencies": {
+    "prisma": "^6.1.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.0",
@@ -42,7 +45,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "prettier": "^3.4.2",
-    "prisma": "^6.1.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.0"

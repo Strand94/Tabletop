@@ -20,6 +20,20 @@ RUN npx prisma generate
 RUN npm run build --workspace @tabletop/client
 RUN npm run build --workspace @tabletop/server
 
+# ---- Deps stage: production-only node_modules (no dev tooling in the image) ----
+FROM node:20-alpine AS proddeps
+WORKDIR /app
+RUN apk add --no-cache python3 make g++ openssl
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/server/package.json apps/server/
+COPY apps/client/package.json apps/client/
+# Only production dependencies (server runtime + prisma CLI for migrate deploy).
+RUN npm ci --omit=dev
+# Generate the Prisma client against the production install.
+COPY prisma ./prisma
+RUN npx prisma generate
+
 # ---- Runtime stage: minimal image that serves API + client ----
 FROM node:20-alpine AS runtime
 WORKDIR /app
@@ -27,11 +41,11 @@ RUN apk add --no-cache openssl curl
 ENV NODE_ENV=production
 ENV CLIENT_DIST=/app/client
 
-# node_modules carries runtime deps, the generated Prisma client, and the
-# Prisma CLI used for `migrate deploy` at boot.
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/prisma ./prisma
+# Production-only node_modules + generated Prisma client (keeps dev tooling and
+# its vulnerabilities out of the shipped image), plus the built app and schema.
+COPY --from=proddeps /app/node_modules ./node_modules
+COPY --from=proddeps /app/package.json ./package.json
+COPY --from=proddeps /app/prisma ./prisma
 COPY --from=build /app/apps/server/dist ./apps/server/dist
 COPY --from=build /app/apps/client/dist ./client
 
