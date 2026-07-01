@@ -12,9 +12,11 @@ test('log a play via the 3-step modal', async ({ page, baseURL }) => {
   const token = (await (await api.post('/api/auth/login', { data: ADMIN })).json())
     .accessToken as string;
   const headers = { Authorization: `Bearer ${token}` };
-  const gameTitle = `Starfall Tactics ${Date.now()}`;
+  const stamp = Date.now();
+  const gameTitle = `Starfall Tactics ${stamp}`;
+  const playerName = `MayaPlayer ${stamp}`;
   await api.post('/api/games', { headers, data: { title: gameTitle } });
-  await api.post('/api/people', { headers, data: { name: 'MayaPlayer' } });
+  await api.post('/api/people', { headers, data: { name: playerName } });
   await api.dispose();
 
   // Log in.
@@ -34,7 +36,7 @@ test('log a play via the 3-step modal', async ({ page, baseURL }) => {
   await dialog.getByRole('button', { name: 'Neste' }).click();
 
   // Step 2: include the player.
-  await dialog.getByRole('button', { name: 'MayaPlayer' }).click();
+  await dialog.getByRole('button', { name: playerName }).click();
   await dialog.getByRole('button', { name: 'Neste' }).click();
 
   // Step 3: save.
@@ -42,7 +44,7 @@ test('log a play via the 3-step modal', async ({ page, baseURL }) => {
 
   // Landed on the session detail page.
   await expect(page.getByRole('heading', { name: gameTitle })).toBeVisible();
-  await expect(page.getByText('MayaPlayer')).toBeVisible();
+  await expect(page.getByText(playerName)).toBeVisible();
 
   // And it appears in the sessions list.
   await page.getByRole('link', { name: 'Partier' }).click();
