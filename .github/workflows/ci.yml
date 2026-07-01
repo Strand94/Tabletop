@@ -50,18 +50,18 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: bgtuser
-          POSTGRES_PASSWORD: bgtpass
-          POSTGRES_DB: boardgametracker_test
+          POSTGRES_USER: tabletop
+          POSTGRES_PASSWORD: tabletop
+          POSTGRES_DB: tabletop_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U bgtuser -d boardgametracker_test"
+          --health-cmd "pg_isready -U tabletop -d tabletop_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://bgtuser:bgtpass@localhost:5432/boardgametracker_test
+      DATABASE_URL: postgresql://tabletop:tabletop@localhost:5432/tabletop_test
       RUN_DB_TESTS: '1'
     steps:
       - uses: actions/checkout@v7
@@ -82,27 +82,27 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: bgtuser
-          POSTGRES_PASSWORD: bgtpass
-          POSTGRES_DB: boardgametracker_e2e
+          POSTGRES_USER: tabletop
+          POSTGRES_PASSWORD: tabletop
+          POSTGRES_DB: tabletop_e2e
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U bgtuser -d boardgametracker_e2e"
+          --health-cmd "pg_isready -U tabletop -d tabletop_e2e"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://bgtuser:bgtpass@localhost:5432/boardgametracker_e2e
+      DATABASE_URL: postgresql://tabletop:tabletop@localhost:5432/tabletop_e2e
       JWT_SECRET: ci-e2e-access-secret-ci-e2e-access-secret
       JWT_REFRESH_SECRET: ci-e2e-refresh-secret-ci-e2e-refresh-secret
-      DB_USER: bgtuser
-      DB_PASSWORD: bgtpass
-      DB_NAME: boardgametracker_e2e
+      DB_USER: tabletop
+      DB_PASSWORD: tabletop
+      DB_NAME: tabletop_e2e
       DEFAULT_CURRENCY: NOK
       DEFAULT_LOCALE: nb
       CLIENT_DIST: ${{ github.workspace }}/apps/client/dist
-      PORT: '5444'
+      PORT: '5470'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6

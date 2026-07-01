@@ -142,7 +142,7 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 
 - [ ] **Test first:** `config.test.ts` — loading config with required env unset throws; with all set returns typed object.
 - [ ] `config.ts`: parse `process.env` through a zod schema (DB__, JWT_SECRET, JWT_REFRESH_SECRET
-      required; PORT default 5444; DEFAULT_CURRENCY `NOK`; DEFAULT_LOCALE `en`; BGG__ defaults). Throw on invalid.
+      required; PORT default 5470; DEFAULT_CURRENCY `NOK`; DEFAULT_LOCALE `en`; BGG__ defaults). Throw on invalid.
 - [ ] `app.ts`: express app factory (helmet, json, request logging, routes, error middleware),
       exposes `GET /api/health` → `{ status: 'ok' }`. No `listen` here (so tests import the app).
 - [ ] **Test:** `health.test.ts` (Supertest) — `GET /api/health` returns 200 `{status:'ok'}`.
@@ -160,7 +160,7 @@ a smoke test `packages/shared/test/smoke.test.ts`.
 - [ ] `app.ts`: in production serve `apps/client/dist` statically and SPA-fallback non-`/api` routes.
 - [ ] Multi-stage `Dockerfile`: build client + server, run node serving both; `docker-compose.yml`
       per product spec §8.4 (app + postgres:16-alpine, healthchecks, volumes); `migrate deploy` on boot.
-- [ ] Verify `docker compose up` serves the app on `:5444` and `/api/health` passes.
+- [ ] Verify `docker compose up` serves the app on `:5470` and `/api/health` passes.
 - [ ] Commit: `feat(stage-1): client skeleton served by express + docker compose`
 
 ---

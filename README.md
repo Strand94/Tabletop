@@ -28,7 +28,7 @@ docker compose --env-file .env -f docker/docker-compose.yml up -d --build
 > The container derives its database URL from `DB_HOST=db`; the `DATABASE_URL`
 > in `.env` (pointing at `localhost`) is only used for local, non-Docker development.
 
-The app is served on `http://localhost:5444`. The **first account you register becomes the
+The app is served on `http://localhost:5470`. The **first account you register becomes the
 admin**; afterwards registration is admin-gated.
 
 ## Local development
@@ -55,22 +55,22 @@ This is an npm-workspaces monorepo:
 
 All configuration is via environment variables (see [`.env.example`](.env.example)):
 
-| Var                  | Required | Default            | Purpose                           |
-| -------------------- | -------- | ------------------ | --------------------------------- |
-| `DB_HOST`            | yes      | `db`               | Postgres host                     |
-| `DB_PORT`            | no       | `5432`             | Postgres port                     |
-| `DB_USER`            | yes      | —                  | Postgres user                     |
-| `DB_PASSWORD`        | yes      | —                  | Postgres password                 |
-| `DB_NAME`            | yes      | `boardgametracker` | Database name                     |
-| `JWT_SECRET`         | **yes**  | —                  | Access-token secret (fail-fast)   |
-| `JWT_REFRESH_SECRET` | **yes**  | —                  | Refresh-token secret (fail-fast)  |
-| `PORT`               | no       | `5444`             | App HTTP port                     |
-| `TZ`                 | no       | `UTC`              | Timezone                          |
-| `DEFAULT_CURRENCY`   | no       | `NOK`              | Instance currency code            |
-| `DEFAULT_LOCALE`     | no       | `en`               | Fallback UI language              |
-| `BGG_SYNC_ENABLED`   | no       | `false`            | Master switch for BGG rating sync |
-| `BGG_SYNC_PROVIDER`  | no       | `csv`              | `csv` \| `xmlapi`                 |
-| `BGG_API_TOKEN`      | no       | —                  | Only if provider is `xmlapi`      |
+| Var                  | Required | Default    | Purpose                           |
+| -------------------- | -------- | ---------- | --------------------------------- |
+| `DB_HOST`            | yes      | `db`       | Postgres host                     |
+| `DB_PORT`            | no       | `5432`     | Postgres port                     |
+| `DB_USER`            | yes      | —          | Postgres user                     |
+| `DB_PASSWORD`        | yes      | —          | Postgres password                 |
+| `DB_NAME`            | yes      | `tabletop` | Database name                     |
+| `JWT_SECRET`         | **yes**  | —          | Access-token secret (fail-fast)   |
+| `JWT_REFRESH_SECRET` | **yes**  | —          | Refresh-token secret (fail-fast)  |
+| `PORT`               | no       | `5470`     | App HTTP port                     |
+| `TZ`                 | no       | `UTC`      | Timezone                          |
+| `DEFAULT_CURRENCY`   | no       | `NOK`      | Instance currency code            |
+| `DEFAULT_LOCALE`     | no       | `en`       | Fallback UI language              |
+| `BGG_SYNC_ENABLED`   | no       | `false`    | Master switch for BGG rating sync |
+| `BGG_SYNC_PROVIDER`  | no       | `csv`      | `csv` \| `xmlapi`                 |
+| `BGG_API_TOKEN`      | no       | —          | Only if provider is `xmlapi`      |
 
 ## CI/CD
 

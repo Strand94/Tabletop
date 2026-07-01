@@ -379,7 +379,7 @@ API must validate that every id in `expansionIds` belongs to `gameId`.
 
 Two containers via Docker Compose:
 
-- **`app`** — combined Node/Express API + served React static bundle. Exposes one HTTP port (default **5444**, configurable).
+- **`app`** — combined Node/Express API + served React static bundle. Exposes one HTTP port (default **5470**, configurable).
 - **`db`** — `postgres:16-alpine`, data persisted to a named volume / bind mount.
 
 ### 8.2 Volumes
@@ -390,22 +390,22 @@ Two containers via Docker Compose:
 
 ### 8.3 Environment variables (`app`)
 
-| Var                  | Required | Default            | Purpose                              |
-| -------------------- | -------- | ------------------ | ------------------------------------ |
-| `DB_HOST`            | yes      | `db`               | Postgres host (compose service name) |
-| `DB_PORT`            | no       | `5432`             |                                      |
-| `DB_USER`            | yes      | —                  |                                      |
-| `DB_PASSWORD`        | yes      | —                  |                                      |
-| `DB_NAME`            | yes      | `boardgametracker` |                                      |
-| `JWT_SECRET`         | **yes**  | —                  | **fail fast if unset**               |
-| `JWT_REFRESH_SECRET` | yes      | —                  |                                      |
-| `PORT`               | no       | `5444`             | app HTTP port                        |
-| `TZ`                 | no       | `UTC`              | timezone                             |
-| `DEFAULT_CURRENCY`   | no       | `NOK`              | instance currency code               |
-| `DEFAULT_LOCALE`     | no       | `en`               | fallback UI language                 |
-| `BGG_SYNC_ENABLED`   | no       | `false`            | master switch for §9                 |
-| `BGG_SYNC_PROVIDER`  | no       | `csv`              | `csv` \| `xmlapi`                    |
-| `BGG_API_TOKEN`      | no       | —                  | only if provider=`xmlapi`            |
+| Var                  | Required | Default    | Purpose                              |
+| -------------------- | -------- | ---------- | ------------------------------------ |
+| `DB_HOST`            | yes      | `db`       | Postgres host (compose service name) |
+| `DB_PORT`            | no       | `5432`     |                                      |
+| `DB_USER`            | yes      | —          |                                      |
+| `DB_PASSWORD`        | yes      | —          |                                      |
+| `DB_NAME`            | yes      | `tabletop` |                                      |
+| `JWT_SECRET`         | **yes**  | —          | **fail fast if unset**               |
+| `JWT_REFRESH_SECRET` | yes      | —          |                                      |
+| `PORT`               | no       | `5470`     | app HTTP port                        |
+| `TZ`                 | no       | `UTC`      | timezone                             |
+| `DEFAULT_CURRENCY`   | no       | `NOK`      | instance currency code               |
+| `DEFAULT_LOCALE`     | no       | `en`       | fallback UI language                 |
+| `BGG_SYNC_ENABLED`   | no       | `false`    | master switch for §9                 |
+| `BGG_SYNC_PROVIDER`  | no       | `csv`      | `csv` \| `xmlapi`                    |
+| `BGG_API_TOKEN`      | no       | —          | only if provider=`xmlapi`            |
 
 ### 8.4 Example `docker-compose.yml`
 
@@ -419,15 +419,15 @@ services:
       db:
         condition: service_healthy
     ports:
-      - '5444:5444'
+      - '5470:5470'
     volumes:
       - ./images:/app/images
       - ./logs:/app/logs
     environment:
       - DB_HOST=db
-      - DB_USER=bgtuser
+      - DB_USER=tabletop
       - DB_PASSWORD=__CHANGEME__
-      - DB_NAME=boardgametracker
+      - DB_NAME=tabletop
       - DB_PORT=5432
       - JWT_SECRET=__CHANGEME_64_HEX__
       - JWT_REFRESH_SECRET=__CHANGEME_64_HEX__
@@ -435,7 +435,7 @@ services:
       - DEFAULT_CURRENCY=NOK
       - DEFAULT_LOCALE=nb
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5444/api/health']
+      test: ['CMD', 'curl', '-f', 'http://localhost:5470/api/health']
       interval: 30s
       timeout: 5s
       retries: 3
@@ -448,11 +448,11 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=boardgametracker
-      - POSTGRES_USER=bgtuser
+      - POSTGRES_DB=tabletop
+      - POSTGRES_USER=tabletop
       - POSTGRES_PASSWORD=__CHANGEME__
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U bgtuser -d boardgametracker']
+      test: ['CMD-SHELL', 'pg_isready -U tabletop -d tabletop']
       interval: 10s
       timeout: 5s
       retries: 5

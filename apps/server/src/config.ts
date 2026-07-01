@@ -16,13 +16,13 @@ const envSchema = z.object({
   DB_PORT: z.coerce.number().int().positive().default(5432),
   DB_USER: z.string().min(1, 'DB_USER is required'),
   DB_PASSWORD: z.string().min(1, 'DB_PASSWORD is required'),
-  DB_NAME: z.string().default('boardgametracker'),
+  DB_NAME: z.string().default('tabletop'),
   DATABASE_URL: z.string().url().optional(),
 
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
 
-  PORT: z.coerce.number().int().positive().default(5444),
+  PORT: z.coerce.number().int().positive().default(5470),
   TZ: z.string().default('UTC'),
   DEFAULT_CURRENCY: z.string().default('NOK'),
   DEFAULT_LOCALE: z.string().default('en'),
@@ -45,7 +45,7 @@ export function resolveDatabaseUrl(env: Record<string, string | undefined> = pro
     env.DATABASE_URL ??
     `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST ?? 'db'}:${
       env.DB_PORT ?? 5432
-    }/${env.DB_NAME ?? 'boardgametracker'}`
+    }/${env.DB_NAME ?? 'tabletop'}`
   );
 }
 

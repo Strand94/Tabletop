@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { loadConfig } from '../src/config.js';
 
 const validEnv = {
-  DB_USER: 'bgtuser',
+  DB_USER: 'tabletop',
   DB_PASSWORD: 'secret',
   JWT_SECRET: 'a'.repeat(64),
   JWT_REFRESH_SECRET: 'b'.repeat(64),
@@ -15,10 +15,10 @@ describe('loadConfig', () => {
 
   it('returns a typed config with defaults applied', () => {
     const config = loadConfig(validEnv);
-    expect(config.PORT).toBe(5444);
+    expect(config.PORT).toBe(5470);
     expect(config.DB_HOST).toBe('db');
     expect(config.DB_PORT).toBe(5432);
-    expect(config.DB_NAME).toBe('boardgametracker');
+    expect(config.DB_NAME).toBe('tabletop');
     expect(config.DEFAULT_CURRENCY).toBe('NOK');
     expect(config.DEFAULT_LOCALE).toBe('en');
     expect(config.BGG_SYNC_ENABLED).toBe(false);
@@ -33,7 +33,7 @@ describe('loadConfig', () => {
 
   it('derives DATABASE_URL from DB_* parts when not provided', () => {
     const config = loadConfig(validEnv);
-    expect(config.DATABASE_URL).toBe('postgresql://bgtuser:secret@db:5432/boardgametracker');
+    expect(config.DATABASE_URL).toBe('postgresql://tabletop:secret@db:5432/tabletop');
   });
 
   it('prefers an explicit DATABASE_URL when set', () => {
