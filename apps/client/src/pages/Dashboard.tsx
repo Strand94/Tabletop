@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Link } from 'react-router-dom';
 import type { DashboardStats } from '@tabletop/shared';
 import { useDashboardStats } from '../lib/stats-api.js';

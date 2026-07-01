@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState } from 'react';
 import type { ExpansionDto } from '@tabletop/shared';
 import { useAuth } from '../lib/auth.js';

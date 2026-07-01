@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState, type FormEvent } from 'react';
 import type { CreatePersonInput, PersonDto } from '@tabletop/shared';
 import { useCreatePerson, useUpdatePerson } from '../lib/people-api.js';

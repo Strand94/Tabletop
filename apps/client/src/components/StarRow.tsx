@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Icon } from './Icon.js';
 
 /** Five stars representing a 0–10 value (each star = 2 points), with half stars. */

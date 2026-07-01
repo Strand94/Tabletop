@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeleteSession, useSession } from '../lib/sessions-api.js';
 import { useRateSession } from '../lib/ratings-api.js';

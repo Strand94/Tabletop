@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
 import { useLocale, type LocaleSetter } from '../lib/i18n.js';

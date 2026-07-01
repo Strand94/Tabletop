@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LocaleProvider, useLocale } from '../src/lib/i18n.js';
