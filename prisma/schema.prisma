@@ -1,4 +1,4 @@
-// Tabletop data model. See docs/design/boardgame-tracker-design-spec.md §3.
+// Tabletop data model. See docs/design/tabletop-design-spec.md §3.
 // Prisma model names are PascalCase; table names are snake_case via @@map.
 
 generator client {

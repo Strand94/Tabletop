@@ -1,4 +1,4 @@
-# Board Game Tracker — Design Specification
+# Tabletop — Design Specification
 
 > A self-hosted, open-source board game collection and play-session tracker.
 > This document is a build-ready handover spec. It defines the data model, API surface,

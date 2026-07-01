@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Tabletop is a self-hosted board game collection and play-session tracker. Runs as two
 containers (app + PostgreSQL). Node >=20, npm workspaces monorepo, TypeScript everywhere.
 
-Design spec: `docs/design/boardgame-tracker-design-spec.md` (authoritative data model / API
+Design spec: `docs/design/tabletop-design-spec.md` (authoritative data model / API
 design). Build plan: `docs/superpowers/plans/2026-06-30-tabletop-mvp-slice.md`. The project is
 built in stages (branch names follow `build/stage-N-*`); check the current branch name against
 the plan to see which stage is in progress.
