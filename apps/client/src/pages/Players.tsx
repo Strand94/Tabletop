@@ -1,10 +1,20 @@
-import { useState } from 'react';
-import type { PersonDto } from '@tabletop/shared';
+import { useMemo, useState } from 'react';
+import type { PersonDto, PlayerStats } from '@tabletop/shared';
 import { useAuth } from '../lib/auth.js';
 import { useDeletePerson, usePeople } from '../lib/people-api.js';
+import { usePlayerStats } from '../lib/stats-api.js';
 import { PersonFormModal } from '../components/PersonFormModal.js';
 import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
+
+function Stat({ value, label }: { value: string; label: string }): JSX.Element {
+  return (
+    <div>
+      <div className="font-display text-[18px] font-semibold">{value}</div>
+      <div className="text-[10.5px] text-muted">{label}</div>
+    </div>
+  );
+}
 
 const avatar =
   'repeating-linear-gradient(135deg, var(--av1), var(--av1) 5px, var(--av2) 5px, var(--av2) 10px)';
@@ -19,11 +29,16 @@ function accountLabel(person: PersonDto): string {
 export function Players(): JSX.Element {
   const { user } = useAuth();
   const { data: people = [], isLoading } = usePeople();
+  const { data: stats = [] } = usePlayerStats();
   const del = useDeletePerson();
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<PersonDto | null>(null);
   const isAdmin = user?.role === 'ADMIN';
   const withAccounts = people.filter((p) => p.account).length;
+  const statsByPerson = useMemo(
+    () => new Map<number, PlayerStats>(stats.map((s) => [s.personId, s])),
+    [stats],
+  );
 
   return (
     <div className="px-7 pb-8 pt-5">
@@ -91,9 +106,39 @@ export function Players(): JSX.Element {
                   </button>
                 )}
               </div>
-              <div className="mt-3.5 border-t border-hairline pt-3 text-[11.5px] text-muted">
-                {t.players.noSessions}
-              </div>
+              {(() => {
+                const s = statsByPerson.get(person.id);
+                if (!s || s.plays === 0) {
+                  return (
+                    <div className="mt-3.5 border-t border-hairline pt-3 text-[11.5px] text-muted">
+                      {t.players.noSessions}
+                    </div>
+                  );
+                }
+                return (
+                  <>
+                    <div className="mt-4 grid grid-cols-2 gap-2.5">
+                      <Stat value={String(s.plays)} label={t.players.plays} />
+                      <div>
+                        <div className="font-display text-[18px] font-semibold text-accent-text">
+                          {Math.round(s.winRate * 100)}%
+                        </div>
+                        <div className="text-[10.5px] text-muted">{t.players.winRate}</div>
+                      </div>
+                      <Stat
+                        value={s.avgScore != null ? String(Math.round(s.avgScore)) : '—'}
+                        label={t.players.avgScore}
+                      />
+                      <Stat value={String(s.wins)} label={t.players.wins} />
+                    </div>
+                    {s.favoriteGame && (
+                      <div className="mt-3.5 border-t border-hairline pt-3 text-[11.5px] text-muted">
+                        {t.players.favorite} · <b className="text-muted2">{s.favoriteGame}</b>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           ))}
         </div>
