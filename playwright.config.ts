@@ -9,6 +9,8 @@ const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:5444';
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
+  // Specs share one Postgres + app instance; run them on a single worker.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['html'], ['github']] : 'list',
