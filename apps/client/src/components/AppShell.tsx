@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from './Icon.js';
 import { useGames } from '../lib/games-api.js';

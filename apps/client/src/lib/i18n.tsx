@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { setActiveTable, type Locale } from './strings.js';
 

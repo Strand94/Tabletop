@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState } from 'react';
 import { StarRow } from './StarRow.js';
 import { t } from '../lib/strings.js';

@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState, type FormEvent } from 'react';
 import type { CreateGameInput, GameDto } from '@tabletop/shared';
 import { useCategories, useCreateGame, useUpdateGame } from '../lib/games-api.js';

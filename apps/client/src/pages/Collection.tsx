@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CollectionStatus } from '@tabletop/shared';

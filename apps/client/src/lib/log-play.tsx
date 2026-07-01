@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogPlayModal } from '../components/LogPlayModal.js';

@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useState, type FormEvent } from 'react';
 import type { CreateExpansionInput, ExpansionDto } from '@tabletop/shared';
 import { useCreateExpansion, useUpdateExpansion } from '../lib/expansions-api.js';

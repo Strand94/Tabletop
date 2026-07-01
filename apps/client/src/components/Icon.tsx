@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 /** Material Symbols Rounded icon. `name` is the symbol ligature, e.g. "casino". */
 export function Icon({
   name,

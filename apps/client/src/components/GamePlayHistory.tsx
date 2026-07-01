@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Link } from 'react-router-dom';
 import { useSessions } from '../lib/sessions-api.js';
 import { durationLabel, shortDate, winnersLabel } from '../lib/datetime.js';

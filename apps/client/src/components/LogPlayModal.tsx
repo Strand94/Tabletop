@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import type { CreateSessionInput, GameDto } from '@tabletop/shared';
 import { useGames } from '../lib/games-api.js';
