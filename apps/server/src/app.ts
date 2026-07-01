@@ -11,6 +11,7 @@ import { createExpansionsRouter } from './modules/expansions/routes.js';
 import { createPeopleRouter } from './modules/people/routes.js';
 import { createLocationsRouter, createSessionsRouter } from './modules/sessions/routes.js';
 import { createStatsRouter } from './modules/stats/routes.js';
+import { createBggRouter } from './modules/bgg/routes.js';
 import { IMAGES_DIR } from './modules/uploads/image.js';
 import type { TokenService } from './modules/auth/service.js';
 
@@ -19,6 +20,11 @@ export interface AppDeps {
   tokens: TokenService;
   defaultLocale: string;
   defaultCurrency: string;
+  bgg?: {
+    enabled: boolean;
+    provider: string;
+    apiToken: string | undefined;
+  };
 }
 
 /**
@@ -62,6 +68,15 @@ export function createApp(deps?: AppDeps): Express {
     api.use(
       '/stats',
       createStatsRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
+    );
+    api.use(
+      '/sync',
+      createBggRouter({
+        tokens: deps.tokens,
+        enabled: deps.bgg?.enabled ?? false,
+        provider: deps.bgg?.provider ?? 'csv',
+        apiToken: deps.bgg?.apiToken,
+      }),
     );
   }
 
