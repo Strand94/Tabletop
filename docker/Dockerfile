@@ -22,6 +22,20 @@ COPY . .
 RUN npm run build --workspace @tabletop/client
 RUN npm run build --workspace @tabletop/server
 
+# ---- Prod deps stage: production-only node_modules (no dev tooling shipped) ----
+FROM node:26-alpine AS proddeps
+WORKDIR /app
+RUN apk add --no-cache python3 make g++ openssl
+# Prisma schema + config are needed by the postinstall `prisma generate`.
+COPY package.json package-lock.json prisma.config.ts ./
+COPY prisma prisma/
+COPY packages/shared/package.json packages/shared/
+COPY apps/server/package.json apps/server/
+COPY apps/client/package.json apps/client/
+# Production dependencies only (server runtime + prisma CLI + dotenv for the
+# boot-time `migrate deploy`); keeps dev tooling and its CVEs out of the image.
+RUN npm ci --omit=dev
+
 # ---- Runtime stage: minimal image that serves API + client ----
 FROM node:26-alpine AS runtime
 WORKDIR /app
@@ -29,10 +43,11 @@ RUN apk add --no-cache openssl curl
 ENV NODE_ENV=production
 ENV CLIENT_DIST=/app/client
 
-# node_modules carries runtime deps, the generated Prisma client, and the
-# Prisma CLI used for `migrate deploy` at boot.
-COPY --from=build /app/node_modules ./node_modules
+# Production-only node_modules (dev tooling excluded). The generated Prisma
+# client is bundled into the server dist by esbuild, so it need not be copied.
+COPY --from=proddeps /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/package-lock.json ./package-lock.json
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/apps/server/dist ./apps/server/dist
