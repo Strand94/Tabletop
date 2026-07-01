@@ -76,4 +76,83 @@ describe('GET /api/stats/dashboard', () => {
     expect(res.body.collectionValue).toBe(1000);
     expect(res.body.avgPrice).toBe(500);
   });
+
+  it('computes most-played, top players, and sessions-per-day', async () => {
+    const auth = { Authorization: `Bearer ${token}` };
+    const gameId = (await request(app).post('/api/games').set(auth).send({ title: 'Crimson' })).body
+      .id;
+    const maya = (await request(app).post('/api/people').set(auth).send({ name: 'Maya' })).body.id;
+    const theo = (await request(app).post('/api/people').set(auth).send({ name: 'Theo' })).body.id;
+
+    // Maya wins twice, Theo once.
+    for (const winner of [maya, maya, theo]) {
+      await request(app)
+        .post('/api/sessions')
+        .set(auth)
+        .send({
+          gameId,
+          start: new Date().toISOString(),
+          players: [
+            { personId: maya, won: winner === maya },
+            { personId: theo, won: winner === theo },
+          ],
+        });
+    }
+
+    const res = await request(app).get('/api/stats/dashboard').set(auth);
+    expect(res.body.mostPlayed[0]).toMatchObject({ gameId, plays: 3 });
+    expect(res.body.sessionsPerDay).toHaveLength(14);
+    expect(res.body.sessionsPerDay.at(-1).count).toBe(3);
+    expect(res.body.recentSessions).toHaveLength(3);
+
+    const maya1 = res.body.topPlayers.find((p: { personId: number }) => p.personId === maya);
+    expect(maya1.wins).toBe(2);
+    expect(maya1.plays).toBe(3);
+    expect(maya1.winRate).toBeCloseTo(2 / 3);
+  });
+
+  it('reports per-player stats with favourite game', async () => {
+    const auth = { Authorization: `Bearer ${token}` };
+    const gameId = (await request(app).post('/api/games').set(auth).send({ title: 'Crimson' })).body
+      .id;
+    const maya = (await request(app).post('/api/people').set(auth).send({ name: 'Maya' })).body.id;
+    await request(app)
+      .post('/api/sessions')
+      .set(auth)
+      .send({
+        gameId,
+        start: new Date().toISOString(),
+        players: [{ personId: maya, score: 90, won: true }],
+      });
+
+    const res = await request(app).get('/api/stats/players').set(auth);
+    const mayaStats = res.body.find((p: { personId: number }) => p.personId === maya);
+    expect(mayaStats).toMatchObject({
+      plays: 1,
+      wins: 1,
+      winRate: 1,
+      avgScore: 90,
+      favoriteGame: 'Crimson',
+    });
+  });
+
+  it('reports per-game stats', async () => {
+    const auth = { Authorization: `Bearer ${token}` };
+    const gameId = (await request(app).post('/api/games').set(auth).send({ title: 'Crimson' })).body
+      .id;
+    const maya = (await request(app).post('/api/people').set(auth).send({ name: 'Maya' })).body.id;
+    await request(app)
+      .post('/api/sessions')
+      .set(auth)
+      .send({
+        gameId,
+        start: new Date().toISOString(),
+        players: [{ personId: maya, won: true }],
+      });
+
+    const res = await request(app).get(`/api/stats/games/${gameId}`).set(auth);
+    expect(res.body).toMatchObject({ gameId, plays: 1 });
+    expect(res.body.lastPlayed).toBeTruthy();
+    expect(res.body.topPlayers[0].personId).toBe(maya);
+  });
 });

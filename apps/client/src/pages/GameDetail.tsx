@@ -5,6 +5,7 @@ import { useLogPlay } from '../lib/log-play.js';
 import { useRateGame } from '../lib/ratings-api.js';
 import { GameFormModal } from '../components/GameFormModal.js';
 import { ExpansionsSection } from '../components/ExpansionsSection.js';
+import { GamePlayHistory } from '../components/GamePlayHistory.js';
 import { RatingCard } from '../components/RatingCard.js';
 import { Icon } from '../components/Icon.js';
 import { playersLabel, playtimeLabel, priceLabel } from '../lib/format.js';
@@ -136,6 +137,7 @@ export function GameDetail(): JSX.Element {
           )}
 
           <ExpansionsSection gameId={game.id} currency={game.currency} />
+          <GamePlayHistory gameId={game.id} />
         </div>
       </div>
 
