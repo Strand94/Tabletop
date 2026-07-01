@@ -83,6 +83,8 @@ export interface SessionDto {
   expansions: SessionExpansionDto[];
   players: SessionPlayerDto[];
   images: SessionImageDto[];
+  /** The requesting user's rating of this specific play, if any (1.0–10.0). */
+  myRating: number | null;
   createdAt: string;
 }
 

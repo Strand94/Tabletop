@@ -26,6 +26,9 @@ const game: GameDto = {
   bggRank: null,
   bggSyncedAt: null,
   categories: [{ id: 1, name: 'Strategi' }],
+  myRating: null,
+  avgSessionRating: null,
+  sessionRatingCount: 0,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
@@ -51,5 +54,16 @@ describe('GameCard', () => {
   it('shows a WISHLIST badge for wishlist games', () => {
     renderCard({ ...game, collectionStatus: 'WISHLIST' });
     expect(screen.getByText('ØNSKE')).toBeInTheDocument();
+  });
+
+  it('shows the user rating badge when present', () => {
+    renderCard({ ...game, myRating: 8.6 });
+    const badge = screen.getByTestId('card-rating');
+    expect(badge).toHaveTextContent('8.6');
+  });
+
+  it('hides the rating badge when unrated', () => {
+    renderCard({ ...game, myRating: null });
+    expect(screen.queryByTestId('card-rating')).not.toBeInTheDocument();
   });
 });

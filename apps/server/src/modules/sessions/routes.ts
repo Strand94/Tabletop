@@ -5,12 +5,14 @@ import {
   createSessionSchema,
   sessionQuerySchema,
   updateSessionSchema,
+  upsertSessionRatingSchema,
 } from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
 import { requireAuth } from '../../middleware/auth.js';
 import type { TokenService } from '../auth/service.js';
 import { uploadImage, imageUrl } from '../uploads/image.js';
+import { upsertSessionRating } from '../ratings/service.js';
 import {
   addSessionImage,
   createSession,
@@ -37,7 +39,7 @@ export function createSessionsRouter(tokens: TokenService): Router {
   router.get('/', (req, res, next) => {
     void (async () => {
       const query = sessionQuerySchema.parse(req.query);
-      res.json(await listSessions(query));
+      res.json(await listSessions(query, req.user!.sub));
     })().catch(next);
   });
 
@@ -50,7 +52,14 @@ export function createSessionsRouter(tokens: TokenService): Router {
 
   router.get('/:id', (req, res, next) => {
     void (async () => {
-      res.json(await getSession(parseId(req.params.id)));
+      res.json(await getSession(parseId(req.params.id), req.user!.sub));
+    })().catch(next);
+  });
+
+  router.put('/:id/rating', (req, res, next) => {
+    void (async () => {
+      const input = upsertSessionRatingSchema.parse(req.body);
+      res.json(await upsertSessionRating(req.user!.sub, parseId(req.params.id), input));
     })().catch(next);
   });
 
@@ -72,7 +81,7 @@ export function createSessionsRouter(tokens: TokenService): Router {
     void (async () => {
       const id = parseId(req.params.id);
       if (!req.file) throw new HttpError(400, 'No image file provided');
-      res.json(await addSessionImage(id, imageUrl(path.basename(req.file.path))));
+      res.json(await addSessionImage(id, imageUrl(path.basename(req.file.path)), req.user!.sub));
     })().catch(next);
   });
 

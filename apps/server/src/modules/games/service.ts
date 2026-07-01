@@ -17,8 +17,16 @@ function dateOnly(value: Date | null): string | null {
   return value === null ? null : value.toISOString().slice(0, 10);
 }
 
+interface RatingFields {
+  myRating: number | null;
+  avgSessionRating: number | null;
+  sessionRatingCount: number;
+}
+
+const NO_RATINGS: RatingFields = { myRating: null, avgSessionRating: null, sessionRatingCount: 0 };
+
 /** Map a Prisma game (with categories) to the API DTO. */
-export function toGameDto(game: GameWithCategories): GameDto {
+export function toGameDto(game: GameWithCategories, ratings: RatingFields = NO_RATINGS): GameDto {
   return {
     id: game.id,
     title: game.title,
@@ -41,6 +49,9 @@ export function toGameDto(game: GameWithCategories): GameDto {
     bggRank: game.bggRank,
     bggSyncedAt: game.bggSyncedAt ? game.bggSyncedAt.toISOString() : null,
     categories: game.categories.map((gc) => ({ id: gc.category.id, name: gc.category.name })),
+    myRating: ratings.myRating,
+    avgSessionRating: ratings.avgSessionRating,
+    sessionRatingCount: ratings.sessionRatingCount,
     createdAt: game.createdAt.toISOString(),
     updatedAt: game.updatedAt.toISOString(),
   };
@@ -74,7 +85,7 @@ function toWritableData(input: Partial<CreateGameInput>): Omit<
   };
 }
 
-export async function listGames(query: GameQuery): Promise<GameDto[]> {
+export async function listGames(query: GameQuery, userId: number): Promise<GameDto[]> {
   const where: Prisma.GameWhereInput = {};
   if (query.status) where.collectionStatus = query.status;
   if (query.category) where.categories = { some: { categoryId: query.category } };
@@ -85,13 +96,40 @@ export async function listGames(query: GameQuery): Promise<GameDto[]> {
     include: gameInclude,
     orderBy: { [query.sort]: query.order },
   });
-  return games.map(toGameDto);
+
+  // One query for the user's ratings across the listed games (cards show the star).
+  const myRatings = await prisma.userGameRating.findMany({
+    where: { userId, gameId: { in: games.map((g) => g.id) } },
+  });
+  const ratingByGame = new Map(myRatings.map((r) => [r.gameId, r.rating.toNumber()]));
+
+  return games.map((g) =>
+    toGameDto(g, {
+      myRating: ratingByGame.get(g.id) ?? null,
+      avgSessionRating: null,
+      sessionRatingCount: 0,
+    }),
+  );
 }
 
-export async function getGame(id: number): Promise<GameDto> {
+export async function getGame(id: number, userId: number): Promise<GameDto> {
   const game = await prisma.game.findUnique({ where: { id }, include: gameInclude });
   if (!game) throw new HttpError(404, 'Game not found');
-  return toGameDto(game);
+
+  const [myRating, sessionAgg] = await Promise.all([
+    prisma.userGameRating.findUnique({ where: { userId_gameId: { userId, gameId: id } } }),
+    prisma.userSessionRating.aggregate({
+      where: { session: { gameId: id } },
+      _avg: { rating: true },
+      _count: { rating: true },
+    }),
+  ]);
+
+  return toGameDto(game, {
+    myRating: myRating?.rating.toNumber() ?? null,
+    avgSessionRating: sessionAgg._avg.rating?.toNumber() ?? null,
+    sessionRatingCount: sessionAgg._count.rating,
+  });
 }
 
 export async function createGame(

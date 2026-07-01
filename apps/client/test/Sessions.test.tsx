@@ -22,6 +22,7 @@ const session: SessionDto = {
     { personId: 2, name: 'Theo', score: 74, won: false, firstPlay: true, color: null },
   ],
   images: [],
+  myRating: null,
   createdAt: '2026-06-24T20:10:00.000Z',
 };
 
