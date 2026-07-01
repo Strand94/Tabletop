@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGame } from '../lib/games-api.js';
+import { useLogPlay } from '../lib/log-play.js';
 import { GameFormModal } from '../components/GameFormModal.js';
 import { ExpansionsSection } from '../components/ExpansionsSection.js';
 import { Icon } from '../components/Icon.js';
@@ -24,6 +25,7 @@ export function GameDetail(): JSX.Element {
   const { id } = useParams();
   const gameId = Number(id);
   const { data: game, isLoading, isError } = useGame(gameId);
+  const { openLogPlay } = useLogPlay();
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <p className="p-7 text-[13px] text-muted">{t.common.loading}</p>;
@@ -53,8 +55,16 @@ export function GameDetail(): JSX.Element {
           </div>
           <button
             type="button"
+            onClick={() => openLogPlay(game.id)}
+            className="mt-3.5 flex w-full items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-[13px] font-semibold text-on-accent"
+          >
+            <Icon name="casino" size={18} />
+            {t.sessions.logPlay}
+          </button>
+          <button
+            type="button"
             onClick={() => setEditing(true)}
-            className="mt-3.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-card py-2.5 text-[12.5px] font-semibold text-muted2"
+            className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-card py-2.5 text-[12.5px] font-semibold text-muted2"
           >
             <Icon name="edit" size={17} />
             {t.gameDetail.edit}
