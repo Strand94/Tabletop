@@ -90,6 +90,11 @@ export async function listGames(query: GameQuery, userId: number): Promise<GameD
   if (query.status) where.collectionStatus = query.status;
   if (query.category) where.categories = { some: { categoryId: query.category } };
   if (query.q) where.title = { contains: query.q, mode: 'insensitive' };
+  if (query.neverPlayed) {
+    // Shelf of shame: owned games with no logged sessions (spec §4.2).
+    where.collectionStatus = 'OWNED';
+    where.sessions = { none: {} };
+  }
 
   const games = await prisma.game.findMany({
     where,

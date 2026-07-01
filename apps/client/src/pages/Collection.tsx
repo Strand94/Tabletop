@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { CollectionStatus } from '@tabletop/shared';
 import { useCategories, useGames, type GamesFilter } from '../lib/games-api.js';
 import { GameCard } from '../components/GameCard.js';
@@ -10,6 +11,8 @@ type StatusTab = 'ALL' | CollectionStatus;
 
 /** Collection screen: status tabs, category chips, search, and the game grid. */
 export function Collection(): JSX.Element {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const shelf = searchParams.get('shelf') === '1';
   const [tab, setTab] = useState<StatusTab>('ALL');
   const [category, setCategory] = useState<number | undefined>();
   const [q, setQ] = useState('');
@@ -17,11 +20,12 @@ export function Collection(): JSX.Element {
 
   const filter = useMemo<GamesFilter>(
     () => ({
-      status: tab === 'ALL' ? undefined : tab,
+      status: shelf ? undefined : tab === 'ALL' ? undefined : tab,
       category,
       q: q.trim() || undefined,
+      neverPlayed: shelf || undefined,
     }),
-    [tab, category, q],
+    [tab, category, q, shelf],
   );
 
   const { data: games = [], isLoading } = useGames(filter);
@@ -35,6 +39,22 @@ export function Collection(): JSX.Element {
 
   return (
     <div className="px-7 pb-8 pt-5">
+      {shelf && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-accent bg-accent-soft px-4 py-3">
+          <Icon name="weekend" size={18} className="text-accent-text" />
+          <div className="flex-1">
+            <div className="text-[13px] font-semibold text-accent-text">{t.shelfOfShame.title}</div>
+            <div className="text-[11.5px] text-muted2">{t.shelfOfShame.body}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSearchParams({})}
+            className="rounded-lg border border-border bg-card px-3 py-1.5 text-[12px] font-semibold text-muted2"
+          >
+            {t.collection.all}
+          </button>
+        </div>
+      )}
       {/* Filter bar */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="flex gap-0.5 rounded-xl border border-border bg-card p-[3px]">

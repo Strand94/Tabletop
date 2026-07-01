@@ -29,6 +29,11 @@ function main(): void {
     tokens: tokenServiceFromConfig(config),
     defaultLocale: config.DEFAULT_LOCALE,
     defaultCurrency: config.DEFAULT_CURRENCY,
+    bgg: {
+      enabled: config.BGG_SYNC_ENABLED,
+      provider: config.BGG_SYNC_PROVIDER,
+      apiToken: config.BGG_API_TOKEN,
+    },
   });
   app.listen(config.PORT, () => {
     logger.info(`Tabletop server listening on port ${config.PORT}`);

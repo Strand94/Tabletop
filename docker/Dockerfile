@@ -35,8 +35,11 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/apps/server/dist ./apps/server/dist
 COPY --from=build /app/apps/client/dist ./client
 
-# Volumes for uploaded images and logs.
-RUN mkdir -p /app/images /app/logs
+# Volumes for uploaded images and logs, owned by the non-root runtime user.
+RUN mkdir -p /app/images /app/logs && chown -R node:node /app
+
+# Drop privileges: run as the built-in non-root `node` user.
+USER node
 
 EXPOSE 5444
 CMD ["node", "apps/server/dist/server.js"]

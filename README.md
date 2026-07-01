@@ -72,6 +72,17 @@ All configuration is via environment variables (see [`.env.example`](.env.exampl
 | `BGG_SYNC_PROVIDER`  | no       | `csv`              | `csv` \| `xmlapi`                 |
 | `BGG_API_TOKEN`      | no       | —                  | Only if provider is `xmlapi`      |
 
+## CI/CD
+
+Every pull request runs the full gauntlet in GitHub Actions: ESLint + Prettier, TypeScript
+typecheck, Vitest unit tests, Supertest integration tests (against a Postgres service),
+Playwright end-to-end tests, `npm audit`, **Trivy** (deps/config/secret scan), **CodeQL** and
+**Semgrep** (SAST), and **Gitleaks** (secret scan). Dependabot keeps dependencies current.
+
+Tagging a release (`git tag v0.2.0 && git push --tags`) builds the image, scans it with Trivy,
+and pushes semver-tagged images to **GHCR** (`ghcr.io/strand94/tabletop`). Pin a version in
+production rather than relying on `latest`.
+
 ## License
 
 [MIT](LICENSE).

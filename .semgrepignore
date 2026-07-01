@@ -1,0 +1,16 @@
+# Test fixtures use dummy secrets/tokens by design.
+**/test/**
+**/*.test.ts
+**/*.int.test.ts
+e2e/
+
+# Documented placeholders, not real secrets.
+.env.example
+docker/docker-compose.yml
+docs/
+
+# Generated / vendored.
+node_modules/
+dist/
+**/dist/**
+prisma/migrations/
