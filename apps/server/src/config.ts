@@ -35,6 +35,21 @@ const envSchema = z.object({
 export type Config = z.infer<typeof envSchema> & { DATABASE_URL: string };
 
 /**
+ * Resolve the Postgres connection string without running full config
+ * validation. Prefers an explicit `DATABASE_URL`, otherwise derives it from the
+ * `DB_*` vars. Used by the Prisma driver adapter (`db.ts`), which is
+ * instantiated at import time and must stay lazy — no throwing here.
+ */
+export function resolveDatabaseUrl(env: Record<string, string | undefined> = process.env): string {
+  return (
+    env.DATABASE_URL ??
+    `postgresql://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST ?? 'db'}:${
+      env.DB_PORT ?? 5432
+    }/${env.DB_NAME ?? 'boardgametracker'}`
+  );
+}
+
+/**
  * Parse and validate configuration from an env-like record (defaults to
  * `process.env`). Throws a descriptive error listing every problem.
  */
@@ -48,9 +63,5 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
   }
 
   const c = parsed.data;
-  const databaseUrl =
-    c.DATABASE_URL ??
-    `postgresql://${c.DB_USER}:${c.DB_PASSWORD}@${c.DB_HOST}:${c.DB_PORT}/${c.DB_NAME}`;
-
-  return { ...c, DATABASE_URL: databaseUrl };
+  return { ...c, DATABASE_URL: resolveDatabaseUrl(env) };
 }

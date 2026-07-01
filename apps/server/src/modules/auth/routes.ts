@@ -6,7 +6,7 @@ import {
   updateMeSchema,
   type UserPublic,
 } from '@tabletop/shared';
-import type { User } from '@prisma/client';
+import type { User } from '../../../generated/prisma/client.js';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
 import { requireAuth } from '../../middleware/auth.js';

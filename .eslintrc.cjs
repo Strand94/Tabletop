@@ -25,6 +25,7 @@ module.exports = {
     'build',
     'coverage',
     'playwright-report',
+    'apps/server/generated',
     '**/*.config.js',
     '**/*.config.cjs',
     'docs/design/mockups',
