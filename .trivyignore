@@ -1,0 +1,11 @@
+# Trivy ignore list. Each entry MUST document why it is safe to ignore.
+
+# CVE-2026-12151 — undici DoS (unbounded memory) in the base image's *bundled
+# npm* CLI at /usr/local/lib/node_modules/npm/node_modules/undici@6.26.0.
+# This is Node's base-image tooling (node:26-alpine), not an application runtime
+# dependency: our app/node_modules contains no vulnerable undici (only
+# undici-types, 0 CVEs). npm is invoked only at container boot for
+# `prisma migrate deploy` against our own Postgres, so undici's HTTP client is
+# never exercised at runtime. Remove this entry once the node:26-alpine base
+# ships an npm with undici >= 6.27.0.
+CVE-2026-12151
