@@ -48,8 +48,9 @@ export const authTokensSchema = z.object({
 export type AuthTokens = z.infer<typeof authTokensSchema>;
 
 /** Decoded JWT claims we put on the access/refresh tokens. */
-export interface TokenPayload {
-  sub: number;
-  username: string;
-  role: Role;
-}
+export const tokenPayloadSchema = z.object({
+  sub: z.number().int().positive(),
+  username: z.string().min(1),
+  role: Role,
+});
+export type TokenPayload = z.infer<typeof tokenPayloadSchema>;

@@ -154,4 +154,39 @@ describe('games API', () => {
     const after = await request(app).get(`/api/games/${id}`).set(auth(memberToken));
     expect(after.status).toBe(404);
   });
+
+  it('stores uploaded images with a safe extension derived from the MIME type', async () => {
+    const created = await request(app)
+      .post('/api/games')
+      .set(auth(memberToken))
+      .send({ title: 'With Cover' });
+    // A tiny valid-enough PNG buffer, uploaded under a malicious filename but a
+    // declared image/png content type. The stored path must not be .html.
+    const res = await request(app)
+      .post(`/api/games/${created.body.id}/image`)
+      .set(auth(memberToken))
+      .attach('image', Buffer.from([0x89, 0x50, 0x4e, 0x47]), {
+        filename: 'evil.html',
+        contentType: 'image/png',
+      });
+    expect(res.status).toBe(200);
+    expect(res.body.imagePath).toMatch(/^\/images\/[a-f0-9-]+\.png$/);
+    expect(res.body.imagePath).not.toContain('.html');
+  });
+
+  it('rejects a disallowed upload type (svg)', async () => {
+    const created = await request(app)
+      .post('/api/games')
+      .set(auth(memberToken))
+      .send({ title: 'No SVG' });
+    const res = await request(app)
+      .post(`/api/games/${created.body.id}/image`)
+      .set(auth(memberToken))
+      .attach('image', Buffer.from('<svg/>'), {
+        filename: 'x.svg',
+        contentType: 'image/svg+xml',
+      });
+    // fileFilter drops the file → no file on the request → 400 from the route.
+    expect(res.status).toBe(400);
+  });
 });

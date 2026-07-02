@@ -19,8 +19,8 @@ const envSchema = z.object({
   DB_NAME: z.string().default('tabletop'),
   DATABASE_URL: z.string().url().optional(),
 
-  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
-  JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
+  JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
 
   PORT: z.coerce.number().int().positive().default(5470),
   TZ: z.string().default('UTC'),

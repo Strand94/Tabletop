@@ -13,6 +13,10 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ ...validEnv, JWT_SECRET: undefined })).toThrow();
   });
 
+  it('rejects a JWT secret shorter than 32 characters', () => {
+    expect(() => loadConfig({ ...validEnv, JWT_SECRET: 'too-short' })).toThrow(/32 characters/);
+  });
+
   it('returns a typed config with defaults applied', () => {
     const config = loadConfig(validEnv);
     expect(config.PORT).toBe(5470);
