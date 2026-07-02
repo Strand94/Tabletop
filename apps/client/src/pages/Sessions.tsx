@@ -1,8 +1,10 @@
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSessions } from '../lib/sessions-api.js';
 import { useLogPlay } from '../lib/log-play.js';
 import { Icon } from '../components/Icon.js';
+import { Pager } from '../components/Pager.js';
 import { durationLabel, shortDate, winnersLabel } from '../lib/datetime.js';
 import { t } from '../lib/strings.js';
 
@@ -11,7 +13,9 @@ const cover =
 
 /** Sessions list: a table of logged plays, most recent first. */
 export function Sessions(): JSX.Element {
-  const { data: sessions = [], isLoading } = useSessions();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useSessions({ page });
+  const sessions = data?.items ?? [];
   const { openLogPlay } = useLogPlay();
 
   return (
@@ -66,6 +70,10 @@ export function Sessions(): JSX.Element {
             </Link>
           ))}
         </div>
+      )}
+
+      {data && (
+        <Pager page={data.page} pageSize={data.pageSize} total={data.total} onPage={setPage} />
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   CreateSessionInput,
   LocationDto,
+  Paginated,
   SessionDto,
   UpdateSessionInput,
 } from '@tabletop/shared';
@@ -10,12 +11,16 @@ import { apiFetch } from './api.js';
 export interface SessionsFilter {
   game?: number;
   person?: number;
+  page?: number;
+  pageSize?: number;
 }
 
 function queryString(filter: SessionsFilter): string {
   const params = new URLSearchParams();
   if (filter.game) params.set('game', String(filter.game));
   if (filter.person) params.set('person', String(filter.person));
+  if (filter.page) params.set('page', String(filter.page));
+  if (filter.pageSize) params.set('pageSize', String(filter.pageSize));
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -23,7 +28,7 @@ function queryString(filter: SessionsFilter): string {
 export function useSessions(filter: SessionsFilter = {}) {
   return useQuery({
     queryKey: ['sessions', filter],
-    queryFn: () => apiFetch<SessionDto[]>(`/api/sessions${queryString(filter)}`),
+    queryFn: () => apiFetch<Paginated<SessionDto>>(`/api/sessions${queryString(filter)}`),
   });
 }
 

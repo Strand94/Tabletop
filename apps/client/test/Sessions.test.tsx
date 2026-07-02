@@ -33,7 +33,7 @@ function renderWith(data: SessionDto[]) {
       ok: true,
       status: 200,
       headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => data,
+      json: async () => ({ items: data, total: data.length, page: 1, pageSize: 25 }),
     }),
   );
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });

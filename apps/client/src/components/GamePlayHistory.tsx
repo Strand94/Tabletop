@@ -6,14 +6,16 @@ import { t } from '../lib/strings.js';
 
 /** Recent plays of a game, shown on its detail page. */
 export function GamePlayHistory({ gameId }: { gameId: number }): JSX.Element {
-  const { data: sessions = [] } = useSessions({ game: gameId });
+  const { data } = useSessions({ game: gameId, pageSize: 8 });
+  const sessions = data?.items ?? [];
+  const total = data?.total ?? sessions.length;
 
   return (
     <div className="mt-6">
       <div className="mb-3 text-[15px] font-semibold">
         {t.gameDetail.playHistory}{' '}
         <span className="font-medium text-muted">
-          {sessions.length} {t.gameDetail.plays}
+          {total} {t.gameDetail.plays}
         </span>
       </div>
       {sessions.length === 0 ? (

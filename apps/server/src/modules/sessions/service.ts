@@ -1,6 +1,7 @@
 import type { Prisma } from '../../../generated/prisma/client.js';
 import type {
   CreateSessionInput,
+  Paginated,
   PlayerResultInput,
   SessionDto,
   SessionQuery,
@@ -111,7 +112,10 @@ export async function createSession(input: CreateSessionInput): Promise<SessionD
   return toSessionDto(session);
 }
 
-export async function listSessions(query: SessionQuery, userId: number): Promise<SessionDto[]> {
+export async function listSessions(
+  query: SessionQuery,
+  userId: number,
+): Promise<Paginated<SessionDto>> {
   const where: Prisma.SessionWhereInput = {};
   if (query.game) where.gameId = query.game;
   if (query.person) where.players = { some: { personId: query.person } };
@@ -120,18 +124,29 @@ export async function listSessions(query: SessionQuery, userId: number): Promise
     if (query.from) where.start.gte = new Date(query.from);
     if (query.to) where.start.lte = new Date(query.to);
   }
-  const sessions = await prisma.session.findMany({
-    where,
-    include: sessionInclude,
-    orderBy: { start: 'desc' },
-  });
+
+  const [total, sessions] = await Promise.all([
+    prisma.session.count({ where }),
+    prisma.session.findMany({
+      where,
+      include: sessionInclude,
+      orderBy: { start: 'desc' },
+      skip: (query.page - 1) * query.pageSize,
+      take: query.pageSize,
+    }),
+  ]);
 
   const myRatings = await prisma.userSessionRating.findMany({
     where: { userId, sessionId: { in: sessions.map((s) => s.id) } },
   });
   const ratingBySession = new Map(myRatings.map((r) => [r.sessionId, r.rating.toNumber()]));
 
-  return sessions.map((s) => toSessionDto(s, ratingBySession.get(s.id) ?? null));
+  return {
+    items: sessions.map((s) => toSessionDto(s, ratingBySession.get(s.id) ?? null)),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+  };
 }
 
 export async function getSession(id: number, userId: number): Promise<SessionDto> {

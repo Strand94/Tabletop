@@ -208,7 +208,8 @@ function Legend({
 /** Dashboard: headline counters, collection breakdown, recently added. */
 export function Dashboard(): JSX.Element {
   const { data: stats, isLoading } = useDashboardStats();
-  const { data: recent = [] } = useGames({ sort: 'createdAt', order: 'desc' });
+  const { data: recentPage } = useGames({ sort: 'createdAt', order: 'desc', pageSize: 5 });
+  const recent = recentPage?.items ?? [];
 
   if (isLoading || !stats) {
     return <p className="p-7 text-[13px] text-muted">{t.common.loading}</p>;

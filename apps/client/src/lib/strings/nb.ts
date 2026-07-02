@@ -222,6 +222,11 @@ export const nb = {
     loading: 'Laster…',
     error: 'Noe gikk galt',
   },
+  pager: {
+    prev: 'Forrige',
+    next: 'Neste',
+    of: 'av',
+  },
 };
 
 export type Strings = typeof nb;

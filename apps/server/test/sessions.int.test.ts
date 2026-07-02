@@ -134,14 +134,14 @@ describe('sessions API', () => {
         players: [{ personId: mayaId, won: true }],
       });
 
-    expect((await request(app).get(`/api/sessions?game=${gameId}`).set(auth())).body).toHaveLength(
-      1,
-    );
     expect(
-      (await request(app).get(`/api/sessions?person=${theoId}`).set(auth())).body,
+      (await request(app).get(`/api/sessions?game=${gameId}`).set(auth())).body.items,
     ).toHaveLength(1);
     expect(
-      (await request(app).get(`/api/sessions?person=${mayaId}`).set(auth())).body,
+      (await request(app).get(`/api/sessions?person=${theoId}`).set(auth())).body.items,
+    ).toHaveLength(1);
+    expect(
+      (await request(app).get(`/api/sessions?person=${mayaId}`).set(auth())).body.items,
     ).toHaveLength(2);
   });
 

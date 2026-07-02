@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CollectionStatus, GameType } from './enums.js';
+import { paginationFields } from './pagination.js';
 
 /**
  * Game create/update payloads. BGG sync fields (bggRating/bggRank/bggSyncedAt)
@@ -70,6 +71,7 @@ export const gameQuerySchema = z.object({
     .union([z.literal('true'), z.literal('false')])
     .optional()
     .transform((v) => v === 'true'),
+  ...paginationFields(24),
 });
 export type GameQuery = z.infer<typeof gameQuerySchema>;
 

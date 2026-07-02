@@ -40,7 +40,8 @@ export function AppShell(): JSX.Element {
   const { theme, toggle } = useTheme();
   const { locale, setLocale } = useLocale();
   const { openLogPlay } = useLogPlay();
-  const { data: shelfGames = [] } = useGames({ neverPlayed: true });
+  const { data: shelfPage } = useGames({ neverPlayed: true, pageSize: 1 });
+  const shelfCount = shelfPage?.total ?? 0;
   const location = useLocation();
   const active = NAV.find((n) =>
     n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to),
@@ -72,7 +73,7 @@ export function AppShell(): JSX.Element {
           ))}
         </nav>
 
-        {shelfGames.length > 0 && (
+        {shelfCount > 0 && (
           <Link
             to="/collection?shelf=1"
             className="mt-[18px] block rounded-xl border border-border bg-accent-soft p-3 no-underline"
@@ -81,7 +82,7 @@ export function AppShell(): JSX.Element {
               {t.shelfOfShame.title}
             </div>
             <div className="mt-0.5 text-[11px] leading-snug text-muted2">
-              <b>{shelfGames.length}</b> · {t.shelfOfShame.body}
+              <b>{shelfCount}</b> · {t.shelfOfShame.body}
             </div>
           </Link>
         )}

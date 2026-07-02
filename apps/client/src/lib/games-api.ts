@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CategoryDto, CreateGameInput, GameDto, UpdateGameInput } from '@tabletop/shared';
+import type {
+  CategoryDto,
+  CreateGameInput,
+  GameDto,
+  Paginated,
+  UpdateGameInput,
+} from '@tabletop/shared';
 import { apiFetch } from './api.js';
 
 export interface GamesFilter {
@@ -9,6 +15,8 @@ export interface GamesFilter {
   sort?: string;
   order?: 'asc' | 'desc';
   neverPlayed?: boolean;
+  page?: number;
+  pageSize?: number;
 }
 
 function gamesQueryString(filter: GamesFilter): string {
@@ -19,6 +27,8 @@ function gamesQueryString(filter: GamesFilter): string {
   if (filter.sort) params.set('sort', filter.sort);
   if (filter.order) params.set('order', filter.order);
   if (filter.neverPlayed) params.set('neverPlayed', 'true');
+  if (filter.page) params.set('page', String(filter.page));
+  if (filter.pageSize) params.set('pageSize', String(filter.pageSize));
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -26,7 +36,7 @@ function gamesQueryString(filter: GamesFilter): string {
 export function useGames(filter: GamesFilter = {}) {
   return useQuery({
     queryKey: ['games', filter],
-    queryFn: () => apiFetch<GameDto[]>(`/api/games${gamesQueryString(filter)}`),
+    queryFn: () => apiFetch<Paginated<GameDto>>(`/api/games${gamesQueryString(filter)}`),
   });
 }
 
