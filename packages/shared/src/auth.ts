@@ -52,5 +52,7 @@ export const tokenPayloadSchema = z.object({
   sub: z.number().int().positive(),
   username: z.string().min(1),
   role: Role,
+  /** Snapshot of the user's tokenVersion; a mismatch on refresh means revoked. */
+  tokenVersion: z.number().int().nonnegative(),
 });
 export type TokenPayload = z.infer<typeof tokenPayloadSchema>;

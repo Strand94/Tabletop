@@ -103,6 +103,35 @@ describe('auth flow', () => {
     expect(res.body.accessToken).toBeTruthy();
   });
 
+  it('revokes outstanding refresh tokens on logout', async () => {
+    await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'maya', password: 'supersecret' });
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ username: 'maya', password: 'supersecret' });
+    const { accessToken, refreshToken } = login.body;
+
+    // Log out (bumps tokenVersion).
+    const logout = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${accessToken}`);
+    expect(logout.status).toBe(204);
+
+    // The old refresh token is now rejected.
+    const revoked = await request(app).post('/api/auth/refresh').send({ refreshToken });
+    expect(revoked.status).toBe(401);
+
+    // A fresh login still works and its refresh token is valid.
+    const relogin = await request(app)
+      .post('/api/auth/login')
+      .send({ username: 'maya', password: 'supersecret' });
+    const refreshed = await request(app)
+      .post('/api/auth/refresh')
+      .send({ refreshToken: relogin.body.refreshToken });
+    expect(refreshed.status).toBe(200);
+  });
+
   it('rejects duplicate usernames (409)', async () => {
     await request(app)
       .post('/api/auth/register')
