@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import express, { type Express, Router } from 'express';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { pinoHttp } from 'pino-http';
 import { logger } from './logger.js';
 import { errorHandler, notFound } from './middleware/error.js';
@@ -46,7 +47,27 @@ function resolveClientDist(): string | null {
 export function createApp(deps?: AppDeps): Express {
   const app = express();
 
-  app.use(helmet());
+  // Helmet with a CSP that permits the Google Fonts + Material Symbols the
+  // client loads, and inline style attributes (React uses `style={}` widely).
+  // Everything else stays same-origin. Self-hosting the fonts later would let
+  // us drop the font-CDN allowances entirely.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          'default-src': ["'self'"],
+          'script-src': ["'self'"],
+          'style-src': ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
+          'font-src': ["'self'", 'https://fonts.gstatic.com'],
+          'img-src': ["'self'", 'data:'],
+          'connect-src': ["'self'"],
+          'object-src': ["'none'"],
+          'base-uri': ["'self'"],
+          'frame-ancestors': ["'self'"],
+        },
+      },
+    }),
+  );
   app.use(express.json());
   app.use(pinoHttp({ logger }));
 
@@ -55,8 +76,18 @@ export function createApp(deps?: AppDeps): Express {
     res.json({ status: 'ok' });
   });
 
+  // Throttle auth endpoints against brute-force/credential-stuffing. Trust the
+  // proxy count from the runtime (behind the compose network / reverse proxy).
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 50,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: { error: 'Too many attempts, please try again later' },
+  });
+
   if (deps) {
-    api.use('/auth', createAuthRouter(deps));
+    api.use('/auth', authLimiter, createAuthRouter(deps));
     api.use(
       '/games',
       createGamesRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),

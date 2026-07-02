@@ -1,6 +1,6 @@
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
-import type { TokenPayload } from '@tabletop/shared';
+import { tokenPayloadSchema, type TokenPayload } from '@tabletop/shared';
 
 /** Hash a plaintext password with argon2id. */
 export function hashPassword(password: string): Promise<string> {
@@ -30,16 +30,13 @@ export interface TokenService {
   verifyRefresh(token: string): TokenPayload;
 }
 
-/** Strip JWT's own claims (iat/exp/...) down to our payload shape. */
+/**
+ * Validate the decoded JWT down to our payload shape. A token with a valid
+ * signature but an unexpected/tampered claim set is rejected rather than
+ * producing an ill-typed `req.user`.
+ */
 function toPayload(decoded: jwt.JwtPayload | string): TokenPayload {
-  if (typeof decoded === 'string') {
-    throw new Error('Unexpected token payload');
-  }
-  return {
-    sub: decoded.sub as unknown as number,
-    username: decoded.username as string,
-    role: decoded.role as TokenPayload['role'],
-  };
+  return tokenPayloadSchema.parse(decoded);
 }
 
 /**
