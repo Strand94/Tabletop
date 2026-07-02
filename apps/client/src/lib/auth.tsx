@@ -60,6 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   }, []);
 
   const logout = useCallback(() => {
+    // Best-effort server-side revocation (bumps tokenVersion → refresh tokens
+    // invalid). Clear locally regardless of the request outcome.
+    void apiFetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     clearTokens();
     setUser(null);
   }, []);

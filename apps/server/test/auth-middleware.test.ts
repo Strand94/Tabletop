@@ -23,8 +23,8 @@ function makeApp() {
   return app;
 }
 
-const adminPayload: TokenPayload = { sub: 1, username: 'maya', role: 'ADMIN' };
-const memberPayload: TokenPayload = { sub: 2, username: 'theo', role: 'MEMBER' };
+const adminPayload: TokenPayload = { sub: 1, username: 'maya', role: 'ADMIN', tokenVersion: 0 };
+const memberPayload: TokenPayload = { sub: 2, username: 'theo', role: 'MEMBER', tokenVersion: 0 };
 
 describe('requireAuth', () => {
   it('rejects requests without a token (401)', async () => {

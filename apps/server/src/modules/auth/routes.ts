@@ -27,6 +27,16 @@ function toPublic(user: User): UserPublic {
   };
 }
 
+/** JWT payload for a user, snapshotting the current tokenVersion. */
+function payloadFor(user: User) {
+  return {
+    sub: user.id,
+    username: user.username,
+    role: user.role,
+    tokenVersion: user.tokenVersion,
+  };
+}
+
 /**
  * Resolve the acting admin for an admin-gated request, or throw 401/403.
  * Used by register after first-run: only an authenticated ADMIN may create users.
@@ -83,7 +93,7 @@ export function createAuthRouter(deps: AuthDeps): Router {
       if (!user || !(await verifyPassword(user.passwordHash, input.password))) {
         throw new HttpError(401, 'Invalid username or password');
       }
-      const payload = { sub: user.id, username: user.username, role: user.role };
+      const payload = payloadFor(user);
       res.json({
         accessToken: tokens.signAccess(payload),
         refreshToken: tokens.signRefresh(payload),
@@ -95,20 +105,36 @@ export function createAuthRouter(deps: AuthDeps): Router {
   router.post('/refresh', (req, res, next) => {
     void (async () => {
       const { refreshToken } = refreshSchema.parse(req.body);
-      let sub: number;
+      let claims;
       try {
-        sub = tokens.verifyRefresh(refreshToken).sub;
+        claims = tokens.verifyRefresh(refreshToken);
       } catch {
         throw new HttpError(401, 'Invalid or expired refresh token');
       }
-      const user = await prisma.user.findUnique({ where: { id: sub } });
+      const user = await prisma.user.findUnique({ where: { id: claims.sub } });
       if (!user) throw new HttpError(401, 'User no longer exists');
-      const payload = { sub: user.id, username: user.username, role: user.role };
+      // Reject refresh tokens issued before the last logout / credential change.
+      if (claims.tokenVersion !== user.tokenVersion) {
+        throw new HttpError(401, 'Refresh token has been revoked');
+      }
+      const payload = payloadFor(user);
       res.json({
         accessToken: tokens.signAccess(payload),
         refreshToken: tokens.signRefresh(payload),
         user: toPublic(user),
       });
+    })().catch(next);
+  });
+
+  router.post('/logout', requireAuth(tokens), (req, res, next) => {
+    void (async () => {
+      // Bump tokenVersion to invalidate every outstanding refresh token for this
+      // user. Access tokens (short-lived) expire on their own.
+      await prisma.user.update({
+        where: { id: req.user!.sub },
+        data: { tokenVersion: { increment: 1 } },
+      });
+      res.status(204).end();
     })().catch(next);
   });
 

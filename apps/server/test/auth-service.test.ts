@@ -9,7 +9,7 @@ const tokens = createTokenService({
   refreshTtl: '7d',
 });
 
-const payload: TokenPayload = { sub: 1, username: 'maya', role: 'ADMIN' };
+const payload: TokenPayload = { sub: 1, username: 'maya', role: 'ADMIN', tokenVersion: 0 };
 
 describe('password hashing', () => {
   it('verifies a correct password against its hash', async () => {
