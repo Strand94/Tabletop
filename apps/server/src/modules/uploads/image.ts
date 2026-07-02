@@ -1,9 +1,14 @@
+import { mkdirSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import multer from 'multer';
 
 /** Directory uploaded images are written to (mounted volume in production). */
 export const IMAGES_DIR = process.env.IMAGES_DIR ?? path.resolve(process.cwd(), 'images');
+
+// Ensure the upload directory exists (the prod volume mount does, but local /
+// CI runs and first-boot may not) so disk writes never fail with ENOENT.
+mkdirSync(IMAGES_DIR, { recursive: true });
 
 /**
  * Allowed image types mapped to the extension we assign on disk. The stored
