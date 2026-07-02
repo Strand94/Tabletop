@@ -13,63 +13,88 @@ interface PlayerAgg {
   name: string;
   plays: number;
   wins: number;
-  scoreSum: number;
-  scoreCount: number;
-  gameCounts: Map<string, number>;
+  avgScore: number | null;
+  favouriteGame: string | null;
 }
 
+/** Minimal shape needed to rank players by win share. */
+type RankablePlayer = Pick<PlayerAgg, 'personId' | 'name' | 'plays' | 'wins'>;
+
 /**
- * Single pass over all player-sessions to derive per-person aggregates (plays,
- * wins, average score, favourite game). Fine for a household-scale instance.
+ * Per-person aggregates. Plays / wins / average score are computed in SQL via
+ * groupBy; the favourite game comes from a light (personId, gameId) projection
+ * plus a single title lookup — instead of materialising every player-session row
+ * with nested person/game includes.
  */
 async function computePlayerAggregates(): Promise<Map<number, PlayerAgg>> {
-  const rows = await prisma.playerSession.findMany({
-    include: {
-      person: { select: { id: true, name: true } },
-      session: { select: { game: { select: { title: true } } } },
-    },
-  });
+  const [statGroups, winGroups, gamePairs, people] = await Promise.all([
+    prisma.playerSession.groupBy({
+      by: ['personId'],
+      _count: { _all: true },
+      _avg: { score: true },
+    }),
+    prisma.playerSession.groupBy({
+      by: ['personId'],
+      where: { won: true },
+      _count: { _all: true },
+    }),
+    prisma.playerSession.findMany({
+      select: { personId: true, session: { select: { gameId: true } } },
+    }),
+    prisma.person.findMany({ select: { id: true, name: true } }),
+  ]);
+
+  // Favourite game per person = most-played game (ties broken by lowest game id).
+  const perPersonGameCounts = new Map<number, Map<number, number>>();
+  for (const row of gamePairs) {
+    let counts = perPersonGameCounts.get(row.personId);
+    if (!counts) {
+      counts = new Map();
+      perPersonGameCounts.set(row.personId, counts);
+    }
+    const gameId = row.session.gameId;
+    counts.set(gameId, (counts.get(gameId) ?? 0) + 1);
+  }
+  const favouriteGameId = new Map<number, number>();
+  for (const [personId, counts] of perPersonGameCounts) {
+    let bestGame = -1;
+    let bestCount = 0;
+    for (const [gameId, count] of counts) {
+      if (count > bestCount || (count === bestCount && (bestGame < 0 || gameId < bestGame))) {
+        bestGame = gameId;
+        bestCount = count;
+      }
+    }
+    if (bestGame >= 0) favouriteGameId.set(personId, bestGame);
+  }
+  const favIds = [...new Set(favouriteGameId.values())];
+  const favGames = favIds.length
+    ? await prisma.game.findMany({
+        where: { id: { in: favIds } },
+        select: { id: true, title: true },
+      })
+    : [];
+  const titleById = new Map(favGames.map((g) => [g.id, g.title]));
+
+  const nameById = new Map(people.map((p) => [p.id, p.name]));
+  const winsById = new Map(winGroups.map((w) => [w.personId, w._count._all]));
 
   const map = new Map<number, PlayerAgg>();
-  for (const row of rows) {
-    let agg = map.get(row.personId);
-    if (!agg) {
-      agg = {
-        personId: row.personId,
-        name: row.person.name,
-        plays: 0,
-        wins: 0,
-        scoreSum: 0,
-        scoreCount: 0,
-        gameCounts: new Map(),
-      };
-      map.set(row.personId, agg);
-    }
-    agg.plays += 1;
-    if (row.won) agg.wins += 1;
-    if (row.score !== null) {
-      agg.scoreSum += row.score;
-      agg.scoreCount += 1;
-    }
-    const title = row.session.game.title;
-    agg.gameCounts.set(title, (agg.gameCounts.get(title) ?? 0) + 1);
+  for (const g of statGroups) {
+    const favGid = favouriteGameId.get(g.personId);
+    map.set(g.personId, {
+      personId: g.personId,
+      name: nameById.get(g.personId) ?? '',
+      plays: g._count._all,
+      wins: winsById.get(g.personId) ?? 0,
+      avgScore: g._avg.score ?? null,
+      favouriteGame: favGid != null ? (titleById.get(favGid) ?? null) : null,
+    });
   }
   return map;
 }
 
-function favouriteGame(agg: PlayerAgg): string | null {
-  let best: string | null = null;
-  let bestCount = 0;
-  for (const [title, count] of agg.gameCounts) {
-    if (count > bestCount) {
-      best = title;
-      bestCount = count;
-    }
-  }
-  return best;
-}
-
-function toTopPlayers(aggs: PlayerAgg[], limit: number): TopPlayer[] {
+function toTopPlayers(aggs: RankablePlayer[], limit: number): TopPlayer[] {
   return aggs
     .filter((a) => a.plays > 0)
     .map((a) => ({
@@ -224,8 +249,8 @@ export async function playerStats(): Promise<PlayerStats[]> {
       plays: agg.plays,
       wins: agg.wins,
       winRate: agg.wins / agg.plays,
-      avgScore: agg.scoreCount > 0 ? agg.scoreSum / agg.scoreCount : null,
-      favoriteGame: favouriteGame(agg),
+      avgScore: agg.avgScore,
+      favoriteGame: agg.favouriteGame,
     };
   });
 }
@@ -252,19 +277,11 @@ export async function gameStats(gameId: number): Promise<GameStats> {
     }),
   ]);
 
-  const byPerson = new Map<number, PlayerAgg>();
+  const byPerson = new Map<number, RankablePlayer>();
   for (const row of playerRows) {
     let agg = byPerson.get(row.personId);
     if (!agg) {
-      agg = {
-        personId: row.personId,
-        name: row.person.name,
-        plays: 0,
-        wins: 0,
-        scoreSum: 0,
-        scoreCount: 0,
-        gameCounts: new Map(),
-      };
+      agg = { personId: row.personId, name: row.person.name, plays: 0, wins: 0 };
       byPerson.set(row.personId, agg);
     }
     agg.plays += 1;
