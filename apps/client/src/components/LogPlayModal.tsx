@@ -39,7 +39,8 @@ export function LogPlayModal({ onClose, initialGameId, onSaved }: Props): JSX.El
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const { data: games = [] } = useGames();
+  const { data: gamesPage } = useGames({ pageSize: 100 });
+  const games = gamesPage?.items ?? [];
   const { data: expansions = [] } = useExpansions(gameId ?? 0);
   const { data: people = [] } = usePeople();
   const { data: locations = [] } = useLocations();

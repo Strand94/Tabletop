@@ -65,8 +65,8 @@ describe('games API', () => {
 
     const list = await request(app).get('/api/games').set(auth(memberToken));
     expect(list.status).toBe(200);
-    expect(list.body).toHaveLength(1);
-    expect(list.body[0].title).toBe('Crimson Frontier');
+    expect(list.body.items).toHaveLength(1);
+    expect(list.body.items[0].title).toBe('Crimson Frontier');
   });
 
   it('rejects invalid ranges (minPlayers > maxPlayers)', async () => {
@@ -100,9 +100,9 @@ describe('games API', () => {
     const filtered = await request(app)
       .get(`/api/games?category=${strategy.id}`)
       .set(auth(memberToken));
-    expect(filtered.body).toHaveLength(1);
-    expect(filtered.body[0].title).toBe('Strat Game');
-    expect(filtered.body[0].categories[0].name).toBe('Strategy');
+    expect(filtered.body.items).toHaveLength(1);
+    expect(filtered.body.items[0].title).toBe('Strat Game');
+    expect(filtered.body.items[0].categories[0].name).toBe('Strategy');
   });
 
   it('filters by status and searches by title', async () => {
@@ -116,12 +116,12 @@ describe('games API', () => {
       .send({ title: 'Wished One', collectionStatus: 'WISHLIST' });
 
     const owned = await request(app).get('/api/games?status=OWNED').set(auth(memberToken));
-    expect(owned.body).toHaveLength(1);
-    expect(owned.body[0].title).toBe('Owned One');
+    expect(owned.body.items).toHaveLength(1);
+    expect(owned.body.items[0].title).toBe('Owned One');
 
     const search = await request(app).get('/api/games?q=wished').set(auth(memberToken));
-    expect(search.body).toHaveLength(1);
-    expect(search.body[0].title).toBe('Wished One');
+    expect(search.body.items).toHaveLength(1);
+    expect(search.body.items[0].title).toBe('Wished One');
   });
 
   it('updates a game', async () => {
@@ -153,6 +153,20 @@ describe('games API', () => {
 
     const after = await request(app).get(`/api/games/${id}`).set(auth(memberToken));
     expect(after.status).toBe(404);
+  });
+
+  it('paginates the list with total/page/pageSize', async () => {
+    for (const title of ['A', 'B', 'C']) {
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title });
+    }
+    const p1 = await request(app).get('/api/games?pageSize=2&page=1').set(auth(memberToken));
+    expect(p1.body.total).toBe(3);
+    expect(p1.body.page).toBe(1);
+    expect(p1.body.pageSize).toBe(2);
+    expect(p1.body.items).toHaveLength(2);
+
+    const p2 = await request(app).get('/api/games?pageSize=2&page=2').set(auth(memberToken));
+    expect(p2.body.items).toHaveLength(1);
   });
 
   it('stores uploaded images with a safe extension derived from the MIME type', async () => {

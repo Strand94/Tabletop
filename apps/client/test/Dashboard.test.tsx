@@ -37,7 +37,10 @@ describe('Dashboard', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((url: string) => {
-        const body = url.includes('/stats/dashboard') ? stats : [];
+        // /stats/dashboard → stats; /api/games (recent) → paginated envelope.
+        const body = url.includes('/stats/dashboard')
+          ? stats
+          : { items: [], total: 0, page: 1, pageSize: 5 };
         return Promise.resolve({
           ok: true,
           status: 200,

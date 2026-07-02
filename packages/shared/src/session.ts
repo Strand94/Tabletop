@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { paginationFields } from './pagination.js';
 
 /** A player's participation & result in a session (spec §3.8). */
 export const playerResultSchema = z.object({
@@ -43,6 +44,7 @@ export const sessionQuerySchema = z.object({
   person: z.coerce.number().int().positive().optional(),
   from: z.string().datetime({ offset: true }).optional(),
   to: z.string().datetime({ offset: true }).optional(),
+  ...paginationFields(25),
 });
 export type SessionQuery = z.infer<typeof sessionQuerySchema>;
 

@@ -1,5 +1,11 @@
 import type { Prisma } from '../../../generated/prisma/client.js';
-import type { CreateGameInput, GameDto, GameQuery, UpdateGameInput } from '@tabletop/shared';
+import type {
+  CreateGameInput,
+  GameDto,
+  GameQuery,
+  Paginated,
+  UpdateGameInput,
+} from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
 
@@ -85,7 +91,7 @@ function toWritableData(input: Partial<CreateGameInput>): Omit<
   };
 }
 
-export async function listGames(query: GameQuery, userId: number): Promise<GameDto[]> {
+export async function listGames(query: GameQuery, userId: number): Promise<Paginated<GameDto>> {
   const where: Prisma.GameWhereInput = {};
   if (query.status) where.collectionStatus = query.status;
   if (query.category) where.categories = { some: { categoryId: query.category } };
@@ -96,11 +102,16 @@ export async function listGames(query: GameQuery, userId: number): Promise<GameD
     where.sessions = { none: {} };
   }
 
-  const games = await prisma.game.findMany({
-    where,
-    include: gameInclude,
-    orderBy: { [query.sort]: query.order },
-  });
+  const [total, games] = await Promise.all([
+    prisma.game.count({ where }),
+    prisma.game.findMany({
+      where,
+      include: gameInclude,
+      orderBy: { [query.sort]: query.order },
+      skip: (query.page - 1) * query.pageSize,
+      take: query.pageSize,
+    }),
+  ]);
 
   // One query for the user's ratings across the listed games (cards show the star).
   const myRatings = await prisma.userGameRating.findMany({
@@ -108,13 +119,18 @@ export async function listGames(query: GameQuery, userId: number): Promise<GameD
   });
   const ratingByGame = new Map(myRatings.map((r) => [r.gameId, r.rating.toNumber()]));
 
-  return games.map((g) =>
-    toGameDto(g, {
-      myRating: ratingByGame.get(g.id) ?? null,
-      avgSessionRating: null,
-      sessionRatingCount: 0,
-    }),
-  );
+  return {
+    items: games.map((g) =>
+      toGameDto(g, {
+        myRating: ratingByGame.get(g.id) ?? null,
+        avgSessionRating: null,
+        sessionRatingCount: 0,
+      }),
+    ),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+  };
 }
 
 export async function getGame(id: number, userId: number): Promise<GameDto> {

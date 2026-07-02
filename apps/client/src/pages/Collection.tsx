@@ -5,6 +5,7 @@ import type { CollectionStatus } from '@tabletop/shared';
 import { useCategories, useGames, type GamesFilter } from '../lib/games-api.js';
 import { GameCard } from '../components/GameCard.js';
 import { GameFormModal } from '../components/GameFormModal.js';
+import { Pager } from '../components/Pager.js';
 import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
 
@@ -17,6 +18,7 @@ export function Collection(): JSX.Element {
   const [tab, setTab] = useState<StatusTab>('ALL');
   const [category, setCategory] = useState<number | undefined>();
   const [q, setQ] = useState('');
+  const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
 
   const filter = useMemo<GamesFilter>(
@@ -25,11 +27,13 @@ export function Collection(): JSX.Element {
       category,
       q: q.trim() || undefined,
       neverPlayed: shelf || undefined,
+      page,
     }),
-    [tab, category, q, shelf],
+    [tab, category, q, shelf, page],
   );
 
-  const { data: games = [], isLoading } = useGames(filter);
+  const { data, isLoading } = useGames(filter);
+  const games = data?.items ?? [];
   const { data: categories = [] } = useCategories();
 
   const tabs: { key: StatusTab; label: string }[] = [
@@ -49,7 +53,10 @@ export function Collection(): JSX.Element {
           </div>
           <button
             type="button"
-            onClick={() => setSearchParams({})}
+            onClick={() => {
+              setSearchParams({});
+              setPage(1);
+            }}
             className="rounded-lg border border-border bg-card px-3 py-1.5 text-[12px] font-semibold text-muted2"
           >
             {t.collection.all}
@@ -63,7 +70,10 @@ export function Collection(): JSX.Element {
             <button
               key={it.key}
               type="button"
-              onClick={() => setTab(it.key)}
+              onClick={() => {
+                setTab(it.key);
+                setPage(1);
+              }}
               className={`rounded-lg px-3 py-1.5 text-[12.5px] font-semibold ${
                 tab === it.key ? 'bg-accent text-on-accent' : 'text-muted2'
               }`}
@@ -79,7 +89,10 @@ export function Collection(): JSX.Element {
               <button
                 key={c.id}
                 type="button"
-                onClick={() => setCategory((cur) => (cur === c.id ? undefined : c.id))}
+                onClick={() => {
+                  setCategory((cur) => (cur === c.id ? undefined : c.id));
+                  setPage(1);
+                }}
                 className={`rounded-full border px-3 py-1.5 text-[12px] font-medium ${
                   category === c.id
                     ? 'border-accent bg-accent-soft text-accent-text'
@@ -97,7 +110,10 @@ export function Collection(): JSX.Element {
             <Icon name="search" size={17} />
             <input
               value={q}
-              onChange={(e) => setQ(e.target.value)}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(1);
+              }}
               placeholder={t.collection.searchPlaceholder}
               aria-label={t.collection.searchPlaceholder}
               className="w-40 bg-transparent text-[13px] text-text outline-none placeholder:text-muted"
@@ -122,11 +138,16 @@ export function Collection(): JSX.Element {
           {t.collection.empty}
         </p>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(176px,1fr))] gap-4">
-          {games.map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(176px,1fr))] gap-4">
+            {games.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+          {data && (
+            <Pager page={data.page} pageSize={data.pageSize} total={data.total} onPage={setPage} />
+          )}
+        </>
       )}
 
       {showForm && <GameFormModal onClose={() => setShowForm(false)} />}

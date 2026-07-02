@@ -73,10 +73,10 @@ describe('shelf of shame filter', () => {
     // The seeded "Crimson" has no sessions -> it is on the shelf.
     const res = await request(app).get('/api/games?neverPlayed=true').set(auth(adminToken));
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
+    expect(res.body.items).toHaveLength(1);
 
     // Log a play; it should drop off the shelf.
-    const gameId = res.body[0].id;
+    const gameId = res.body.items[0].id;
     const person = (
       await request(app).post('/api/people').set(auth(adminToken)).send({ name: 'M' })
     ).body.id;
@@ -90,6 +90,6 @@ describe('shelf of shame filter', () => {
       });
 
     const after = await request(app).get('/api/games?neverPlayed=true').set(auth(adminToken));
-    expect(after.body).toHaveLength(0);
+    expect(after.body.items).toHaveLength(0);
   });
 });

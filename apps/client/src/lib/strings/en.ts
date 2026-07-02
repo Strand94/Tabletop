@@ -224,4 +224,9 @@ export const en: Strings = {
     loading: 'Loading…',
     error: 'Something went wrong',
   },
+  pager: {
+    prev: 'Previous',
+    next: 'Next',
+    of: 'of',
+  },
 };

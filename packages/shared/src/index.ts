@@ -8,6 +8,7 @@
 
 export * from './enums.js';
 export * from './auth.js';
+export * from './pagination.js';
 export * from './game.js';
 export * from './expansion.js';
 export * from './person.js';
