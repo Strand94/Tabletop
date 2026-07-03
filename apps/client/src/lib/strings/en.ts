@@ -131,6 +131,8 @@ export const en: Strings = {
     result: 'Result',
     notFound: 'Session not found',
     photos: 'Photos from the night',
+    playerless: 'No players',
+    playerlessWarning: 'This session has no players — likely because a player was deleted.',
   },
   logPlay: {
     title: 'Log a play',

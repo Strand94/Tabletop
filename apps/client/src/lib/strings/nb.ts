@@ -129,6 +129,8 @@ export const nb = {
     result: 'Resultat',
     notFound: 'Fant ikke partiet',
     photos: 'Bilder fra kvelden',
+    playerless: 'Ingen spillere',
+    playerlessWarning: 'Denne økten har ingen spillere – trolig fordi en spiller ble slettet.',
   },
   logPlay: {
     title: 'Logg et parti',
