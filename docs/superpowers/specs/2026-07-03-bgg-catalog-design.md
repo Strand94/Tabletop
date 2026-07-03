@@ -81,14 +81,24 @@ New Prisma model `BggCatalogEntry` → table `bgg_catalog`:
 
 ## 4. Ingestion / refresh (`apps/server/src/modules/bgg`)
 
-- **`catalog-source.ts`** — `fetchLatestSnapshot()`:
-  1. `GET` the GitHub contents/trees API for `beefsack/bgg-ranking-historicals`.
-  2. Pick the newest `YYYY-MM-DD*.csv` by filename.
-  3. Download the raw CSV and stream-parse rows (header → field mapping, decimals, null-blanks).
-     Returns `{ snapshotDate, rows }`.
-- **`catalog-service.ts`** — `refreshCatalog({ snapshotDate, rows })`: within a transaction,
-  upsert all rows (replace-in-place). Never clears on a failed/partial download. Returns
-  `{ count, snapshotDate }`. Also `searchCatalog(q, limit)` and `getCatalogEntries(bggIds)`.
+- **`catalog-source.ts`**:
+  - `resolveLatest()` — `GET` the GitHub contents/trees API for
+    `beefsack/bgg-ranking-historicals`, pick the newest `YYYY-MM-DD*.csv` by filename, and
+    return just its `{ snapshotDate, downloadUrl }` (a cheap listing, no CSV downloaded yet).
+  - `downloadSnapshot(downloadUrl)` — fetch the raw CSV and stream-parse rows (header → field
+    mapping, decimals, null-blanks). Returns `{ rows }`.
+- **`catalog-service.ts`**:
+  - `refreshCatalog({ force? })` — the orchestrator: call `resolveLatest()`, then
+    **skip-if-unchanged**: if `snapshotDate` equals the currently stored max `snapshotDate`,
+    return `{ status: 'unchanged', snapshotDate, count }` **without downloading the CSV** — so a
+    same-day poll never re-fetches or re-processes. Otherwise download and, in a transaction,
+    **replace the catalog** (delete-all + insert, i.e. old rows go away so removed/re-ranked
+    games don't linger) and stamp every row with the new `snapshotDate`. Returns
+    `{ status: 'refreshed', snapshotDate, count }`. `force: true` bypasses the skip check.
+  - A failed/partial download throws **before** the delete — the existing catalog is never
+    wiped. `searchCatalog(q, limit)` and `getCatalogEntries(bggIds)` for read paths.
+  - The current snapshot date is read from the table (max `snapshotDate`); no separate metadata
+    table needed.
 - **Config** (`config.ts`, zod): `BGG_CATALOG_REPO` (default `beefsack/bgg-ranking-historicals`),
   `BGG_CATALOG_REFRESH_ENABLED` (default false), `BGG_CATALOG_REFRESH_CRON`/interval. Fail-fast
   on malformed config; a refresh _runtime_ failure logs (pino) and keeps prior data.
@@ -108,7 +118,10 @@ New Prisma model `BggCatalogEntry` → table `bgg_catalog`:
 ## 5. Autofill on add
 
 - **Shared** (`packages/shared/src/bgg.ts`): `bggCatalogSearchQuerySchema` (`{ q, limit? }`),
-  `BggCatalogHitDto` (`{ bggId, name, year, rank, average, thumbnail }`), `bggUrl(bggId)` helper.
+  `BggCatalogHitDto` exposing **every catalog field**
+  (`{ bggId, name, year, rank, average, bayesAverage, usersRated, thumbnail, snapshotDate }`),
+  and a `bggUrl(bggId)` helper. The hit carries `thumbnail` so the dropdown can render the
+  cover image.
 - **Server**: `GET /api/bgg/catalog/search?q=` (member auth). If `q` is all digits → match
   `bggId` exactly (plus name-contains); else `name ILIKE '%q%'` ordered by `rank` asc (nulls
   last), `limit` default 10 / max 25.
@@ -116,6 +129,10 @@ New Prisma model `BggCatalogEntry` → table `bgg_catalog`:
   name + year + rank + a "View on BGG ↗" link. On select → populate `title`, `releaseYear`,
   `bggId`, `bggRating` (= `average`), `bggRank`, `imagePath` (= `thumbnail`); leave
   players/playtime/weight/description blank. Submit through the existing create-game flow.
+- **Thumbnail is a remote absolute URL** (`https://cf.geekdo-images.com/...`), not a local
+  `/images/...` path. The image renderer must use it as-is when the value is absolute rather than
+  prefixing it — the plan verifies how the current `imagePath` renderer handles absolute URLs and
+  adapts it if needed so the cover actually displays.
 
 ---
 
