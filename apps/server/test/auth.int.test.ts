@@ -145,4 +145,19 @@ describe('auth flow', () => {
       .send({ username: 'maya', password: 'supersecret' });
     expect(res.status).toBe(409);
   });
+
+  it('reports needsSetup=true when no users exist', async () => {
+    const res = await request(app).get('/api/auth/setup-status');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ needsSetup: true });
+  });
+
+  it('reports needsSetup=false once a user exists', async () => {
+    await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'maya', password: 'supersecret' });
+    const res = await request(app).get('/api/auth/setup-status');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ needsSetup: false });
+  });
 });
