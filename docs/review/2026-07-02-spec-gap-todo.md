@@ -41,15 +41,29 @@ P2 spec requirement with workaround · P3 polish / deferrable.
 
 ## Polish
 
-| #   | Item                                                                                                                                                                                                        | Priority | SP  |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --- |
-| 12  | **Seed categories are Norwegian-only literals** (`'Strategi','Familie','Co-op','Kortspill'`) shown verbatim regardless of locale — i18n smell for an `en`-default instance.                                 | P3       | 2   |
-| 13  | **Port/DB naming deviates from spec** (`5470`/`tabletop` vs spec's `5444`/`boardgametracker`). Intentional Tabletop branding, consistent across config/compose — not a bug, noted as a conscious deviation. | —        | 0   |
+| #   | Item                                                                                                                                                                                                             | Priority | SP  |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --- |
+| 12  | **Seed categories are Norwegian-only literals** (`'Strategi','Familie','Co-op','Kortspill'`) shown verbatim regardless of locale — i18n smell for an `en`-default instance. See also #15 (broader i18n cluster). | P3       | 2   |
+| 13  | **Port/DB naming deviates from spec** (`5470`/`tabletop` vs spec's `5444`/`boardgametracker`). Intentional Tabletop branding, consistent across config/compose — not a bug, noted as a conscious deviation.      | —        | 0   |
+
+---
+
+## Beyond spec / feature requests
+
+Enhancements raised outside the design spec (household-use feedback, 2026-07-03). Not spec
+gaps — tracked here so they don't get lost.
+
+| #   | Item                                                                                                                                                                                                                                                                                                                                                            | Priority     | SP  |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --- |
+| 15  | **i18n cluster (English-first).** Broadens #12. Three parts: (a) make **English the default locale** (fall back to `en`, not `nb`); (b) **audit for remaining hardcoded strings** beyond the seed categories — any user-facing literal not routed through `lib/strings.ts`; (c) **flag icons next to the language selector**.                                   | P2           | 5   |
+| 16  | **Mobile-friendly / responsive layout.** No responsive pass has been done; layouts assume desktop widths. Make the collection, session, and stats views usable on a phone. Net-new, not spec-driven.                                                                                                                                                            | P2           | 5   |
+| 17  | **Shared household collection (partner co-editing).** Let a partner share one collection, sessions, ratings, etc. Data model already leans multi-user (`Person.userId`, roles) and members can already edit most resources, so the open question is the **scoping model**: per-user vs. shared-household. **Needs a brainstorm/design pass before estimating.** | needs design | ?   |
 
 ---
 
 ## Suggested order
 
-`#1 → #2 → #3 → #10 (decision) → #6 / #7`, then P3 polish.
+`#1 → #2 → #3 → #10 (decision) → #6 / #7`, then P3 polish. Feature requests (#15–#17) slot
+after the P0/P1 spec gaps; #17 needs a design pass before it can be scheduled.
 
-**Totals:** P0 = 5 SP · P1 = 7 SP · P2 = 16 SP · P3 = 14 SP.
+**Totals:** P0 = 5 SP · P1 = 7 SP · P2 = 16 SP · P3 = 14 SP · feature requests = 10 SP + #17 (TBD).

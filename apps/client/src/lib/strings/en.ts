@@ -62,6 +62,7 @@ export const en: Strings = {
     minPlaytime: 'Min time',
     maxPlaytime: 'Max time',
     minAge: 'Age',
+    bggId: 'BGG ID',
     weight: 'Complexity (1–5)',
     price: 'Price',
     status: 'Status',
