@@ -63,6 +63,13 @@ export function createAuthRouter(deps: AuthDeps): Router {
   const router = Router();
   const { tokens, defaultLocale } = deps;
 
+  router.get('/setup-status', (_req, res, next) => {
+    void (async () => {
+      const userCount = await prisma.user.count();
+      res.json({ needsSetup: userCount === 0 });
+    })().catch(next);
+  });
+
   router.post('/register', (req, res, next) => {
     void (async () => {
       const input = registerSchema.parse(req.body);

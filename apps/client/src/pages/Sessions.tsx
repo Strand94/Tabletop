@@ -63,7 +63,13 @@ export function Sessions(): JSX.Element {
                   <div className="text-[10.5px] text-muted">{shortDate(s.start)}</div>
                 </div>
               </div>
-              <span className="text-[12px] text-muted2">{s.players.length}</span>
+              {s.players.length === 0 ? (
+                <span className="justify-self-start rounded bg-chip px-1.5 py-0.5 text-[9.5px] font-bold text-muted2">
+                  {t.sessions.playerless}
+                </span>
+              ) : (
+                <span className="text-[12px] text-muted2">{s.players.length}</span>
+              )}
               <span className="truncate text-[12px] font-semibold">{winnersLabel(s.players)}</span>
               <span className="text-[12px] text-muted2">{durationLabel(s.durationMinutes)}</span>
               <span className="truncate text-[12px] text-muted2">{s.location?.name ?? '—'}</span>

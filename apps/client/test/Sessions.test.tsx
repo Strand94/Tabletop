@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import type { SessionDto } from '@tabletop/shared';
 import { Sessions } from '../src/pages/Sessions.js';
+import { setActiveTable } from '../src/lib/strings.js';
 
 vi.mock('../src/lib/log-play.js', () => ({ useLogPlay: () => ({ openLogPlay: vi.fn() }) }));
 
@@ -61,5 +62,11 @@ describe('Sessions', () => {
   it('shows an empty state when there are no sessions', async () => {
     renderWith([]);
     expect(await screen.findByTestId('sessions-empty')).toBeInTheDocument();
+  });
+
+  it('flags a session that has no players', async () => {
+    setActiveTable('en');
+    renderWith([{ ...session, players: [] }]);
+    expect(await screen.findByText('No players')).toBeInTheDocument();
   });
 });

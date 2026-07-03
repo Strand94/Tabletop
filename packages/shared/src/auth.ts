@@ -47,6 +47,12 @@ export const authTokensSchema = z.object({
 });
 export type AuthTokens = z.infer<typeof authTokensSchema>;
 
+/** First-run setup probe: true when no user account exists yet. */
+export const setupStatusSchema = z.object({
+  needsSetup: z.boolean(),
+});
+export type SetupStatus = z.infer<typeof setupStatusSchema>;
+
 /** Decoded JWT claims we put on the access/refresh tokens. */
 export const tokenPayloadSchema = z.object({
   sub: z.number().int().positive(),

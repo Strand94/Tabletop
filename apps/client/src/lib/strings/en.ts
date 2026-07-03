@@ -27,6 +27,14 @@ export const en: Strings = {
     submit: 'Sign in',
     error: 'Wrong username or password',
     loading: 'Signing in…',
+    setupTitle: 'Create admin',
+    setupSubtitle: 'First run — set up the first account',
+    confirmPassword: 'Confirm password',
+    createAdmin: 'Create admin',
+    creating: 'Creating…',
+    passwordTooShort: 'Password must be at least 8 characters',
+    passwordMismatch: 'Passwords do not match',
+    setupError: 'Could not create the account',
   },
   roles: {
     ADMIN: 'Admin',
@@ -123,6 +131,8 @@ export const en: Strings = {
     result: 'Result',
     notFound: 'Session not found',
     photos: 'Photos from the night',
+    playerless: 'No players',
+    playerlessWarning: 'This session has no players — likely because a player was deleted.',
   },
   logPlay: {
     title: 'Log a play',

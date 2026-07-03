@@ -94,6 +94,15 @@ export function SessionDetail(): JSX.Element {
             )}
           </div>
 
+          {session.players.length === 0 && (
+            <div
+              role="alert"
+              className="rounded-2xl border border-[#c8453a]/40 bg-[#c8453a]/10 px-5 py-3 text-[12.5px] font-semibold text-[#c8453a]"
+            >
+              {t.sessions.playerlessWarning}
+            </div>
+          )}
+
           {/* Players table */}
           <div className="overflow-hidden rounded-2xl border border-border bg-card">
             <div className="grid grid-cols-[1.4fr_.9fr_.7fr_.9fr] gap-3 border-b border-border px-4 py-3 text-[10.5px] font-semibold uppercase tracking-wide text-muted">
