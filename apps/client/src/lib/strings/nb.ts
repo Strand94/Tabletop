@@ -25,6 +25,14 @@ export const nb = {
     submit: 'Logg inn',
     error: 'Feil brukernavn eller passord',
     loading: 'Logger inn…',
+    setupTitle: 'Opprett administrator',
+    setupSubtitle: 'Første gang – lag den første kontoen',
+    confirmPassword: 'Bekreft passord',
+    createAdmin: 'Opprett administrator',
+    creating: 'Oppretter…',
+    passwordTooShort: 'Passordet må ha minst 8 tegn',
+    passwordMismatch: 'Passordene er ikke like',
+    setupError: 'Kunne ikke opprette kontoen',
   },
   roles: {
     ADMIN: 'Admin',
@@ -121,6 +129,8 @@ export const nb = {
     result: 'Resultat',
     notFound: 'Fant ikke partiet',
     photos: 'Bilder fra kvelden',
+    playerless: 'Ingen spillere',
+    playerlessWarning: 'Denne økten har ingen spillere – trolig fordi en spiller ble slettet.',
   },
   logPlay: {
     title: 'Logg et parti',
