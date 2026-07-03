@@ -128,6 +128,19 @@ async function mostPlayedGames(limit: number): Promise<DashboardStats['mostPlaye
   }));
 }
 
+/**
+ * Local-time `YYYY-MM-DD` key. The window below is anchored to local midnight
+ * (the server's TZ — `Europe/Oslo` in the default compose), so buckets must be
+ * keyed by local date too. Keying by UTC (`toISOString`) here would misplace
+ * evening plays into the wrong day under a non-UTC TZ (spec review #3).
+ */
+function localDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 /** Sessions per day for the last `days` days (oldest first), zero-filled. */
 async function sessionsPerDay(days: number): Promise<SessionsPerDay[]> {
   const since = new Date();
@@ -141,7 +154,7 @@ async function sessionsPerDay(days: number): Promise<SessionsPerDay[]> {
 
   const counts = new Map<string, number>();
   for (const s of sessions) {
-    const key = s.start.toISOString().slice(0, 10);
+    const key = localDateKey(s.start);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
@@ -149,7 +162,7 @@ async function sessionsPerDay(days: number): Promise<SessionsPerDay[]> {
   for (let i = 0; i < days; i++) {
     const d = new Date(since);
     d.setDate(since.getDate() + i);
-    const key = d.toISOString().slice(0, 10);
+    const key = localDateKey(d);
     result.push({ date: key, count: counts.get(key) ?? 0 });
   }
   return result;
