@@ -71,6 +71,23 @@ model Game {
   @@map("game")
 }
 
+model BggCatalogEntry {
+  bggId        Int       @id @map("bgg_id")
+  name         String
+  year         Int?
+  rank         Int?
+  average      Decimal?  @db.Decimal(4, 2)
+  bayesAverage Decimal?  @map("bayes_average") @db.Decimal(4, 2)
+  usersRated   Int?      @map("users_rated")
+  thumbnail    String?
+  snapshotDate DateTime? @map("snapshot_date") @db.Date
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([name])
+  @@index([rank])
+  @@map("bgg_catalog")
+}
+
 model Expansion {
   id          Int       @id @default(autoincrement())
   gameId      Int       @map("game_id")

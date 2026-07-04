@@ -16,6 +16,7 @@ export function applyMigrations(): void {
 /** Truncate all data tables between tests; resets identity sequences. */
 export async function resetDb(): Promise<void> {
   const tables = [
+    'bgg_catalog',
     'session_image',
     'user_session_rating',
     'user_game_rating',
