@@ -168,3 +168,77 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('GET /api/bgg/catalog/search',
       .expect(400);
   });
 });
+
+describe.skipIf(process.env.RUN_DB_TESTS !== '1')('POST /api/bgg/catalog/import', () => {
+  let app: Express;
+  let token: string;
+  beforeEach(async () => {
+    applyMigrations();
+    await resetDb();
+    app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'maya', password: 'supersecret' });
+    token = (
+      await request(app).post('/api/auth/login').send({ username: 'maya', password: 'supersecret' })
+    ).body.accessToken;
+    await replaceCatalog(
+      [
+        {
+          bggId: 1,
+          name: 'Ark Nova',
+          year: 2021,
+          rank: 2,
+          average: 8.54,
+          bayesAverage: 8.35,
+          usersRated: 100,
+          thumbnail: 'https://x/t1.jpg',
+        },
+        {
+          bggId: 2,
+          name: 'Brass',
+          year: 2018,
+          rank: 1,
+          average: 8.6,
+          bayesAverage: 8.4,
+          usersRated: 200,
+          thumbnail: 'https://x/t2.jpg',
+        },
+      ],
+      '2026-06-29',
+    );
+  });
+
+  it('creates games from catalog rows and maps fields', async () => {
+    const res = await request(app)
+      .post('/api/bgg/catalog/import')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ bggIds: [1, 2], collectionStatus: 'WISHLIST' })
+      .expect(201);
+    expect(res.body).toEqual({ created: 2, skipped: 0 });
+    const list = await request(app).get('/api/games?q=Ark').set('Authorization', `Bearer ${token}`);
+    expect(list.body.items[0]).toMatchObject({
+      title: 'Ark Nova',
+      releaseYear: 2021,
+      bggId: 1,
+      bggRating: 8.54,
+      bggRank: 2,
+      imagePath: 'https://x/t1.jpg',
+      collectionStatus: 'WISHLIST',
+    });
+  });
+
+  it('skips ids already in the collection or absent from the catalog', async () => {
+    await request(app)
+      .post('/api/bgg/catalog/import')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ bggIds: [1] })
+      .expect(201);
+    const res = await request(app)
+      .post('/api/bgg/catalog/import')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ bggIds: [1, 2, 999] })
+      .expect(201);
+    expect(res.body).toEqual({ created: 1, skipped: 2 });
+  });
+});
