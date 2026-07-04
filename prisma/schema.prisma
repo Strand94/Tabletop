@@ -67,7 +67,7 @@ model Game {
   userRatings UserGameRating[]
 
   @@index([collectionStatus])
-  @@index([bggId])
+  @@unique([bggId])
   @@map("game")
 }
 

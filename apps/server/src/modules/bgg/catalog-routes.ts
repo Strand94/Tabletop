@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { bggCatalogSearchQuerySchema, bggImportSchema } from '@tabletop/shared';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
+import { HttpError } from '../../middleware/error.js';
 import type { TokenService } from '../auth/service.js';
 import { searchCatalog } from './catalog-service.js';
 import { importGames } from './import-service.js';
@@ -34,7 +35,16 @@ export function createBggCatalogRouter(deps: BggCatalogDeps): Router {
   router.post('/catalog/refresh', requireRole('ADMIN'), (req, res, next) => {
     void (async () => {
       const force = req.query.force === 'true';
-      res.json(await refreshCatalog({ source: githubSource(deps.catalogRepo), force }));
+      let result;
+      try {
+        result = await refreshCatalog({ source: githubSource(deps.catalogRepo), force });
+      } catch (err) {
+        throw new HttpError(
+          502,
+          `BGG catalog refresh failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+        );
+      }
+      res.json(result);
     })().catch(next);
   });
 

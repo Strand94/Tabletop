@@ -242,3 +242,36 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('POST /api/bgg/catalog/import'
     expect(res.body).toEqual({ created: 1, skipped: 2 });
   });
 });
+
+describe.skipIf(process.env.RUN_DB_TESTS !== '1')('POST /api/bgg/catalog/refresh', () => {
+  let app: Express;
+  let memberToken: string;
+  beforeEach(async () => {
+    applyMigrations();
+    await resetDb();
+    app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
+    // First registered user becomes ADMIN; register a second user for MEMBER.
+    await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'maya', password: 'supersecret' });
+    const adminToken = (
+      await request(app).post('/api/auth/login').send({ username: 'maya', password: 'supersecret' })
+    ).body.accessToken;
+    await request(app)
+      .post('/api/auth/register')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ username: 'theo', password: 'anothersecret' });
+    memberToken = (
+      await request(app)
+        .post('/api/auth/login')
+        .send({ username: 'theo', password: 'anothersecret' })
+    ).body.accessToken;
+  });
+
+  it('rejects a non-admin member with 403', async () => {
+    await request(app)
+      .post('/api/bgg/catalog/refresh')
+      .set('Authorization', `Bearer ${memberToken}`)
+      .expect(403);
+  });
+});
