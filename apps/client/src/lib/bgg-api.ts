@@ -2,6 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import type { BggCatalogHitDto, BggImportInput, BggImportResultDto } from '@tabletop/shared';
 import { apiFetch } from './api.js';
 
+export { hitToFormPatch } from './bgg-autofill.js';
+
 /** Debounced-by-caller search over the local BGG catalog. Disabled for blank q. */
 export function useBggCatalogSearch(q: string) {
   return useQuery({

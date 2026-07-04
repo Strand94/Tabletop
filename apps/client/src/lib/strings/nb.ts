@@ -69,6 +69,10 @@ export const nb = {
     saving: 'Lagrer…',
     cancel: 'Avbryt',
     required: 'Tittel er påkrevd',
+    bggSearch: 'Søk på BoardGameGeek',
+    bggSearchPlaceholder: 'Skriv spillnavn eller BGG-ID…',
+    bggViewOnBgg: 'Vis på BGG',
+    bggNoResults: 'Ingen treff',
   },
   gameDetail: {
     back: 'Samling',
