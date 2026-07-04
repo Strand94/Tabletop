@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { refreshCatalog, type SnapshotSource } from '../src/modules/bgg/catalog-source.js';
 import * as service from '../src/modules/bgg/catalog-service.js';
+import { runCatalogRefresh } from '../src/modules/bgg/catalog-cli.js';
 
 const CSV =
   'ID,Name,Year,Rank,Average,Bayes average,Users rated,URL,Thumbnail\n1,Ark Nova,2021,2,8.54,8.35,100,/bg/1,t1';
@@ -41,5 +42,30 @@ describe('refreshCatalog', () => {
     const result = await refreshCatalog({ source: fakeSource(['2026-06-29.csv']), force: true });
     expect(replace).toHaveBeenCalledOnce();
     expect(result.status).toBe('refreshed');
+  });
+});
+
+describe('runCatalogRefresh (CLI arg handling)', () => {
+  it('routes --file to a local-file replace using the filename date', async () => {
+    const replace = vi.fn().mockResolvedValue(1);
+    const result = await runCatalogRefresh(['--file', '/tmp/2026-06-29T00-57-24.csv'], {
+      readFile: () =>
+        Promise.resolve(
+          'ID,Name,Year,Rank,Average,Bayes average,Users rated,URL,Thumbnail\n1,X,2020,5,7,6,9,/bg/1,t',
+        ),
+      replace,
+      refresh: vi.fn(),
+    });
+    expect(replace).toHaveBeenCalledWith(expect.any(Array), '2026-06-29');
+    expect(result).toEqual({ status: 'refreshed', snapshotDate: '2026-06-29', count: 1 });
+  });
+
+  it('routes no --file to a network refresh', async () => {
+    const refresh = vi
+      .fn()
+      .mockResolvedValue({ status: 'unchanged', snapshotDate: '2026-06-29', count: 0 });
+    const result = await runCatalogRefresh([], { readFile: vi.fn(), replace: vi.fn(), refresh });
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(result.status).toBe('unchanged');
   });
 });
