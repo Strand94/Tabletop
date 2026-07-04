@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { BggCatalogHitDto, BggImportInput, BggImportResultDto } from '@tabletop/shared';
+import type {
+  BggCatalogHitDto,
+  BggCatalogRefreshResultDto,
+  BggImportInput,
+  BggImportResultDto,
+} from '@tabletop/shared';
 import { apiFetch } from './api.js';
 import { useDebouncedValue } from './use-debounced-value.js';
 
@@ -24,5 +29,13 @@ export function useBggImport() {
         method: 'POST',
         body: input,
       }),
+  });
+}
+
+/** Admin-only: download the latest snapshot and replace the local catalog. */
+export function useBggCatalogRefresh() {
+  return useMutation({
+    mutationFn: () =>
+      apiFetch<BggCatalogRefreshResultDto>('/api/bgg/catalog/refresh', { method: 'POST' }),
   });
 }
