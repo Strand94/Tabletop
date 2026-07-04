@@ -1,12 +1,33 @@
 import type { BggImportInput, BggImportResultDto } from '@tabletop/shared';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { prisma } from '../../db.js';
+import { fetchAndStoreImage } from '../uploads/image.js';
 import { getCatalogEntries } from './catalog-service.js';
+
+/**
+ * Resolve the cover to persist for a catalog thumbnail: download and self-host it
+ * so it renders same-origin, falling back to the source URL if the download fails
+ * (that URL still renders thanks to the CDN allowance in the CSP). Already-local
+ * paths are kept as-is.
+ */
+async function resolveCover(
+  thumbnail: string | null,
+  storeImage: (url: string) => Promise<string>,
+): Promise<string | undefined> {
+  if (!thumbnail) return undefined;
+  if (thumbnail.startsWith('/')) return thumbnail;
+  try {
+    return await storeImage(thumbnail);
+  } catch {
+    return thumbnail;
+  }
+}
 
 /** Create a Game per catalog id, skipping ids already owned or not in the catalog. */
 export async function importGames(
   input: BggImportInput,
   defaultCurrency: string,
+  storeImage: (url: string) => Promise<string> = fetchAndStoreImage,
 ): Promise<BggImportResultDto> {
   const entries = await getCatalogEntries(input.bggIds);
   const existing = await prisma.game.findMany({
@@ -23,7 +44,7 @@ export async function importGames(
         data: {
           title: e.name,
           releaseYear: e.year ?? undefined,
-          imagePath: e.thumbnail ?? undefined,
+          imagePath: await resolveCover(e.thumbnail, storeImage),
           bggId: e.bggId,
           bggRating: e.average ?? undefined,
           bggRank: e.rank ?? undefined,

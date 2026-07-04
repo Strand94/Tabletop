@@ -77,3 +77,21 @@ export function useUpdateGame(id: number) {
     },
   });
 }
+
+export function useDeleteGame() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => apiFetch<void>(`/api/games/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['games'] });
+      void qc.invalidateQueries({ queryKey: ['stats'] });
+    },
+  });
+}
+
+/** Upload a cover to a game by id, outside the hook lifecycle (used post-create). */
+export function uploadGameImage(id: number, file: File): Promise<GameDto> {
+  const body = new FormData();
+  body.append('image', file);
+  return apiFetch<GameDto>(`/api/games/${id}/image`, { method: 'POST', body });
+}
