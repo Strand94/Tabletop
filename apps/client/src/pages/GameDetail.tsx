@@ -1,8 +1,9 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { bggUrl } from '@tabletop/shared';
-import { useGame } from '../lib/games-api.js';
+import { useDeleteGame, useGame } from '../lib/games-api.js';
+import { useAuth } from '../lib/auth.js';
 import { useLogPlay } from '../lib/log-play.js';
 import { useRateGame } from '../lib/ratings-api.js';
 import { GameFormModal } from '../components/GameFormModal.js';
@@ -32,11 +33,21 @@ export function GameDetail(): JSX.Element {
   const { data: game, isLoading, isError } = useGame(gameId);
   const { openLogPlay } = useLogPlay();
   const rateGame = useRateGame(gameId);
+  const del = useDeleteGame();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <p className="p-7 text-[13px] text-muted">{t.common.loading}</p>;
   if (isError || !game)
     return <p className="p-7 text-[13px] text-muted">{t.gameDetail.notFound}</p>;
+
+  async function onDelete(): Promise<void> {
+    if (!window.confirm(t.gameDetail.confirmDelete)) return;
+    await del.mutateAsync(gameId);
+    navigate('/collection');
+  }
 
   return (
     <div className="px-7 pb-8 pt-4">
@@ -75,6 +86,17 @@ export function GameDetail(): JSX.Element {
             <Icon name="edit" size={17} />
             {t.gameDetail.edit}
           </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={del.isPending}
+              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-card py-2.5 text-[12.5px] font-semibold text-[#c8453a] disabled:opacity-60"
+            >
+              <Icon name="delete" size={17} />
+              {t.gameDetail.delete}
+            </button>
+          )}
         </div>
 
         {/* Right: details */}

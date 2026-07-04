@@ -1,8 +1,8 @@
 import type { JSX } from 'react';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import type { BggCatalogHitDto, CreateGameInput, GameDto } from '@tabletop/shared';
 import { bggUrl } from '@tabletop/shared';
-import { useCategories, useCreateGame, useUpdateGame } from '../lib/games-api.js';
+import { useCategories, useCreateGame, useUpdateGame, uploadGameImage } from '../lib/games-api.js';
 import { useBggCatalogSearch, hitToFormPatch } from '../lib/bgg-api.js';
 import { Icon } from './Icon.js';
 import { t } from '../lib/strings.js';
@@ -58,6 +58,7 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
   const editing = Boolean(game);
   const [form, setForm] = useState<FormState>(() => initialState(game));
   const [categoryIds, setCategoryIds] = useState<number[]>(game?.categories.map((c) => c.id) ?? []);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { data: categories = [] } = useCategories();
   const createGame = useCreateGame();
@@ -106,9 +107,11 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
       imagePath: form.imagePath.trim() || undefined,
     };
     try {
-      const saved = editing
+      let saved = editing
         ? await updateGame.mutateAsync(payload)
         : await createGame.mutateAsync(payload);
+      // A picked file wins over a typed URL: upload it to the now-existing game.
+      if (imageFile) saved = await uploadGameImage(saved.id, imageFile);
       onSaved?.(saved);
       onClose();
     } catch {
@@ -330,6 +333,32 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
             />
           </Field>
 
+          <Field label={t.gameForm.cover}>
+            <div className="flex items-center gap-3">
+              <CoverPreview imagePath={form.imagePath} file={imageFile} />
+              <div className="flex flex-1 flex-col gap-2">
+                <input
+                  type="url"
+                  aria-label={t.gameForm.coverUrl}
+                  value={form.imagePath}
+                  onChange={(e) => {
+                    set('imagePath', e.target.value);
+                    setImageFile(null);
+                  }}
+                  placeholder={t.gameForm.coverUrlPlaceholder}
+                  className={inputClass}
+                />
+                <input
+                  type="file"
+                  aria-label={t.gameForm.coverUpload}
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+                  className="text-[12px] text-muted2 file:mr-2 file:rounded-md file:border file:border-border file:bg-card file:px-2 file:py-1 file:text-[12px] file:font-semibold file:text-muted2"
+                />
+              </div>
+            </div>
+          </Field>
+
           {error && (
             <p role="alert" className="m-0 text-[12.5px] font-semibold text-[#c8453a]">
               {error}
@@ -360,6 +389,27 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
 
 const inputClass =
   'w-full rounded-lg border border-border bg-input px-3 py-2 text-[13px] text-text outline-none focus:border-accent';
+
+/** Small square preview of the chosen cover: a staged file wins over the saved URL. */
+function CoverPreview({ imagePath, file }: { imagePath: string; file: File | null }): JSX.Element {
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setObjectUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setObjectUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const src = objectUrl ?? (imagePath.trim() || null);
+  return (
+    <div className="h-16 w-16 flex-none overflow-hidden rounded-lg border border-border bg-chip">
+      {src && <img src={src} alt="" className="h-full w-full object-cover" />}
+    </div>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }): JSX.Element {
   return (
