@@ -63,7 +63,7 @@ export function GameDetail(): JSX.Element {
         {/* Left: cover + actions */}
         <div>
           <div
-            className="aspect-[3/4] w-full rounded-2xl border border-border"
+            className="aspect-square w-full rounded-2xl border border-border"
             style={game.imagePath ? undefined : { background: cover }}
           >
             {game.imagePath && (
