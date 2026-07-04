@@ -64,10 +64,11 @@ export function createApp(deps?: AppDeps): Express {
           'script-src': ["'self'"],
           'style-src': ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          // cf.geekdo-images.com serves BGG cover thumbnails, shown live in the
-          // catalog search preview (before import) and as a hotlink fallback when
-          // self-hosting a cover fails.
-          'img-src': ["'self'", 'data:', 'https://cf.geekdo-images.com'],
+          // Covers can be hotlinked from any host: BGG thumbnails (cf.geekdo-images.com)
+          // shown live in the catalog search preview and as a fallback when self-hosting
+          // fails, plus arbitrary image URLs a user pastes into the cover field. Allowing
+          // any https image source keeps those from being silently blocked.
+          'img-src': ["'self'", 'data:', 'https:'],
           'connect-src': ["'self'"],
           'object-src': ["'none'"],
           'base-uri': ["'self'"],

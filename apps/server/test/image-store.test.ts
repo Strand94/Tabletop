@@ -1,7 +1,7 @@
 import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 
 // IMAGES_DIR is read at module load, so point it at a temp dir before importing.
 const dir = mkdtempSync(path.join(tmpdir(), 'tabletop-img-'));
@@ -14,13 +14,16 @@ function fakeResponse(opts: {
   ok?: boolean;
   status?: number;
   contentType?: string;
+  contentLength?: string;
   bytes?: Buffer;
 }): Response {
   const bytes = opts.bytes ?? Buffer.from('img-bytes');
+  const headers = new Headers(opts.contentType ? { 'content-type': opts.contentType } : {});
+  if (opts.contentLength) headers.set('content-length', opts.contentLength);
   return {
     ok: opts.ok ?? true,
     status: opts.status ?? 200,
-    headers: new Headers(opts.contentType ? { 'content-type': opts.contentType } : {}),
+    headers,
     arrayBuffer: () =>
       Promise.resolve(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)),
   } as unknown as Response;
@@ -69,5 +72,23 @@ describe('fetchAndStoreImage', () => {
         ),
       ),
     ).rejects.toThrow();
+  });
+
+  it('rejects on an oversized Content-Length before buffering the body', async () => {
+    const arrayBuffer = vi.fn(() => Promise.resolve(new ArrayBuffer(0)));
+    await expect(
+      fetchAndStoreImage('https://cf.geekdo-images.com/huge.jpg', () =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: new Headers({
+            'content-type': 'image/jpeg',
+            'content-length': String(9 * 1024 * 1024),
+          }),
+          arrayBuffer,
+        } as unknown as Response),
+      ),
+    ).rejects.toThrow();
+    expect(arrayBuffer).not.toHaveBeenCalled();
   });
 });

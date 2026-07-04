@@ -70,6 +70,12 @@ export async function fetchAndStoreImage(
   const contentType = res.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
   const ext = MIME_TO_EXT[contentType];
   if (!ext) throw new Error(`Unsupported image type: ${contentType || 'unknown'}`);
+  // Reject on the advertised size before buffering, so an oversized (or lying)
+  // response isn't fully read into memory ahead of the post-read length check.
+  const declaredLength = Number(res.headers.get('content-length'));
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_IMAGE_BYTES) {
+    throw new Error('Image exceeds size limit');
+  }
   const buffer = Buffer.from(await res.arrayBuffer());
   if (buffer.length > MAX_IMAGE_BYTES) throw new Error('Image exceeds size limit');
   const filename = `${randomUUID()}${ext}`;

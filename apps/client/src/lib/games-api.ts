@@ -89,22 +89,6 @@ export function useDeleteGame() {
   });
 }
 
-/** Upload a cover image for an existing game (multipart). Returns the updated game. */
-export function useUploadGameImage() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, file }: { id: number; file: File }) => {
-      const body = new FormData();
-      body.append('image', file);
-      return apiFetch<GameDto>(`/api/games/${id}/image`, { method: 'POST', body });
-    },
-    onSuccess: (game) => {
-      void qc.invalidateQueries({ queryKey: ['games'] });
-      void qc.invalidateQueries({ queryKey: ['game', game.id] });
-    },
-  });
-}
-
 /** Upload a cover to a game by id, outside the hook lifecycle (used post-create). */
 export function uploadGameImage(id: number, file: File): Promise<GameDto> {
   const body = new FormData();

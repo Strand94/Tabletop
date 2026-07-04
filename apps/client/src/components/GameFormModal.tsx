@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import { useEffect, useState, type FormEvent } from 'react';
 import type { BggCatalogHitDto, CreateGameInput, GameDto } from '@tabletop/shared';
 import { bggUrl } from '@tabletop/shared';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCategories, useCreateGame, useUpdateGame, uploadGameImage } from '../lib/games-api.js';
 import { useBggCatalogSearch, hitToFormPatch } from '../lib/bgg-api.js';
 import { Icon } from './Icon.js';
@@ -60,6 +61,7 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
   const [categoryIds, setCategoryIds] = useState<number[]>(game?.categories.map((c) => c.id) ?? []);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const qc = useQueryClient();
   const { data: categories = [] } = useCategories();
   const createGame = useCreateGame();
   const updateGame = useUpdateGame(game?.id ?? 0);
@@ -111,7 +113,13 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
         ? await updateGame.mutateAsync(payload)
         : await createGame.mutateAsync(payload);
       // A picked file wins over a typed URL: upload it to the now-existing game.
-      if (imageFile) saved = await uploadGameImage(saved.id, imageFile);
+      // The upload happens after the create/update mutation's cache invalidation,
+      // so re-invalidate here to surface the new cover in the list and detail views.
+      if (imageFile) {
+        saved = await uploadGameImage(saved.id, imageFile);
+        void qc.invalidateQueries({ queryKey: ['games'] });
+        void qc.invalidateQueries({ queryKey: ['game', saved.id] });
+      }
       onSaved?.(saved);
       onClose();
     } catch {
