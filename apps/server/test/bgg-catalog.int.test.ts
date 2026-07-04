@@ -1,5 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import request from 'supertest';
+import type { Express } from 'express';
 import { prisma } from '../src/db.js';
+import { createApp } from '../src/app.js';
+import { tokenServiceFromConfig } from '../src/modules/auth/routes.js';
 import {
   currentSnapshotDate,
   getCatalogRatings,
@@ -8,6 +12,11 @@ import {
 } from '../src/modules/bgg/catalog-service.js';
 import type { CatalogRow } from '../src/modules/bgg/csv.js';
 import { applyMigrations, resetDb } from './helpers/db.js';
+
+const tokens = tokenServiceFromConfig({
+  JWT_SECRET: 'access-secret-access-secret-1234567890',
+  JWT_REFRESH_SECRET: 'refresh-secret-refresh-secret-1234567890',
+});
 
 describe.skipIf(process.env.RUN_DB_TESTS !== '1')('bgg_catalog table', () => {
   beforeEach(async () => {
@@ -101,5 +110,61 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('catalog-service', () => {
   it('returns ratings for the sync provider', async () => {
     await replaceCatalog(rows, '2026-06-29');
     expect(await getCatalogRatings([3, 999])).toEqual([{ bggId: 3, rating: 8.6, rank: 1 }]);
+  });
+});
+
+describe.skipIf(process.env.RUN_DB_TESTS !== '1')('GET /api/bgg/catalog/search', () => {
+  let app: Express;
+  let token: string;
+  beforeEach(async () => {
+    applyMigrations();
+    await resetDb();
+    app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'maya', password: 'supersecret' });
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ username: 'maya', password: 'supersecret' });
+    token = login.body.accessToken;
+    await replaceCatalog(
+      [
+        {
+          bggId: 1,
+          name: 'Ark Nova',
+          year: 2021,
+          rank: 2,
+          average: 8.54,
+          bayesAverage: 8.35,
+          usersRated: 100,
+          thumbnail: 't1',
+        },
+      ],
+      '2026-06-29',
+    );
+  });
+
+  it('requires auth', async () => {
+    await request(app).get('/api/bgg/catalog/search?q=ark').expect(401);
+  });
+
+  it('returns hits with every field', async () => {
+    const res = await request(app)
+      .get('/api/bgg/catalog/search?q=ark')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body[0]).toMatchObject({
+      bggId: 1,
+      name: 'Ark Nova',
+      average: 8.54,
+      thumbnail: 't1',
+    });
+  });
+
+  it('rejects an empty query', async () => {
+    await request(app)
+      .get('/api/bgg/catalog/search?q=')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
   });
 });

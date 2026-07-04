@@ -13,6 +13,7 @@ import { createPeopleRouter } from './modules/people/routes.js';
 import { createLocationsRouter, createSessionsRouter } from './modules/sessions/routes.js';
 import { createStatsRouter } from './modules/stats/routes.js';
 import { createBggRouter } from './modules/bgg/routes.js';
+import { createBggCatalogRouter } from './modules/bgg/catalog-routes.js';
 import { createExportRouter } from './modules/export/routes.js';
 import { IMAGES_DIR } from './modules/uploads/image.js';
 import type { TokenService } from './modules/auth/service.js';
@@ -111,6 +112,10 @@ export function createApp(deps?: AppDeps): Express {
       }),
     );
     api.use('/export', createExportRouter(deps.tokens));
+    api.use(
+      '/bgg',
+      createBggCatalogRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
+    );
   }
 
   app.use('/api', api);
