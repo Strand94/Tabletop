@@ -61,6 +61,7 @@ export const nb = {
     minPlaytime: 'Min. tid',
     maxPlaytime: 'Maks tid',
     minAge: 'Alder',
+    bggId: 'BGG-ID',
     weight: 'Kompleksitet (1–5)',
     price: 'Pris',
     status: 'Status',

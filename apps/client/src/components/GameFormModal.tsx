@@ -21,6 +21,7 @@ interface FormState {
   minPlaytime: string;
   maxPlaytime: string;
   minAge: string;
+  bggId: string;
   weight: string;
   price: string;
   description: string;
@@ -38,6 +39,7 @@ function initialState(game?: GameDto): FormState {
     minPlaytime: game?.minPlaytime?.toString() ?? '',
     maxPlaytime: game?.maxPlaytime?.toString() ?? '',
     minAge: game?.minAge?.toString() ?? '',
+    bggId: game?.bggId?.toString() ?? '',
     weight: game?.weight?.toString() ?? '',
     price: game?.price?.toString() ?? '',
     description: game?.description ?? '',
@@ -97,6 +99,7 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
       minPlaytime: num(form.minPlaytime),
       maxPlaytime: num(form.maxPlaytime),
       minAge: num(form.minAge),
+      bggId: num(form.bggId),
       weight: num(form.weight),
       price: num(form.price),
       description: form.description.trim() || undefined,
@@ -265,6 +268,16 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
               />
             </Field>
           </div>
+
+          <Field label={t.gameForm.bggId}>
+            <input
+              aria-label={t.gameForm.bggId}
+              inputMode="numeric"
+              value={form.bggId}
+              onChange={(e) => set('bggId', e.target.value)}
+              className={inputClass}
+            />
+          </Field>
 
           <Field label={t.gameForm.status}>
             <div className="flex gap-1 rounded-lg bg-chip p-1">
