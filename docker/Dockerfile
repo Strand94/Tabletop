@@ -59,7 +59,10 @@ COPY --from=build /app/apps/server/dist ./apps/server/dist
 COPY --from=build /app/apps/client/dist ./client
 
 # Volumes for uploaded images and logs, owned by the non-root runtime user.
-RUN mkdir -p /app/images /app/logs && chown -R node:node /app
+# Only these dirs need write access — chown just them (a recursive `chown /app`
+# rewrites every node_modules file's metadata, duplicating ~360MB into a new
+# layer). The rest is world-readable and read-only at runtime.
+RUN mkdir -p /app/images /app/logs && chown node:node /app/images /app/logs
 
 # Drop privileges: run as the built-in non-root `node` user.
 USER node
