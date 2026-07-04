@@ -3,6 +3,8 @@
  * only ever writes the read-only bgg_rating / bgg_rank / bgg_synced_at fields;
  * it never touches user ratings. Wiring the real fetch is a later, opt-in change.
  */
+import { getCatalogRatings } from './catalog-service.js';
+
 export interface BggRating {
   bggId: number;
   rating: number | null;
@@ -15,13 +17,14 @@ export interface BggRatingProvider {
 }
 
 /**
- * Default provider: would download BGG's public ranks CSV data dump and match by
- * bgg_id. No token required. Ships as a no-op stub — returns nothing so a sync
- * run is a safe no-op until wired up.
+ * Default provider: reads from the locally cached catalog (populated by the
+ * admin catalog refresh from BGG's public ranks CSV data dump) and matches by
+ * bgg_id. No token required.
  */
 export class CsvDumpProvider implements BggRatingProvider {
-  fetchRatings(_bggIds: number[]): Promise<BggRating[]> {
-    return Promise.resolve([]);
+  async fetchRatings(bggIds: number[]): Promise<BggRating[]> {
+    const ratings = await getCatalogRatings(bggIds);
+    return ratings.map((r) => ({ bggId: r.bggId, rating: r.rating, rank: r.rank }));
   }
 }
 

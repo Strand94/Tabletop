@@ -28,6 +28,7 @@ export interface AppDeps {
     provider: string;
     apiToken: string | undefined;
   };
+  catalogRepo?: string;
 }
 
 /**
@@ -114,7 +115,11 @@ export function createApp(deps?: AppDeps): Express {
     api.use('/export', createExportRouter(deps.tokens));
     api.use(
       '/bgg',
-      createBggCatalogRouter({ tokens: deps.tokens, defaultCurrency: deps.defaultCurrency }),
+      createBggCatalogRouter({
+        tokens: deps.tokens,
+        defaultCurrency: deps.defaultCurrency,
+        catalogRepo: deps.catalogRepo ?? 'beefsack/bgg-ranking-historicals',
+      }),
     );
   }
 

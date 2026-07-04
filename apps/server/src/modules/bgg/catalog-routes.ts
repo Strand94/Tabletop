@@ -1,13 +1,15 @@
 import { Router } from 'express';
 import { bggCatalogSearchQuerySchema, bggImportSchema } from '@tabletop/shared';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, requireRole } from '../../middleware/auth.js';
 import type { TokenService } from '../auth/service.js';
 import { searchCatalog } from './catalog-service.js';
 import { importGames } from './import-service.js';
+import { githubSource, refreshCatalog } from './catalog-source.js';
 
 export interface BggCatalogDeps {
   tokens: TokenService;
   defaultCurrency: string;
+  catalogRepo: string;
 }
 
 /** Catalog routes mounted at /api/bgg. All require an authenticated member. */
@@ -26,6 +28,13 @@ export function createBggCatalogRouter(deps: BggCatalogDeps): Router {
     void (async () => {
       const input = bggImportSchema.parse(req.body);
       res.status(201).json(await importGames(input, deps.defaultCurrency));
+    })().catch(next);
+  });
+
+  router.post('/catalog/refresh', requireRole('ADMIN'), (req, res, next) => {
+    void (async () => {
+      const force = req.query.force === 'true';
+      res.json(await refreshCatalog({ source: githubSource(deps.catalogRepo), force }));
     })().catch(next);
   });
 
