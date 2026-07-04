@@ -8,6 +8,7 @@ export const nb = {
     sessions: 'Partier',
     players: 'Spillere',
     settings: 'Innstillinger',
+    browseBgg: 'Utforsk BGG',
   },
   shelfOfShame: {
     title: 'Hylle uten spill',
@@ -60,6 +61,7 @@ export const nb = {
     minPlaytime: 'Min. tid',
     maxPlaytime: 'Maks tid',
     minAge: 'Alder',
+    bggId: 'BGG-ID',
     weight: 'Kompleksitet (1–5)',
     price: 'Pris',
     status: 'Status',
@@ -69,6 +71,10 @@ export const nb = {
     saving: 'Lagrer…',
     cancel: 'Avbryt',
     required: 'Tittel er påkrevd',
+    bggSearch: 'Søk på BoardGameGeek',
+    bggSearchPlaceholder: 'Skriv spillnavn eller BGG-ID…',
+    bggViewOnBgg: 'Vis på BGG',
+    bggNoResults: 'Ingen treff',
   },
   gameDetail: {
     back: 'Samling',
@@ -83,6 +89,7 @@ export const nb = {
     playHistory: 'Spillhistorikk',
     plays: 'partier',
     noPlays: 'Ingen partier ennå.',
+    viewOnBgg: 'Vis på BoardGameGeek',
   },
   rating: {
     yourGameRating: 'Din vurdering',
@@ -236,6 +243,13 @@ export const nb = {
     prev: 'Forrige',
     next: 'Neste',
     of: 'av',
+  },
+  browseBgg: {
+    title: 'Utforsk BoardGameGeek',
+    searchPlaceholder: 'Søk i BGG-katalogen…',
+    add: 'Legg til valgte',
+    imported: '{{created}} lagt til, {{skipped}} hoppet over',
+    empty: 'Søk for å finne spill å importere',
   },
 };
 

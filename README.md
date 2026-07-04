@@ -2,11 +2,11 @@
 
 > A self-hosted, open-source board game collection and play-session tracker.
 
-Track your board game **collection** (with rich, BGG-like metadata entered manually),
-manage **expansions** as first-class objects, log **play sessions** (players, scores,
-winners, duration, location), and keep **two kinds of personal rating** — one for a game
-overall and one for an individual play. Multi-user with roles, fully translatable UI,
-and an optional, pluggable BGG rating sync that can be wired up later.
+Track your board game **collection**, manage **expansions** as first-class objects, log
+**play sessions** (players, scores, winners, duration, location), and keep **two kinds of
+personal rating** — one for a game overall and one for an individual play. Add games fast
+with **BoardGameGeek autofill and bulk import**, and let the read-only **BGG rating sync**
+keep ranks and ratings fresh. Multi-user with roles and a fully translatable UI.
 
 Runs as **two containers** (app + PostgreSQL) on a home NAS or server.
 
@@ -55,22 +55,52 @@ This is an npm-workspaces monorepo:
 
 All configuration is via environment variables (see [`.env.example`](.env.example)):
 
-| Var                  | Required | Default    | Purpose                           |
-| -------------------- | -------- | ---------- | --------------------------------- |
-| `DB_HOST`            | yes      | `db`       | Postgres host                     |
-| `DB_PORT`            | no       | `5432`     | Postgres port                     |
-| `DB_USER`            | yes      | —          | Postgres user                     |
-| `DB_PASSWORD`        | yes      | —          | Postgres password                 |
-| `DB_NAME`            | yes      | `tabletop` | Database name                     |
-| `JWT_SECRET`         | **yes**  | —          | Access-token secret (fail-fast)   |
-| `JWT_REFRESH_SECRET` | **yes**  | —          | Refresh-token secret (fail-fast)  |
-| `PORT`               | no       | `5470`     | App HTTP port                     |
-| `TZ`                 | no       | `UTC`      | Timezone                          |
-| `DEFAULT_CURRENCY`   | no       | `NOK`      | Instance currency code            |
-| `DEFAULT_LOCALE`     | no       | `en`       | Fallback UI language              |
-| `BGG_SYNC_ENABLED`   | no       | `false`    | Master switch for BGG rating sync |
-| `BGG_SYNC_PROVIDER`  | no       | `csv`      | `csv` \| `xmlapi`                 |
-| `BGG_API_TOKEN`      | no       | —          | Only if provider is `xmlapi`      |
+| Var                           | Required | Default                            | Purpose                                      |
+| ----------------------------- | -------- | ---------------------------------- | -------------------------------------------- |
+| `DB_HOST`                     | yes      | `db`                               | Postgres host                                |
+| `DB_PORT`                     | no       | `5432`                             | Postgres port                                |
+| `DB_USER`                     | yes      | —                                  | Postgres user                                |
+| `DB_PASSWORD`                 | yes      | —                                  | Postgres password                            |
+| `DB_NAME`                     | yes      | `tabletop`                         | Database name                                |
+| `JWT_SECRET`                  | **yes**  | —                                  | Access-token secret (fail-fast)              |
+| `JWT_REFRESH_SECRET`          | **yes**  | —                                  | Refresh-token secret (fail-fast)             |
+| `PORT`                        | no       | `5470`                             | App HTTP port                                |
+| `TZ`                          | no       | `UTC`                              | Timezone                                     |
+| `DEFAULT_CURRENCY`            | no       | `NOK`                              | Instance currency code                       |
+| `DEFAULT_LOCALE`              | no       | `en`                               | Fallback UI language                         |
+| `BGG_SYNC_ENABLED`            | no       | `false`                            | Master switch for BGG rating sync            |
+| `BGG_SYNC_PROVIDER`           | no       | `csv`                              | `csv` \| `xmlapi`                            |
+| `BGG_API_TOKEN`               | no       | —                                  | Only if provider is `xmlapi`                 |
+| `BGG_CATALOG_REPO`            | no       | `beefsack/bgg-ranking-historicals` | GitHub mirror the catalog is fetched from    |
+| `BGG_CATALOG_REFRESH_ENABLED` | no       | `false`                            | Enable the daily in-app catalog auto-refresh |
+
+## BoardGameGeek catalog
+
+Tabletop keeps a local **BGG catalog** (~31k games) that powers three things:
+
+- **Autofill on add** — in the add-game form, search by name or BGG ID and pick a match to
+  fill title, year, BGG ID, rating, rank, and thumbnail. (Player counts, playtime, weight,
+  and description aren't in the source data, so they stay manual.)
+- **Bulk import** — the **Browse BGG** screen lets you search, multi-select, and add many
+  games at once (skipping any already in your collection).
+- **Rating sync** — the admin BGG sync updates the read-only `bggRating` / `bggRank` fields
+  on games you own, matched by BGG ID.
+
+The catalog is sourced from the public [`beefsack/bgg-ranking-historicals`](https://github.com/beefsack/bgg-ranking-historicals)
+mirror of BGG's daily ranks dump — a free, no-auth source (BGG's own XML API and ranks dump
+are login-gated). Load or refresh it any of these ways:
+
+```bash
+# One-off from a CSV you already downloaded (works offline):
+npm run bgg:catalog:refresh -- --file /path/to/bgg-ranks.csv
+
+# Or download the newest snapshot from the mirror:
+npm run bgg:catalog:refresh
+```
+
+Admins can also trigger a refresh from the app (`POST /api/bgg/catalog/refresh`), and setting
+`BGG_CATALOG_REFRESH_ENABLED=true` enables a daily in-app auto-refresh. Refreshes replace the
+catalog transactionally and skip the download when the snapshot hasn't changed.
 
 ## CI/CD
 

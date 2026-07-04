@@ -2,20 +2,13 @@ import type { Prisma } from '../../../generated/prisma/client.js';
 import type { CreateExpansionInput, ExpansionDto, UpdateExpansionInput } from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
+import { decToNum, dateOnly } from '../../lib/prisma-map.js';
 
 const expansionInclude = {
   _count: { select: { sessions: true } },
 } satisfies Prisma.ExpansionInclude;
 
 type ExpansionWithCount = Prisma.ExpansionGetPayload<{ include: typeof expansionInclude }>;
-
-function decToNum(value: Prisma.Decimal | null): number | null {
-  return value === null ? null : value.toNumber();
-}
-
-function dateOnly(value: Date | null): string | null {
-  return value === null ? null : value.toISOString().slice(0, 10);
-}
 
 export function toExpansionDto(exp: ExpansionWithCount): ExpansionDto {
   return {

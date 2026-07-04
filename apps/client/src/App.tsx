@@ -11,6 +11,7 @@ import { Login } from './pages/Login.js';
 import { Dashboard } from './pages/Dashboard.js';
 import { Collection } from './pages/Collection.js';
 import { GameDetail } from './pages/GameDetail.js';
+import { BrowseBgg } from './pages/BrowseBgg.js';
 import { Players } from './pages/Players.js';
 import { Sessions } from './pages/Sessions.js';
 import { SessionDetail } from './pages/SessionDetail.js';
@@ -34,6 +35,7 @@ export function App(): JSX.Element {
                       <Route index element={<Dashboard />} />
                       <Route path="collection" element={<Collection />} />
                       <Route path="collection/:id" element={<GameDetail />} />
+                      <Route path="browse-bgg" element={<BrowseBgg />} />
                       <Route path="sessions" element={<Sessions />} />
                       <Route path="sessions/:id" element={<SessionDetail />} />
                       <Route path="players" element={<Players />} />

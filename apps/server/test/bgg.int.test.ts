@@ -5,6 +5,7 @@ import { createApp } from '../src/app.js';
 import { tokenServiceFromConfig } from '../src/modules/auth/routes.js';
 import { prisma } from '../src/db.js';
 import { applyMigrations, resetDb } from './helpers/db.js';
+import { replaceCatalog } from '../src/modules/bgg/catalog-service.js';
 
 const tokens = tokenServiceFromConfig({
   JWT_SECRET: 'access-secret-access-secret-1234567890',
@@ -76,5 +77,50 @@ describe('POST /api/sync/bgg', () => {
       .set({ Authorization: `Bearer ${adminToken}` });
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ status: 'ok', synced: 0 });
+  });
+
+  it('sync updates bgg_rating/bgg_rank from the catalog when enabled', async () => {
+    const app = createApp({
+      tokens,
+      defaultLocale: 'en',
+      defaultCurrency: 'NOK',
+      bgg: { enabled: true, provider: 'csv', apiToken: undefined },
+    });
+    await bootstrap(app);
+    const game = await request(app)
+      .post('/api/games')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Ark Nova', bggId: 1 })
+      .expect(201);
+    await replaceCatalog(
+      [
+        {
+          bggId: 1,
+          name: 'Ark Nova',
+          year: 2021,
+          rank: 2,
+          average: 8.54,
+          bayesAverage: 8.35,
+          usersRated: 100,
+          thumbnail: 't',
+        },
+      ],
+      '2026-06-29',
+    );
+    const enabledApp = createApp({
+      tokens,
+      defaultLocale: 'en',
+      defaultCurrency: 'NOK',
+      bgg: { enabled: true, provider: 'csv', apiToken: undefined },
+    });
+    await request(enabledApp)
+      .post('/api/sync/bgg')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+    const fetched = await request(app)
+      .get(`/api/games/${game.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(fetched.body.bggRating).toBe(8.54);
+    expect(fetched.body.bggRank).toBe(2);
   });
 });

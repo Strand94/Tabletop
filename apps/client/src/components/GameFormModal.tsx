@@ -1,7 +1,9 @@
 import type { JSX } from 'react';
 import { useState, type FormEvent } from 'react';
-import type { CreateGameInput, GameDto } from '@tabletop/shared';
+import type { BggCatalogHitDto, CreateGameInput, GameDto } from '@tabletop/shared';
+import { bggUrl } from '@tabletop/shared';
 import { useCategories, useCreateGame, useUpdateGame } from '../lib/games-api.js';
+import { useBggCatalogSearch, hitToFormPatch } from '../lib/bgg-api.js';
 import { Icon } from './Icon.js';
 import { t } from '../lib/strings.js';
 
@@ -23,6 +25,8 @@ interface FormState {
   price: string;
   description: string;
   status: 'OWNED' | 'WISHLIST';
+  bggId: string;
+  imagePath: string;
 }
 
 function initialState(game?: GameDto): FormState {
@@ -38,6 +42,8 @@ function initialState(game?: GameDto): FormState {
     price: game?.price?.toString() ?? '',
     description: game?.description ?? '',
     status: game?.collectionStatus ?? 'OWNED',
+    bggId: game?.bggId?.toString() ?? '',
+    imagePath: game?.imagePath ?? '',
   };
 }
 
@@ -57,6 +63,20 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
   const createGame = useCreateGame();
   const updateGame = useUpdateGame(game?.id ?? 0);
   const pending = createGame.isPending || updateGame.isPending;
+  const [bggQuery, setBggQuery] = useState('');
+  const { data: hits = [] } = useBggCatalogSearch(bggQuery);
+
+  function applyHit(hit: BggCatalogHitDto): void {
+    const patch = hitToFormPatch(hit);
+    setForm((f) => ({
+      ...f,
+      title: patch.title,
+      releaseYear: patch.releaseYear,
+      bggId: String(patch.bggId),
+      imagePath: patch.imagePath ?? '',
+    }));
+    setBggQuery('');
+  }
 
   function set(key: keyof FormState, value: string): void {
     setForm((f) => ({ ...f, [key]: value }));
@@ -82,6 +102,8 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
       description: form.description.trim() || undefined,
       collectionStatus: form.status,
       categoryIds,
+      bggId: num(form.bggId),
+      imagePath: form.imagePath.trim() || undefined,
     };
     try {
       const saved = editing
@@ -116,6 +138,55 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4 overflow-y-auto px-6 py-5">
+          {!editing && (
+            <Field label={t.gameForm.bggSearch}>
+              <input
+                aria-label={t.gameForm.bggSearch}
+                value={bggQuery}
+                onChange={(e) => setBggQuery(e.target.value)}
+                placeholder={t.gameForm.bggSearchPlaceholder}
+                className={inputClass}
+              />
+              {bggQuery.trim() !== '' && (
+                <ul className="mt-1 max-h-56 overflow-y-auto rounded-lg border border-border bg-card">
+                  {hits.length === 0 && (
+                    <li className="px-3 py-2 text-[12px] text-muted2">{t.gameForm.bggNoResults}</li>
+                  )}
+                  {hits.map((hit) => (
+                    <li key={hit.bggId} className="flex items-center gap-2 px-2 py-1.5">
+                      <button
+                        type="button"
+                        onClick={() => applyHit(hit)}
+                        className="flex flex-1 items-center gap-2 text-left"
+                      >
+                        {hit.thumbnail && (
+                          <img
+                            src={hit.thumbnail}
+                            alt=""
+                            className="h-8 w-8 rounded object-cover"
+                          />
+                        )}
+                        <span className="text-[13px]">
+                          {hit.name}
+                          {hit.year ? ` (${hit.year})` : ''}
+                          {hit.rank ? ` · #${hit.rank}` : ''}
+                        </span>
+                      </button>
+                      <a
+                        href={bggUrl(hit.bggId)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-semibold text-accent-text"
+                      >
+                        {t.gameForm.bggViewOnBgg} ↗
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Field>
+          )}
+
           <Field label={t.gameForm.title}>
             <input
               aria-label={t.gameForm.title}
@@ -194,6 +265,16 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
               />
             </Field>
           </div>
+
+          <Field label={t.gameForm.bggId}>
+            <input
+              aria-label={t.gameForm.bggId}
+              inputMode="numeric"
+              value={form.bggId}
+              onChange={(e) => set('bggId', e.target.value)}
+              className={inputClass}
+            />
+          </Field>
 
           <Field label={t.gameForm.status}>
             <div className="flex gap-1 rounded-lg bg-chip p-1">

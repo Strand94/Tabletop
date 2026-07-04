@@ -10,6 +10,7 @@ export const en: Strings = {
     sessions: 'Sessions',
     players: 'Players',
     settings: 'Settings',
+    browseBgg: 'Browse BGG',
   },
   shelfOfShame: {
     title: 'Shelf of shame',
@@ -62,6 +63,7 @@ export const en: Strings = {
     minPlaytime: 'Min time',
     maxPlaytime: 'Max time',
     minAge: 'Age',
+    bggId: 'BGG ID',
     weight: 'Complexity (1–5)',
     price: 'Price',
     status: 'Status',
@@ -71,6 +73,10 @@ export const en: Strings = {
     saving: 'Saving…',
     cancel: 'Cancel',
     required: 'Title is required',
+    bggSearch: 'Search BoardGameGeek',
+    bggSearchPlaceholder: 'Type a game name or BGG ID…',
+    bggViewOnBgg: 'View on BGG',
+    bggNoResults: 'No matches',
   },
   gameDetail: {
     back: 'Collection',
@@ -85,6 +91,7 @@ export const en: Strings = {
     playHistory: 'Play history',
     plays: 'plays',
     noPlays: 'No plays yet.',
+    viewOnBgg: 'View on BoardGameGeek',
   },
   rating: {
     yourGameRating: 'Your rating',
@@ -238,5 +245,12 @@ export const en: Strings = {
     prev: 'Previous',
     next: 'Next',
     of: 'of',
+  },
+  browseBgg: {
+    title: 'Browse BoardGameGeek',
+    searchPlaceholder: 'Search the BGG catalog…',
+    add: 'Add selected',
+    imported: '{{created}} added, {{skipped}} skipped',
+    empty: 'Search to find games to import',
   },
 };
