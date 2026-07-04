@@ -45,7 +45,12 @@ ENV CLIENT_DIST=/app/client
 
 # Production-only node_modules (dev tooling excluded). The generated Prisma
 # client is bundled into the server dist by esbuild, so it need not be copied.
+# Root node_modules holds the hoisted deps; the server workspace keeps its own
+# node_modules for deps that can't hoist (e.g. multer, whose readable-stream@3
+# subtree conflicts with the root's readable-stream@4). esbuild leaves all npm
+# deps external, so both trees must ship or Node can't resolve them at runtime.
 COPY --from=proddeps /app/node_modules ./node_modules
+COPY --from=proddeps /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/package-lock.json ./package-lock.json
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
