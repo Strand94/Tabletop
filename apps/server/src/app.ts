@@ -30,6 +30,8 @@ export interface AppDeps {
     apiToken: string | undefined;
   };
   catalogRepo?: string;
+  /** Override BGG cover self-hosting (tests inject a deterministic stub). */
+  storeImage?: (url: string) => Promise<string>;
 }
 
 /**
@@ -62,7 +64,10 @@ export function createApp(deps?: AppDeps): Express {
           'script-src': ["'self'"],
           'style-src': ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
           'font-src': ["'self'", 'https://fonts.gstatic.com'],
-          'img-src': ["'self'", 'data:'],
+          // cf.geekdo-images.com serves BGG cover thumbnails, shown live in the
+          // catalog search preview (before import) and as a hotlink fallback when
+          // self-hosting a cover fails.
+          'img-src': ["'self'", 'data:', 'https://cf.geekdo-images.com'],
           'connect-src': ["'self'"],
           'object-src': ["'none'"],
           'base-uri': ["'self'"],
@@ -120,6 +125,7 @@ export function createApp(deps?: AppDeps): Express {
         tokens: deps.tokens,
         defaultCurrency: deps.defaultCurrency,
         catalogRepo: deps.catalogRepo ?? DEFAULT_BGG_CATALOG_REPO,
+        storeImage: deps.storeImage,
       }),
     );
   }

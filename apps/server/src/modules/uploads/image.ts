@@ -1,4 +1,4 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import multer from 'multer';
@@ -48,4 +48,31 @@ export const uploadImage = multer({
 /** Public URL path for a stored image filename. */
 export function imageUrl(filename: string): string {
   return `/images/${filename}`;
+}
+
+/** Cap on downloaded images, matching the upload limit. */
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+/**
+ * Download a remote image into IMAGES_DIR and return its `/images/...` URL, so a
+ * cover is self-hosted (same-origin, no external hotlink) rather than pointing at
+ * a third-party CDN. The stored extension is derived from the response's
+ * Content-Type via the same allowlist as uploads — never from the URL — and
+ * non-image types, non-2xx responses, and oversized bodies are rejected. Callers
+ * that want a hotlink fallback should `.catch()` and keep the original URL.
+ */
+export async function fetchAndStoreImage(
+  url: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<string> {
+  const res = await fetchImpl(url);
+  if (!res.ok) throw new Error(`Image download failed: ${res.status}`);
+  const contentType = res.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
+  const ext = MIME_TO_EXT[contentType];
+  if (!ext) throw new Error(`Unsupported image type: ${contentType || 'unknown'}`);
+  const buffer = Buffer.from(await res.arrayBuffer());
+  if (buffer.length > MAX_IMAGE_BYTES) throw new Error('Image exceeds size limit');
+  const filename = `${randomUUID()}${ext}`;
+  writeFileSync(path.join(IMAGES_DIR, filename), buffer);
+  return imageUrl(filename);
 }

@@ -11,6 +11,8 @@ export interface BggCatalogDeps {
   tokens: TokenService;
   defaultCurrency: string;
   catalogRepo: string;
+  /** Override the cover self-hosting function (tests inject a deterministic stub). */
+  storeImage?: (url: string) => Promise<string>;
 }
 
 /** Catalog routes mounted at /api/bgg. All require an authenticated member. */
@@ -28,7 +30,7 @@ export function createBggCatalogRouter(deps: BggCatalogDeps): Router {
   router.post('/catalog/import', (req, res, next) => {
     void (async () => {
       const input = bggImportSchema.parse(req.body);
-      res.status(201).json(await importGames(input, deps.defaultCurrency));
+      res.status(201).json(await importGames(input, deps.defaultCurrency, deps.storeImage));
     })().catch(next);
   });
 
