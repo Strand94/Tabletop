@@ -193,17 +193,7 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('POST /api/bgg/catalog/import'
   beforeEach(async () => {
     applyMigrations();
     await resetDb();
-    // Stub cover self-hosting: succeed for t1 (→ /images/...), fail for t2 so the
-    // import falls back to the source URL. Keeps the test off the network.
-    app = createApp({
-      tokens,
-      defaultLocale: 'en',
-      defaultCurrency: 'NOK',
-      storeImage: (url) =>
-        url.includes('t2')
-          ? Promise.reject(new Error('boom'))
-          : Promise.resolve('/images/self.jpg'),
-    });
+    app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
     await request(app)
       .post('/api/auth/register')
       .send({ username: 'maya', password: 'supersecret' });
@@ -251,21 +241,18 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('POST /api/bgg/catalog/import'
       bggId: 1,
       bggRating: 8.54,
       bggRank: 2,
-      imagePath: '/images/self.jpg',
       collectionStatus: 'WISHLIST',
     });
   });
 
-  it('falls back to the source thumbnail URL when self-hosting fails', async () => {
+  it('does not set a cover from the low-quality catalog thumbnail', async () => {
     await request(app)
       .post('/api/bgg/catalog/import')
       .set('Authorization', `Bearer ${token}`)
-      .send({ bggIds: [2] })
+      .send({ bggIds: [1] })
       .expect(201);
-    const list = await request(app)
-      .get('/api/games?q=Brass')
-      .set('Authorization', `Bearer ${token}`);
-    expect(list.body.items[0]).toMatchObject({ bggId: 2, imagePath: 'https://x/t2.jpg' });
+    const list = await request(app).get('/api/games?q=Ark').set('Authorization', `Bearer ${token}`);
+    expect(list.body.items[0]).toMatchObject({ bggId: 1, imagePath: null });
   });
 
   it('skips ids already in the collection or absent from the catalog', async () => {
