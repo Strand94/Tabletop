@@ -50,3 +50,28 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ ...validEnv, BGG_SYNC_PROVIDER: 'bogus' })).toThrow();
   });
 });
+
+describe('BGG catalog config', () => {
+  it('defaults the mirror repo and refresh flag', () => {
+    const base = {
+      DB_USER: 'u',
+      DB_PASSWORD: 'p',
+      JWT_SECRET: 'x'.repeat(32),
+      JWT_REFRESH_SECRET: 'y'.repeat(32),
+    };
+    const c = loadConfig(base);
+    expect(c.BGG_CATALOG_REPO).toBe('beefsack/bgg-ranking-historicals');
+    expect(c.BGG_CATALOG_REFRESH_ENABLED).toBe(false);
+  });
+
+  it('reads overrides', () => {
+    const base = {
+      DB_USER: 'u',
+      DB_PASSWORD: 'p',
+      JWT_SECRET: 'x'.repeat(32),
+      JWT_REFRESH_SECRET: 'y'.repeat(32),
+    };
+    const c = loadConfig({ ...base, BGG_CATALOG_REFRESH_ENABLED: 'true' });
+    expect(c.BGG_CATALOG_REFRESH_ENABLED).toBe(true);
+  });
+});

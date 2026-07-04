@@ -25,6 +25,12 @@ const NAV: NavItem[] = [
   },
   { to: '/sessions', icon: 'casino', label: t.nav.sessions, subtitle: 'Loggede partier' },
   { to: '/players', icon: 'group', label: t.nav.players, subtitle: 'Spillere i husstanden' },
+  {
+    to: '/browse-bgg',
+    icon: 'travel_explore',
+    label: t.nav.browseBgg,
+    subtitle: 'Importer fra BoardGameGeek',
+  },
   { to: '/settings', icon: 'settings', label: t.nav.settings, subtitle: 'Innstillinger' },
 ];
 

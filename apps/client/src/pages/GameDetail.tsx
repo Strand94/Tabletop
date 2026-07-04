@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { bggUrl } from '@tabletop/shared';
 import { useGame } from '../lib/games-api.js';
 import { useLogPlay } from '../lib/log-play.js';
 import { useRateGame } from '../lib/ratings-api.js';
@@ -81,6 +82,16 @@ export function GameDetail(): JSX.Element {
           <h2 className="m-0 font-display text-[26px] font-semibold tracking-tight">
             {game.title}
           </h2>
+          {game.bggId && (
+            <a
+              href={bggUrl(game.bggId)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1.5 inline-block text-[12.5px] font-semibold text-accent-text"
+            >
+              {t.gameDetail.viewOnBgg} ↗
+            </a>
+          )}
           {game.categories.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {game.categories.map((c) => (

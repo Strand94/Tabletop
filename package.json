@@ -25,6 +25,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
+    "bgg:catalog:refresh": "tsx apps/server/src/modules/bgg/catalog-cli.ts",
     "postinstall": "prisma generate",
     "prepare": "husky || true"
   },
