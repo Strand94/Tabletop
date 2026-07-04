@@ -98,6 +98,23 @@ describe('expansions API', () => {
     expect(updated.body.price).toBe(199);
   });
 
+  it('clears an optional field when updated with null', async () => {
+    const created = await request(app)
+      .post(`/api/games/${gameId}/expansions`)
+      .set(auth(memberToken))
+      .send({ title: 'Clearable', releaseYear: 2020, price: 199 });
+    expect(created.body.releaseYear).toBe(2020);
+
+    const updated = await request(app)
+      .patch(`/api/expansions/${created.body.id}`)
+      .set(auth(memberToken))
+      .send({ releaseYear: null });
+    expect(updated.status).toBe(200);
+    expect(updated.body.releaseYear).toBeNull();
+    // A field NOT included in the patch must stay unchanged.
+    expect(updated.body.price).toBe(199);
+  });
+
   it('forbids members from deleting but allows admins', async () => {
     const created = await request(app)
       .post(`/api/games/${gameId}/expansions`)

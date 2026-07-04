@@ -41,18 +41,18 @@ function toWritableData(
 ): Omit<Prisma.ExpansionUncheckedCreateInput, 'gameId' | 'title'> & { title?: string } {
   return {
     title: input.title,
-    imagePath: input.imagePath ?? undefined,
-    releaseYear: input.releaseYear ?? undefined,
-    minPlayers: input.minPlayers ?? undefined,
-    maxPlayers: input.maxPlayers ?? undefined,
-    minPlaytime: input.minPlaytime ?? undefined,
-    maxPlaytime: input.maxPlaytime ?? undefined,
-    minAge: input.minAge ?? undefined,
-    weight: input.weight ?? undefined,
-    description: input.description ?? undefined,
-    price: input.price ?? undefined,
-    dateAdded: input.dateAdded ? new Date(input.dateAdded) : undefined,
-    bggId: input.bggId ?? undefined,
+    imagePath: input.imagePath,
+    releaseYear: input.releaseYear,
+    minPlayers: input.minPlayers,
+    maxPlayers: input.maxPlayers,
+    minPlaytime: input.minPlaytime,
+    maxPlaytime: input.maxPlaytime,
+    minAge: input.minAge,
+    weight: input.weight,
+    description: input.description,
+    price: input.price,
+    dateAdded: input.dateAdded == null ? input.dateAdded : new Date(input.dateAdded),
+    bggId: input.bggId,
   };
 }
 

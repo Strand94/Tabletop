@@ -138,6 +138,23 @@ describe('games API', () => {
     expect(updated.body.collectionStatus).toBe('WISHLIST');
   });
 
+  it('clears an optional field when updated with null', async () => {
+    const created = await request(app)
+      .post('/api/games')
+      .set(auth(memberToken))
+      .send({ title: 'Clearable', releaseYear: 1999, description: 'old' });
+    expect(created.body.releaseYear).toBe(1999);
+
+    const updated = await request(app)
+      .patch(`/api/games/${created.body.id}`)
+      .set(auth(memberToken))
+      .send({ releaseYear: null });
+    expect(updated.status).toBe(200);
+    expect(updated.body.releaseYear).toBeNull();
+    // A field NOT included in the patch must stay unchanged.
+    expect(updated.body.description).toBe('old');
+  });
+
   it('forbids members from deleting but allows admins', async () => {
     const created = await request(app)
       .post('/api/games')
