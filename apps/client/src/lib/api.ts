@@ -38,17 +38,26 @@ interface ApiOptions extends Omit<RequestInit, 'body'> {
  * single token refresh then retries once. Throws ApiError on non-2xx.
  */
 export async function apiFetch<T>(path: string, options: ApiOptions = {}): Promise<T> {
+  // FormData bodies (file uploads) are passed through untouched: the browser sets
+  // the multipart Content-Type with its boundary, and we must not JSON-encode them.
+  const isFormData = options.body instanceof FormData;
+
   const doRequest = async (): Promise<Response> => {
     const headers = new Headers(options.headers);
     const token = getAccessToken();
     if (token) headers.set('Authorization', `Bearer ${token}`);
-    if (options.body !== undefined && !headers.has('Content-Type')) {
+    if (options.body !== undefined && !isFormData && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
     return fetch(path, {
       ...options,
       headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      body:
+        options.body === undefined
+          ? undefined
+          : isFormData
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
     });
   };
 
