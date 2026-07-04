@@ -39,10 +39,10 @@ function initialState(exp?: ExpansionDto): FormState {
   };
 }
 
-function num(value: string): number | undefined {
-  if (value.trim() === '') return undefined;
+function num(value: string): number | null {
+  if (value.trim() === '') return null;
   const n = Number(value);
-  return Number.isFinite(n) ? n : undefined;
+  return Number.isFinite(n) ? n : null;
 }
 
 const inputClass =
@@ -87,7 +87,7 @@ export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.E
       minAge: num(form.minAge),
       weight: num(form.weight),
       price: num(form.price),
-      description: form.description.trim() || undefined,
+      description: form.description.trim() || null,
     };
     try {
       if (editing) await update.mutateAsync(payload);
