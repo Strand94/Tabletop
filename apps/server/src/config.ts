@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DEFAULT_BGG_CATALOG_REPO } from '@tabletop/shared';
 
 /**
  * Typed, fail-fast application configuration. All environment access goes
@@ -30,7 +31,7 @@ const envSchema = z.object({
   BGG_SYNC_ENABLED: booleanFromString.default(false),
   BGG_SYNC_PROVIDER: z.enum(['csv', 'xmlapi']).default('csv'),
   BGG_API_TOKEN: z.string().optional(),
-  BGG_CATALOG_REPO: z.string().default('beefsack/bgg-ranking-historicals'),
+  BGG_CATALOG_REPO: z.string().default(DEFAULT_BGG_CATALOG_REPO),
   BGG_CATALOG_REFRESH_ENABLED: booleanFromString.default(false),
 });
 

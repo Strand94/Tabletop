@@ -1,6 +1,7 @@
 import type { BggCatalogHitDto } from '@tabletop/shared';
 import type { Prisma } from '../../../generated/prisma/client.js';
 import { prisma } from '../../db.js';
+import { decToNum, dateOnly } from '../../lib/prisma-map.js';
 import type { CatalogRow } from './csv.js';
 
 const CHUNK = 5000;
@@ -21,16 +22,19 @@ function toHit(row: {
     name: row.name,
     year: row.year,
     rank: row.rank,
-    average: row.average === null ? null : row.average.toNumber(),
-    bayesAverage: row.bayesAverage === null ? null : row.bayesAverage.toNumber(),
+    average: decToNum(row.average),
+    bayesAverage: decToNum(row.bayesAverage),
     usersRated: row.usersRated,
     thumbnail: row.thumbnail,
-    snapshotDate: row.snapshotDate ? row.snapshotDate.toISOString().slice(0, 10) : null,
+    snapshotDate: dateOnly(row.snapshotDate),
   };
 }
 
 /** Delete-all + insert, transactionally, so removed games do not linger. */
 export async function replaceCatalog(rows: CatalogRow[], snapshotDate: string): Promise<number> {
+  if (rows.length === 0) {
+    throw new Error('refusing to replace bgg_catalog with zero rows');
+  }
   const stamp = new Date(`${snapshotDate}T00:00:00.000Z`);
   const data = rows.map((r) => ({ ...r, snapshotDate: stamp }));
   await prisma.$transaction([
@@ -57,8 +61,11 @@ export async function currentSnapshotDate(): Promise<string | null> {
 
 /** Numeric query → id match; otherwise case-insensitive name contains, rank first. */
 export async function searchCatalog(q: string, limit: number): Promise<BggCatalogHitDto[]> {
-  const where: Prisma.BggCatalogEntryWhereInput = /^\d+$/.test(q)
-    ? { OR: [{ bggId: Number(q) }, { name: { contains: q, mode: 'insensitive' } }] }
+  const idCandidate = /^\d+$/.test(q) ? Number(q) : null;
+  const isValidId =
+    idCandidate !== null && Number.isInteger(idCandidate) && idCandidate <= 2147483647;
+  const where: Prisma.BggCatalogEntryWhereInput = isValidId
+    ? { OR: [{ bggId: idCandidate }, { name: { contains: q, mode: 'insensitive' } }] }
     : { name: { contains: q, mode: 'insensitive' } };
   const rows = await prisma.bggCatalogEntry.findMany({
     where,

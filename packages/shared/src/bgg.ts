@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { CollectionStatus } from './enums.js';
 
+/** Default GitHub repo mirroring the BGG rankings CSV (single source of truth). */
+export const DEFAULT_BGG_CATALOG_REPO = 'beefsack/bgg-ranking-historicals';
+
 /** Canonical BGG game page. Resolves without the slug, so id is enough. */
 export function bggUrl(bggId: number): string {
   return `https://boardgamegeek.com/boardgame/${bggId}`;

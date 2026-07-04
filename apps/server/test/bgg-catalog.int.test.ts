@@ -111,6 +111,16 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('catalog-service', () => {
     await replaceCatalog(rows, '2026-06-29');
     expect(await getCatalogRatings([3, 999])).toEqual([{ bggId: 3, rating: 8.6, rank: 1 }]);
   });
+
+  it('refuses to replace the catalog with zero rows, preserving existing data', async () => {
+    await replaceCatalog([rows[0]!], '2026-06-29');
+    await expect(replaceCatalog([], '2026-06-30')).rejects.toThrow();
+
+    const all = await searchCatalog('ark', 25);
+    expect(all).toHaveLength(1);
+    expect(all[0]?.bggId).toBe(rows[0]!.bggId);
+    expect(await currentSnapshotDate()).toBe('2026-06-29');
+  });
 });
 
 describe.skipIf(process.env.RUN_DB_TESTS !== '1')('GET /api/bgg/catalog/search', () => {
@@ -166,6 +176,14 @@ describe.skipIf(process.env.RUN_DB_TESTS !== '1')('GET /api/bgg/catalog/search',
       .get('/api/bgg/catalog/search?q=')
       .set('Authorization', `Bearer ${token}`)
       .expect(400);
+  });
+
+  it('does not 500 on a numeric query that overflows int4', async () => {
+    const res = await request(app)
+      .get('/api/bgg/catalog/search?q=99999999999999999999')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(Array.isArray(res.body)).toBe(true);
   });
 });
 

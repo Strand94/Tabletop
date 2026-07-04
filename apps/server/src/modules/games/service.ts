@@ -8,20 +8,13 @@ import type {
 } from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
+import { decToNum, dateOnly } from '../../lib/prisma-map.js';
 
 const gameInclude = {
   categories: { include: { category: true } },
 } satisfies Prisma.GameInclude;
 
 type GameWithCategories = Prisma.GameGetPayload<{ include: typeof gameInclude }>;
-
-function decToNum(value: Prisma.Decimal | null): number | null {
-  return value === null ? null : value.toNumber();
-}
-
-function dateOnly(value: Date | null): string | null {
-  return value === null ? null : value.toISOString().slice(0, 10);
-}
 
 interface RatingFields {
   myRating: number | null;

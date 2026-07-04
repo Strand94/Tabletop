@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import express, { type Express, Router } from 'express';
+import { DEFAULT_BGG_CATALOG_REPO } from '@tabletop/shared';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { pinoHttp } from 'pino-http';
@@ -118,7 +119,7 @@ export function createApp(deps?: AppDeps): Express {
       createBggCatalogRouter({
         tokens: deps.tokens,
         defaultCurrency: deps.defaultCurrency,
-        catalogRepo: deps.catalogRepo ?? 'beefsack/bgg-ranking-historicals',
+        catalogRepo: deps.catalogRepo ?? DEFAULT_BGG_CATALOG_REPO,
       }),
     );
   }
