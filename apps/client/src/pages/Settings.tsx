@@ -2,7 +2,8 @@ import type { JSX } from 'react';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
 import { useLocale, type LocaleSetter } from '../lib/i18n.js';
-import { apiFetch } from '../lib/api.js';
+import { apiFetch, ApiError } from '../lib/api.js';
+import { useBggCatalogRefresh } from '../lib/bgg-api.js';
 import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
 import type { Locale } from '../lib/strings.js';
@@ -98,6 +99,18 @@ export function Settings(): JSX.Element {
   const { theme, toggle } = useTheme();
   const { locale, setLocale } = useLocale();
   const isAdmin = user?.role === 'ADMIN';
+  const refresh = useBggCatalogRefresh();
+  const refreshStatus = refresh.isPending
+    ? undefined
+    : refresh.error
+      ? refresh.error instanceof ApiError
+        ? refresh.error.message
+        : t.settings.refreshFailed
+      : refresh.data
+        ? refresh.data.status === 'refreshed'
+          ? t.settings.catalogUpdated.replace('{n}', String(refresh.data.count))
+          : t.settings.catalogUpToDate
+        : undefined;
 
   return (
     <div className="max-w-[760px] px-7 pb-9 pt-[22px]">
@@ -130,7 +143,7 @@ export function Settings(): JSX.Element {
       </Section>
 
       <Section title={t.settings.bggSync}>
-        <Row title={t.settings.enableSync} hint={t.settings.syncHint} last>
+        <Row title={t.settings.enableSync} hint={t.settings.syncHint} last={!isAdmin}>
           <div className="flex items-center gap-2">
             <span className="rounded bg-chip px-2 py-1 text-[9.5px] font-bold text-muted2">
               {t.settings.offByDefault}
@@ -140,6 +153,22 @@ export function Settings(): JSX.Element {
             </div>
           </div>
         </Row>
+        {isAdmin && (
+          <Row title={t.settings.refreshCatalog} hint={t.settings.refreshCatalogHint} last>
+            <div className="flex items-center gap-3">
+              {refreshStatus && <span className="text-[11.5px] text-muted">{refreshStatus}</span>}
+              <button
+                type="button"
+                disabled={refresh.isPending}
+                onClick={() => refresh.mutate()}
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-input px-3 py-2 text-[12.5px] font-semibold text-muted2 disabled:opacity-60"
+              >
+                <Icon name="sync" size={16} className={refresh.isPending ? 'animate-spin' : ''} />
+                {t.settings.refreshCatalog}
+              </button>
+            </div>
+          </Row>
+        )}
       </Section>
 
       {isAdmin && (

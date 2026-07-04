@@ -13,6 +13,7 @@ export function hitToFormPatch(hit: BggCatalogHitDto): AutofillPatch {
     title: hit.name,
     releaseYear: hit.year === null ? '' : String(hit.year),
     bggId: hit.bggId,
-    imagePath: hit.thumbnail,
+    // The catalog thumbnail is low quality — don't autofill it as the cover.
+    imagePath: null,
   };
 }

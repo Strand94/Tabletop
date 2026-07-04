@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { hitToFormPatch } from './bgg-autofill.js';
 
 describe('hitToFormPatch', () => {
-  it('maps a catalog hit to the form fields it can fill', () => {
+  it('maps a catalog hit to the form fields it can fill, without the low-quality cover', () => {
     expect(
       hitToFormPatch({
         bggId: 1,
@@ -15,7 +15,7 @@ describe('hitToFormPatch', () => {
         thumbnail: 'https://x/t.jpg',
         snapshotDate: '2026-06-29',
       }),
-    ).toEqual({ title: 'Ark Nova', releaseYear: '2021', bggId: 1, imagePath: 'https://x/t.jpg' });
+    ).toEqual({ title: 'Ark Nova', releaseYear: '2021', bggId: 1, imagePath: null });
   });
 
   it('tolerates null year and thumbnail', () => {

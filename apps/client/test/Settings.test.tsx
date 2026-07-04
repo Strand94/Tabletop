@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LocaleProvider } from '../src/lib/i18n.js';
 import { ThemeProvider } from '../src/lib/theme.js';
 import { Settings } from '../src/pages/Settings.js';
@@ -18,12 +19,15 @@ function renderSettings() {
       json: async () => ({}),
     }),
   );
+  const queryClient = new QueryClient();
   return render(
-    <LocaleProvider>
-      <ThemeProvider>
-        <Settings />
-      </ThemeProvider>
-    </LocaleProvider>,
+    <QueryClientProvider client={queryClient}>
+      <LocaleProvider>
+        <ThemeProvider>
+          <Settings />
+        </ThemeProvider>
+      </LocaleProvider>
+    </QueryClientProvider>,
   );
 }
 

@@ -54,7 +54,7 @@ describe('GameFormModal — bggId', () => {
     expect(mutatingBody(mock)).toMatchObject({ title: 'Catan', bggId: 13 });
   });
 
-  it('omits bggId when the field is cleared on edit', async () => {
+  it('sends bggId as null when the field is cleared on edit', async () => {
     const mock = stubFetch();
     const game = { id: 1, title: 'Catan', bggId: 13, categories: [] } as unknown as GameDto;
     renderModal(game);
@@ -64,6 +64,7 @@ describe('GameFormModal — bggId', () => {
     fireEvent.click(screen.getByText('Lagre'));
 
     await waitFor(() => expect(mock.mock.calls.some(([, i]) => i?.method === 'PATCH')).toBe(true));
-    expect(mutatingBody(mock)).not.toHaveProperty('bggId');
+    // Clearing an optional field now sends an explicit null so the server unsets it.
+    expect(mutatingBody(mock)).toMatchObject({ bggId: null });
   });
 });
