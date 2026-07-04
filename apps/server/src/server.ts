@@ -4,6 +4,7 @@ import { loadConfig, type Config } from './config.js';
 import { logger } from './logger.js';
 import { tokenServiceFromConfig } from './modules/auth/routes.js';
 import { githubSource, refreshCatalog } from './modules/bgg/catalog-source.js';
+import { currentSnapshotDate } from './modules/bgg/catalog-service.js';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -31,6 +32,21 @@ async function runCatalogRefresh(config: Config): Promise<void> {
     );
   } catch (err) {
     logger.error({ err }, 'BGG catalog refresh failed');
+  }
+}
+
+/**
+ * One-shot: populate the catalog on a fresh/empty database so search & import
+ * work out of the box. Independent of the recurring BGG_CATALOG_REFRESH_ENABLED
+ * scheduler. Best-effort — logs and never throws.
+ */
+async function initCatalogIfEmpty(config: Config): Promise<void> {
+  try {
+    if ((await currentSnapshotDate()) !== null) return; // already populated
+    logger.info('BGG catalog empty — running initial refresh');
+    await runCatalogRefresh(config);
+  } catch (err) {
+    logger.error({ err }, 'BGG catalog init check failed');
   }
 }
 
@@ -63,6 +79,7 @@ function main(): void {
   });
   app.listen(config.PORT, () => {
     logger.info(`Tabletop server listening on port ${config.PORT}`);
+    void initCatalogIfEmpty(config);
     scheduleCatalogRefresh(config);
   });
 }

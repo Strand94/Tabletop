@@ -30,8 +30,6 @@ export interface AppDeps {
     apiToken: string | undefined;
   };
   catalogRepo?: string;
-  /** Override BGG cover self-hosting (tests inject a deterministic stub). */
-  storeImage?: (url: string) => Promise<string>;
 }
 
 /**
@@ -126,7 +124,6 @@ export function createApp(deps?: AppDeps): Express {
         tokens: deps.tokens,
         defaultCurrency: deps.defaultCurrency,
         catalogRepo: deps.catalogRepo ?? DEFAULT_BGG_CATALOG_REPO,
-        storeImage: deps.storeImage,
       }),
     );
   }

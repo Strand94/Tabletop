@@ -48,10 +48,10 @@ function initialState(game?: GameDto): FormState {
   };
 }
 
-function num(value: string): number | undefined {
-  if (value.trim() === '') return undefined;
+function num(value: string): number | null {
+  if (value.trim() === '') return null;
   const n = Number(value);
-  return Number.isFinite(n) ? n : undefined;
+  return Number.isFinite(n) ? n : null;
 }
 
 /** Modal form for creating or editing a game. */
@@ -102,11 +102,11 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
       minAge: num(form.minAge),
       weight: num(form.weight),
       price: num(form.price),
-      description: form.description.trim() || undefined,
+      description: form.description.trim() || null,
       collectionStatus: form.status,
       categoryIds,
       bggId: num(form.bggId),
-      imagePath: form.imagePath.trim() || undefined,
+      imagePath: form.imagePath.trim() || null,
     };
     try {
       let saved = editing

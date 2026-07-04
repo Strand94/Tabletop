@@ -20,7 +20,7 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
       data-testid="game-card"
     >
       <div
-        className="relative h-[150px]"
+        className="relative aspect-square"
         style={game.imagePath ? undefined : { background: placeholderCover }}
       >
         {game.imagePath && (
