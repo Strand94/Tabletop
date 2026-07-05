@@ -10,6 +10,7 @@ import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
 
 type StatusTab = 'ALL' | CollectionStatus;
+type GameSort = 'title' | 'releaseYear' | 'dateAdded' | 'createdAt' | 'myRating';
 
 /** Collection screen: status tabs, category chips, search, and the game grid. */
 export function Collection(): JSX.Element {
@@ -18,6 +19,8 @@ export function Collection(): JSX.Element {
   const [tab, setTab] = useState<StatusTab>('ALL');
   const [category, setCategory] = useState<number | undefined>();
   const [q, setQ] = useState('');
+  const [sort, setSort] = useState<GameSort>('dateAdded');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
 
@@ -26,10 +29,12 @@ export function Collection(): JSX.Element {
       status: shelf ? undefined : tab === 'ALL' ? undefined : tab,
       category,
       q: q.trim() || undefined,
+      sort,
+      order,
       neverPlayed: shelf || undefined,
       page,
     }),
-    [tab, category, q, shelf, page],
+    [tab, category, q, sort, order, shelf, page],
   );
 
   const { data, isLoading } = useGames(filter);
@@ -41,6 +46,20 @@ export function Collection(): JSX.Element {
     { key: 'OWNED', label: t.collection.ownedFilter },
     { key: 'WISHLIST', label: t.collection.wishlistFilter },
   ];
+
+  const sortOptions: { value: GameSort; label: string }[] = [
+    { value: 'title', label: t.gameForm.title },
+    { value: 'releaseYear', label: t.gameForm.releaseYear },
+    { value: 'dateAdded', label: t.dashboard.recentlyAdded },
+    { value: 'myRating', label: t.collection.sortMyRating },
+  ];
+
+  function changeSort(next: GameSort): void {
+    setSort(next);
+    // Rating sort reads best highest-first; keep the previous default for others.
+    setOrder(next === 'myRating' ? 'desc' : 'asc');
+    setPage(1);
+  }
 
   return (
     <div className="px-7 pb-8 pt-5">
@@ -106,6 +125,18 @@ export function Collection(): JSX.Element {
         )}
 
         <div className="ml-auto flex items-center gap-2">
+          <select
+            value={sort}
+            onChange={(e) => changeSort(e.target.value as GameSort)}
+            aria-label={t.collection.sortLabel}
+            className="rounded-lg border border-border bg-input px-3 py-2 text-[13px] font-semibold text-muted2 outline-none focus:border-accent"
+          >
+            {sortOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-input px-3 py-2 text-muted">
             <Icon name="search" size={17} />
             <input

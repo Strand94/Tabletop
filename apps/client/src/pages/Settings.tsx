@@ -1,12 +1,21 @@
 import type { JSX, FormEvent } from 'react';
 import { useState } from 'react';
-import type { AdminCreateUserInput, Role, UserPublic } from '@tabletop/shared';
+import type {
+  AdminCreateUserInput,
+  CategoryDto,
+  CreateLocationInput,
+  LocationDto,
+  Role,
+  UserPublic,
+} from '@tabletop/shared';
 import { useAuth } from '../lib/auth.js';
 import { useTheme } from '../lib/theme.js';
 import { useLocale, type LocaleSetter } from '../lib/i18n.js';
 import { apiFetch, ApiError } from '../lib/api.js';
 import { useBggCatalogRefresh } from '../lib/bgg-api.js';
 import { useCreateUser, useDeleteUser, useUpdateUser, useUsers } from '../lib/users-api.js';
+import { useCategories, useCreateCategory, useDeleteCategory } from '../lib/categories-api.js';
+import { useCreateLocation, useDeleteLocation, useLocations } from '../lib/locations-api.js';
 import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
 import type { Locale } from '../lib/strings.js';
@@ -199,6 +208,8 @@ export function Settings(): JSX.Element {
       )}
 
       {isAdmin && <UsersSection currentUserId={user?.id ?? null} />}
+      {isAdmin && <CategoriesSection />}
+      {isAdmin && <LocationsSection />}
     </div>
   );
 }
@@ -351,6 +362,316 @@ function UserRow({
         </button>
       </div>
     </div>
+  );
+}
+
+/** Admin-only category management: list, add, delete with confirm. */
+function CategoriesSection(): JSX.Element {
+  const { data: categories = [] } = useCategories();
+  const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState<CategoryDto | null>(null);
+
+  return (
+    <>
+      <Section title={t.settings.categories.title}>
+        {categories.length === 0 ? (
+          <Row title={t.settings.categories.empty} last />
+        ) : (
+          categories.map((c, i) => (
+            <Row key={c.id} title={c.name} last={i === categories.length - 1}>
+              <button
+                type="button"
+                onClick={() => setDeleting(c)}
+                aria-label={t.settings.categories.delete}
+                title={t.settings.categories.delete}
+                className="flex h-[34px] w-[34px] items-center justify-center rounded-lg border border-border text-muted2"
+              >
+                <Icon name="delete" size={16} />
+              </button>
+            </Row>
+          ))
+        )}
+      </Section>
+
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setCreating(true)}
+          className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-[12.5px] font-semibold text-on-accent"
+        >
+          <Icon name="add" size={16} />
+          {t.settings.categories.add}
+        </button>
+      </div>
+
+      {creating && <CreateCategoryModal onClose={() => setCreating(false)} />}
+      {deleting && <DeleteCategoryModal category={deleting} onClose={() => setDeleting(null)} />}
+    </>
+  );
+}
+
+function CreateCategoryModal({ onClose }: { onClose: () => void }): JSX.Element {
+  const createCategory = useCreateCategory();
+  const [name, setName] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent): Promise<void> {
+    e.preventDefault();
+    setError(null);
+    if (name.trim() === '') {
+      setError(t.settings.categories.nameRequired);
+      return;
+    }
+    try {
+      await createCategory.mutateAsync(name.trim());
+      onClose();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return (
+    <ModalShell title={t.settings.categories.createTitle} onClose={onClose}>
+      <form onSubmit={onSubmit} className="flex flex-col gap-4 overflow-y-auto px-6 py-5">
+        <ModalField label={t.settings.categories.name}>
+          <input
+            aria-label={t.settings.categories.name}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={modalInputClass}
+            required
+          />
+        </ModalField>
+        {error && (
+          <p role="alert" className="m-0 text-[12.5px] font-semibold text-[#c8453a]">
+            {error}
+          </p>
+        )}
+        <ModalFooter
+          onClose={onClose}
+          pending={createCategory.isPending}
+          submitLabel={t.settings.categories.create}
+          pendingLabel={t.settings.categories.creating}
+        />
+      </form>
+    </ModalShell>
+  );
+}
+
+function DeleteCategoryModal({
+  category,
+  onClose,
+}: {
+  category: CategoryDto;
+  onClose: () => void;
+}): JSX.Element {
+  const deleteCategory = useDeleteCategory();
+  const [error, setError] = useState<string | null>(null);
+
+  async function onConfirm(): Promise<void> {
+    setError(null);
+    try {
+      await deleteCategory.mutateAsync(category.id);
+      onClose();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return (
+    <ModalShell title={t.settings.categories.deleteTitle} onClose={onClose}>
+      <div className="flex flex-col gap-4 px-6 py-5">
+        <p className="m-0 text-[13px] text-text">
+          {t.settings.categories.confirmDelete.replace('{name}', category.name)}
+        </p>
+        {error && (
+          <p role="alert" className="m-0 text-[12.5px] font-semibold text-[#c8453a]">
+            {error}
+          </p>
+        )}
+        <div className="flex items-center justify-end gap-2 border-t border-hairline pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border bg-card px-4 py-2 text-[13px] font-semibold text-muted2"
+          >
+            {t.settings.categories.cancel}
+          </button>
+          <button
+            type="button"
+            disabled={deleteCategory.isPending}
+            onClick={() => void onConfirm()}
+            className="rounded-lg bg-[#c8453a] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-60"
+          >
+            {deleteCategory.isPending ? t.settings.categories.saving : t.settings.categories.delete}
+          </button>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}
+
+/** Admin-only location management: list (name + address), add, delete with confirm. */
+function LocationsSection(): JSX.Element {
+  const { data: locations = [] } = useLocations();
+  const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState<LocationDto | null>(null);
+
+  return (
+    <>
+      <Section title={t.settings.locations.title}>
+        {locations.length === 0 ? (
+          <Row title={t.settings.locations.empty} last />
+        ) : (
+          locations.map((l, i) => (
+            <Row
+              key={l.id}
+              title={l.name}
+              hint={l.address ?? undefined}
+              last={i === locations.length - 1}
+            >
+              <button
+                type="button"
+                onClick={() => setDeleting(l)}
+                aria-label={t.settings.locations.delete}
+                title={t.settings.locations.delete}
+                className="flex h-[34px] w-[34px] items-center justify-center rounded-lg border border-border text-muted2"
+              >
+                <Icon name="delete" size={16} />
+              </button>
+            </Row>
+          ))
+        )}
+      </Section>
+
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setCreating(true)}
+          className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-[12.5px] font-semibold text-on-accent"
+        >
+          <Icon name="add" size={16} />
+          {t.settings.locations.add}
+        </button>
+      </div>
+
+      {creating && <CreateLocationModal onClose={() => setCreating(false)} />}
+      {deleting && <DeleteLocationModal location={deleting} onClose={() => setDeleting(null)} />}
+    </>
+  );
+}
+
+function CreateLocationModal({ onClose }: { onClose: () => void }): JSX.Element {
+  const createLocation = useCreateLocation();
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent): Promise<void> {
+    e.preventDefault();
+    setError(null);
+    if (name.trim() === '') {
+      setError(t.settings.locations.nameRequired);
+      return;
+    }
+    const payload: CreateLocationInput = {
+      name: name.trim(),
+      ...(address.trim() ? { address: address.trim() } : {}),
+    };
+    try {
+      await createLocation.mutateAsync(payload);
+      onClose();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return (
+    <ModalShell title={t.settings.locations.createTitle} onClose={onClose}>
+      <form onSubmit={onSubmit} className="flex flex-col gap-4 overflow-y-auto px-6 py-5">
+        <ModalField label={t.settings.locations.name}>
+          <input
+            aria-label={t.settings.locations.name}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={modalInputClass}
+            required
+          />
+        </ModalField>
+        <ModalField label={t.settings.locations.addressOptional}>
+          <input
+            aria-label={t.settings.locations.address}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className={modalInputClass}
+          />
+        </ModalField>
+        {error && (
+          <p role="alert" className="m-0 text-[12.5px] font-semibold text-[#c8453a]">
+            {error}
+          </p>
+        )}
+        <ModalFooter
+          onClose={onClose}
+          pending={createLocation.isPending}
+          submitLabel={t.settings.locations.create}
+          pendingLabel={t.settings.locations.creating}
+        />
+      </form>
+    </ModalShell>
+  );
+}
+
+function DeleteLocationModal({
+  location,
+  onClose,
+}: {
+  location: LocationDto;
+  onClose: () => void;
+}): JSX.Element {
+  const deleteLocation = useDeleteLocation();
+  const [error, setError] = useState<string | null>(null);
+
+  async function onConfirm(): Promise<void> {
+    setError(null);
+    try {
+      await deleteLocation.mutateAsync(location.id);
+      onClose();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return (
+    <ModalShell title={t.settings.locations.deleteTitle} onClose={onClose}>
+      <div className="flex flex-col gap-4 px-6 py-5">
+        <p className="m-0 text-[13px] text-text">
+          {t.settings.locations.confirmDelete.replace('{name}', location.name)}
+        </p>
+        {error && (
+          <p role="alert" className="m-0 text-[12.5px] font-semibold text-[#c8453a]">
+            {error}
+          </p>
+        )}
+        <div className="flex items-center justify-end gap-2 border-t border-hairline pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border bg-card px-4 py-2 text-[13px] font-semibold text-muted2"
+          >
+            {t.settings.locations.cancel}
+          </button>
+          <button
+            type="button"
+            disabled={deleteLocation.isPending}
+            onClick={() => void onConfirm()}
+            className="rounded-lg bg-[#c8453a] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-60"
+          >
+            {deleteLocation.isPending ? t.settings.locations.saving : t.settings.locations.delete}
+          </button>
+        </div>
+      </div>
+    </ModalShell>
   );
 }
 
