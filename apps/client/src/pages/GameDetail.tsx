@@ -63,11 +63,17 @@ export function GameDetail(): JSX.Element {
         {/* Left: cover + actions */}
         <div>
           <div
-            className="aspect-square w-full rounded-2xl border border-border"
+            className={`aspect-square w-full rounded-2xl border border-border ${
+              game.imagePath ? 'bg-chip' : ''
+            }`}
             style={game.imagePath ? undefined : { background: cover }}
           >
             {game.imagePath && (
-              <img src={game.imagePath} alt="" className="h-full w-full rounded-2xl object-cover" />
+              <img
+                src={game.imagePath}
+                alt=""
+                className="h-full w-full rounded-2xl object-contain"
+              />
             )}
           </div>
           <button

@@ -20,11 +20,16 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
       data-testid="game-card"
     >
       <div
-        className="relative aspect-square"
+        className={`relative aspect-square ${game.imagePath ? 'bg-chip' : ''}`}
         style={game.imagePath ? undefined : { background: placeholderCover }}
       >
         {game.imagePath && (
-          <img src={game.imagePath} alt="" className="h-full w-full object-cover" loading="lazy" />
+          <img
+            src={game.imagePath}
+            alt=""
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
         )}
         <span
           className={`absolute left-2 top-2 rounded px-1.5 py-[3px] text-[9.5px] font-bold tracking-wide ${

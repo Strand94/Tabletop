@@ -28,6 +28,13 @@ export function useUpdateExpansion(gameId: number, id: number) {
   });
 }
 
+/** Upload a cover image for an expansion; returns the updated expansion with its new imagePath. */
+export function uploadExpansionImage(id: number, file: File): Promise<ExpansionDto> {
+  const body = new FormData();
+  body.append('image', file);
+  return apiFetch<ExpansionDto>(`/api/expansions/${id}/image`, { method: 'POST', body });
+}
+
 export function useDeleteExpansion(gameId: number) {
   const qc = useQueryClient();
   return useMutation({

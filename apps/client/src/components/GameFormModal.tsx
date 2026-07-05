@@ -1,10 +1,11 @@
 import type { JSX } from 'react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { BggCatalogHitDto, CreateGameInput, GameDto } from '@tabletop/shared';
 import { bggUrl } from '@tabletop/shared';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCategories, useCreateGame, useUpdateGame, uploadGameImage } from '../lib/games-api.js';
 import { useBggCatalogSearch, hitToFormPatch } from '../lib/bgg-api.js';
+import { CoverPreview } from './CoverPreview.js';
 import { Icon } from './Icon.js';
 import { t } from '../lib/strings.js';
 
@@ -397,27 +398,6 @@ export function GameFormModal({ onClose, onSaved, game }: Props): JSX.Element {
 
 const inputClass =
   'w-full rounded-lg border border-border bg-input px-3 py-2 text-[13px] text-text outline-none focus:border-accent';
-
-/** Small square preview of the chosen cover: a staged file wins over the saved URL. */
-function CoverPreview({ imagePath, file }: { imagePath: string; file: File | null }): JSX.Element {
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  useEffect(() => {
-    if (!file) {
-      setObjectUrl(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setObjectUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
-
-  const src = objectUrl ?? (imagePath.trim() || null);
-  return (
-    <div className="h-16 w-16 flex-none overflow-hidden rounded-lg border border-border bg-chip">
-      {src && <img src={src} alt="" className="h-full w-full object-cover" />}
-    </div>
-  );
-}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }): JSX.Element {
   return (

@@ -61,4 +61,13 @@ describe('ExpansionsSection', () => {
     renderWithClient(<ExpansionsSection gameId={7} currency="NOK" />, []);
     expect(await screen.findByTestId('expansions-empty')).toBeInTheDocument();
   });
+
+  it('renders the expansion cover image when one is set', async () => {
+    const { container } = renderWithClient(<ExpansionsSection gameId={7} currency="NOK" />, [
+      { ...expansion, imagePath: '/images/frostmark.png' },
+    ]);
+    await screen.findByText('Frostmark');
+    const img = container.querySelector('img');
+    expect(img).toHaveAttribute('src', '/images/frostmark.png');
+  });
 });
