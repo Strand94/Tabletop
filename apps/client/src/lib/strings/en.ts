@@ -52,6 +52,10 @@ export const en: Strings = {
     searchPlaceholder: 'Search collection…',
     sortLabel: 'Sort',
     sortMyRating: 'My rating',
+    sortBggRating: 'BGG rating',
+    sortBggRank: 'BGG rank',
+    sortWeight: 'Weight',
+    bggShort: 'BGG',
   },
   gameForm: {
     createTitle: 'New game',

@@ -33,15 +33,28 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
         >
           {owned ? t.collection.owned : t.collection.wishlist}
         </span>
-        {game.myRating != null && (
-          <span
-            className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white"
-            data-testid="card-rating"
-          >
-            <Icon name="star" size={13} className="text-star" />
-            {game.myRating.toFixed(1)}
-          </span>
-        )}
+        <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
+          {game.bggRating != null && (
+            <span
+              className="flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white"
+              data-testid="card-bgg-rating"
+            >
+              <span className="text-[8.5px] font-bold tracking-wide text-muted2">
+                {t.collection.bggShort}
+              </span>
+              {game.bggRating.toFixed(1)}
+            </span>
+          )}
+          {game.myRating != null && (
+            <span
+              className="flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white"
+              data-testid="card-rating"
+            >
+              <Icon name="star" size={13} className="text-star" />
+              {game.myRating.toFixed(1)}
+            </span>
+          )}
+        </div>
       </div>
       <div className="px-3 py-2.5">
         <div className="truncate text-[13px] font-semibold">{game.title}</div>

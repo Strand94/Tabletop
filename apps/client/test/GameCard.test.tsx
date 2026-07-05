@@ -66,4 +66,22 @@ describe('GameCard', () => {
     renderCard({ ...game, myRating: null });
     expect(screen.queryByTestId('card-rating')).not.toBeInTheDocument();
   });
+
+  it('shows the BGG rating badge when present', () => {
+    renderCard({ ...game, bggRating: 7.83 });
+    const badge = screen.getByTestId('card-bgg-rating');
+    expect(badge).toHaveTextContent('BGG');
+    expect(badge).toHaveTextContent('7.8');
+  });
+
+  it('hides the BGG rating badge when absent', () => {
+    renderCard({ ...game, bggRating: null });
+    expect(screen.queryByTestId('card-bgg-rating')).not.toBeInTheDocument();
+  });
+
+  it('shows both the user rating and BGG rating badges together', () => {
+    renderCard({ ...game, myRating: 9, bggRating: 7.83 });
+    expect(screen.getByTestId('card-rating')).toBeInTheDocument();
+    expect(screen.getByTestId('card-bgg-rating')).toBeInTheDocument();
+  });
 });
