@@ -1,7 +1,13 @@
 import type { JSX } from 'react';
 import { useState, type FormEvent } from 'react';
 import type { CreateExpansionInput, ExpansionDto } from '@tabletop/shared';
-import { useCreateExpansion, useUpdateExpansion } from '../lib/expansions-api.js';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  useCreateExpansion,
+  useUpdateExpansion,
+  uploadExpansionImage,
+} from '../lib/expansions-api.js';
+import { CoverPreview } from './CoverPreview.js';
 import { Icon } from './Icon.js';
 import { t } from '../lib/strings.js';
 
@@ -22,6 +28,7 @@ interface FormState {
   weight: string;
   price: string;
   description: string;
+  imagePath: string;
 }
 
 function initialState(exp?: ExpansionDto): FormState {
@@ -36,6 +43,7 @@ function initialState(exp?: ExpansionDto): FormState {
     weight: exp?.weight?.toString() ?? '',
     price: exp?.price?.toString() ?? '',
     description: exp?.description ?? '',
+    imagePath: exp?.imagePath ?? '',
   };
 }
 
@@ -61,9 +69,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.Element {
   const editing = Boolean(expansion);
   const [form, setForm] = useState<FormState>(() => initialState(expansion));
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Once created, remember the id so a retry after a failed image upload updates
+  // that record instead of creating a duplicate.
+  const [savedId, setSavedId] = useState<number | null>(expansion?.id ?? null);
+  const qc = useQueryClient();
   const create = useCreateExpansion(gameId);
-  const update = useUpdateExpansion(gameId, expansion?.id ?? 0);
+  const update = useUpdateExpansion(gameId);
   const pending = create.isPending || update.isPending;
 
   function set(key: keyof FormState, value: string): void {
@@ -88,10 +101,24 @@ export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.E
       weight: num(form.weight),
       price: num(form.price),
       description: form.description.trim() || null,
+      imagePath: form.imagePath.trim() || null,
     };
     try {
-      if (editing) await update.mutateAsync(payload);
-      else await create.mutateAsync(payload);
+      // savedId is set for edits and once a create has succeeded; updating it on a
+      // retry avoids creating a duplicate if the image upload below previously failed.
+      let id = savedId;
+      if (id == null) {
+        id = (await create.mutateAsync(payload)).id;
+        setSavedId(id);
+      } else {
+        await update.mutateAsync({ id, input: payload });
+      }
+      // A picked file wins over a typed URL: upload it to the now-existing expansion,
+      // then refresh the list so the new cover shows.
+      if (imageFile) {
+        await uploadExpansionImage(id, imageFile);
+        void qc.invalidateQueries({ queryKey: ['expansions', gameId] });
+      }
       onClose();
     } catch {
       setError(t.common.error);
@@ -188,6 +215,32 @@ export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.E
               rows={2}
               className={`${inputClass} resize-none`}
             />
+          </Field>
+
+          <Field label={t.gameForm.cover}>
+            <div className="flex items-center gap-3">
+              <CoverPreview imagePath={form.imagePath} file={imageFile} />
+              <div className="flex flex-1 flex-col gap-2">
+                <input
+                  type="url"
+                  aria-label={t.gameForm.coverUrl}
+                  value={form.imagePath}
+                  onChange={(e) => {
+                    set('imagePath', e.target.value);
+                    setImageFile(null);
+                  }}
+                  placeholder={t.gameForm.coverUrlPlaceholder}
+                  className={inputClass}
+                />
+                <input
+                  type="file"
+                  aria-label={t.gameForm.coverUpload}
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+                  className="text-[12px] text-muted2 file:mr-2 file:rounded-md file:border file:border-border file:bg-card file:px-2 file:py-1 file:text-[12px] file:font-semibold file:text-muted2"
+                />
+              </div>
+            </div>
           </Field>
 
           {error && (

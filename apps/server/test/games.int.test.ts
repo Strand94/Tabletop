@@ -255,6 +255,56 @@ describe('games API', () => {
     expect(p2.body.items.map((g: { id: number }) => g.id)).toEqual([c]);
   });
 
+  it('sorts by BGG rating and rank with nulls last', async () => {
+    const good = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'Good' })
+    ).body.id;
+    const okay = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'Okay' })
+    ).body.id;
+    const unsynced = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'Unsynced' })
+    ).body.id;
+
+    // bggRating/bggRank are read-only over the API (set by BGG sync), so seed directly.
+    await prisma.game.update({ where: { id: good }, data: { bggRating: 8.5, bggRank: 12 } });
+    await prisma.game.update({ where: { id: okay }, data: { bggRating: 6.2, bggRank: 340 } });
+
+    const byRating = await request(app)
+      .get('/api/games?sort=bggRating&order=desc')
+      .set(auth(memberToken));
+    expect(byRating.status).toBe(200);
+    expect(byRating.body.items.map((g: { id: number }) => g.id)).toEqual([good, okay, unsynced]);
+
+    // Rank: lower is better, so ascending puts the top-ranked game first, unranked last.
+    const byRank = await request(app)
+      .get('/api/games?sort=bggRank&order=asc')
+      .set(auth(memberToken));
+    expect(byRank.body.items.map((g: { id: number }) => g.id)).toEqual([good, okay, unsynced]);
+  });
+
+  it('sorts by weight with nulls last', async () => {
+    const heavy = (
+      await request(app)
+        .post('/api/games')
+        .set(auth(memberToken))
+        .send({ title: 'Heavy', weight: 4.5 })
+    ).body.id;
+    const light = (
+      await request(app)
+        .post('/api/games')
+        .set(auth(memberToken))
+        .send({ title: 'Light', weight: 1.8 })
+    ).body.id;
+    const noWeight = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'NoWeight' })
+    ).body.id;
+
+    const desc = await request(app).get('/api/games?sort=weight&order=desc').set(auth(memberToken));
+    expect(desc.status).toBe(200);
+    expect(desc.body.items.map((g: { id: number }) => g.id)).toEqual([heavy, light, noWeight]);
+  });
+
   it('deletes a category (admin only) and games keep surviving without the tag', async () => {
     const category = await prisma.category.create({ data: { name: 'Legacy' } });
     const gameId = (

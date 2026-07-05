@@ -103,6 +103,30 @@ function toListItems(games: GameWithCategories[], ratingByGame: Map<number, numb
   );
 }
 
+/** Sort columns that are nullable — they take `nulls: 'last'` so unset games sink. */
+const NULLABLE_SORTS: ReadonlySet<GameQuery['sort']> = new Set([
+  'releaseYear',
+  'dateAdded',
+  'bggRating',
+  'bggRank',
+  'weight',
+]);
+
+/**
+ * Build the Prisma `orderBy`. Nullable columns get `nulls: 'last'` so unrated/
+ * unranked/undated games always sort to the bottom; required columns (title,
+ * createdAt) must not carry `nulls` — Prisma rejects it on non-nullable fields.
+ */
+function orderByFor(
+  sort: GameQuery['sort'],
+  order: GameQuery['order'],
+): Prisma.GameOrderByWithRelationInput {
+  if (NULLABLE_SORTS.has(sort)) {
+    return { [sort]: { sort: order, nulls: 'last' } };
+  }
+  return { [sort]: order };
+}
+
 export async function listGames(query: GameQuery, userId: number): Promise<Paginated<GameDto>> {
   const where: Prisma.GameWhereInput = {};
   if (query.status) where.collectionStatus = query.status;
@@ -123,7 +147,7 @@ export async function listGames(query: GameQuery, userId: number): Promise<Pagin
     prisma.game.findMany({
       where,
       include: gameInclude,
-      orderBy: { [query.sort]: query.order },
+      orderBy: orderByFor(query.sort, query.order),
       skip: (query.page - 1) * query.pageSize,
       take: query.pageSize,
     }),

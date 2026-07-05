@@ -64,7 +64,18 @@ export const gameQuerySchema = z.object({
   status: CollectionStatus.optional(),
   category: z.coerce.number().int().positive().optional(),
   q: z.string().max(200).optional(),
-  sort: z.enum(['title', 'releaseYear', 'dateAdded', 'createdAt', 'myRating']).default('title'),
+  sort: z
+    .enum([
+      'title',
+      'releaseYear',
+      'dateAdded',
+      'createdAt',
+      'myRating',
+      'bggRating',
+      'bggRank',
+      'weight',
+    ])
+    .default('title'),
   order: z.enum(['asc', 'desc']).default('asc'),
   /** "Shelf of shame": owned games that have never been played (spec §4.2). */
   neverPlayed: z

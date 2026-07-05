@@ -277,12 +277,25 @@ export function Dashboard(): JSX.Element {
                     className="flex items-center gap-3 no-underline text-text"
                   >
                     <div
-                      className="h-11 w-8 flex-none rounded"
-                      style={{
-                        background:
-                          'repeating-linear-gradient(135deg, var(--ph1), var(--ph1) 4px, var(--ph2) 4px, var(--ph2) 8px)',
-                      }}
-                    />
+                      className="h-11 w-8 flex-none overflow-hidden rounded bg-chip"
+                      style={
+                        game.imagePath
+                          ? undefined
+                          : {
+                              background:
+                                'repeating-linear-gradient(135deg, var(--ph1), var(--ph1) 4px, var(--ph2) 4px, var(--ph2) 8px)',
+                            }
+                      }
+                    >
+                      {game.imagePath && (
+                        <img
+                          src={game.imagePath}
+                          alt=""
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[12.5px] font-semibold">
                         {game.title}{' '}

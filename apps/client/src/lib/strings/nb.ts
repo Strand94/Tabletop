@@ -50,6 +50,10 @@ export const nb = {
     searchPlaceholder: 'Søk i samling…',
     sortLabel: 'Sorter',
     sortMyRating: 'Min vurdering',
+    sortBggRating: 'BGG-vurdering',
+    sortBggRank: 'BGG-rangering',
+    sortWeight: 'Kompleksitet',
+    bggShort: 'BGG',
   },
   gameForm: {
     createTitle: 'Nytt spill',

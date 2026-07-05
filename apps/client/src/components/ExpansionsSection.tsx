@@ -65,7 +65,19 @@ export function ExpansionsSection({
               className="flex items-center gap-3.5 rounded-xl border border-border bg-card px-3.5 py-3"
               data-testid="expansion-row"
             >
-              <div className="h-[46px] w-9 flex-none rounded" style={{ background: cover }} />
+              <div
+                className="h-[46px] w-9 flex-none overflow-hidden rounded bg-chip"
+                style={exp.imagePath ? undefined : { background: cover }}
+              >
+                {exp.imagePath && (
+                  <img
+                    src={exp.imagePath}
+                    alt=""
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                )}
+              </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[13px] font-semibold">{exp.title}</div>
                 <div className="mt-0.5 text-[11.5px] text-muted">{metaLine(exp, currency)}</div>

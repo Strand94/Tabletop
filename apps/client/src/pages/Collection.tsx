@@ -10,7 +10,18 @@ import { Icon } from '../components/Icon.js';
 import { t } from '../lib/strings.js';
 
 type StatusTab = 'ALL' | CollectionStatus;
-type GameSort = 'title' | 'releaseYear' | 'dateAdded' | 'createdAt' | 'myRating';
+type GameSort =
+  | 'title'
+  | 'releaseYear'
+  | 'dateAdded'
+  | 'createdAt'
+  | 'myRating'
+  | 'bggRating'
+  | 'bggRank'
+  | 'weight';
+
+// Ratings read best-first (desc); rank is best-first ascending (rank 1 on top).
+const DESC_BY_DEFAULT = new Set<GameSort>(['myRating', 'bggRating']);
 
 /** Collection screen: status tabs, category chips, search, and the game grid. */
 export function Collection(): JSX.Element {
@@ -54,12 +65,14 @@ export function Collection(): JSX.Element {
     { value: 'releaseYear', label: t.gameForm.releaseYear },
     { value: 'dateAdded', label: t.dashboard.recentlyAdded },
     { value: 'myRating', label: t.collection.sortMyRating },
+    { value: 'bggRating', label: t.collection.sortBggRating },
+    { value: 'bggRank', label: t.collection.sortBggRank },
+    { value: 'weight', label: t.collection.sortWeight },
   ];
 
   function changeSort(next: GameSort): void {
     setSort(next);
-    // Rating sort reads best highest-first; keep the previous default for others.
-    setOrder(next === 'myRating' ? 'desc' : 'asc');
+    setOrder(DESC_BY_DEFAULT.has(next) ? 'desc' : 'asc');
     setPage(1);
   }
 
