@@ -3,6 +3,10 @@
 **/build
 **/coverage
 **/.vitest
+# Prisma's generated client — regenerated inside the image by the postinstall
+# `prisma generate`. Must NOT be copied from the host: a stale host copy would
+# clobber the freshly-generated one and get bundled, dropping newer models.
+**/generated
 playwright-report
 test-results
 .git
