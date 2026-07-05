@@ -32,8 +32,8 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
           />
         )}
         <span
-          className={`absolute left-2 top-2 rounded px-1.5 py-[3px] text-[9.5px] font-bold tracking-wide ${
-            owned ? 'bg-accent-soft text-accent-text' : 'bg-chip text-muted2'
+          className={`absolute left-2 top-2 rounded px-1.5 py-[3px] text-[9.5px] font-bold tracking-wide shadow-sm ${
+            owned ? 'bg-accent text-on-accent' : 'bg-black/70 text-white'
           }`}
         >
           {owned ? t.collection.owned : t.collection.wishlist}
@@ -41,10 +41,10 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
         <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
           {game.bggRating != null && (
             <span
-              className="flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white"
+              className="flex items-center gap-1 rounded-md bg-black/70 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white shadow-sm"
               data-testid="card-bgg-rating"
             >
-              <span className="text-[8.5px] font-bold tracking-wide text-muted2">
+              <span className="text-[8.5px] font-bold tracking-wide text-white/70">
                 {t.collection.bggShort}
               </span>
               {game.bggRating.toFixed(1)}
@@ -52,7 +52,7 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
           )}
           {game.myRating != null && (
             <span
-              className="flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white"
+              className="flex items-center gap-1 rounded-md bg-black/70 px-1.5 py-[3px] font-display text-[11px] font-semibold text-white shadow-sm"
               data-testid="card-rating"
             >
               <Icon name="star" size={13} className="text-star" />
@@ -63,14 +63,25 @@ export function GameCard({ game }: { game: GameDto }): JSX.Element {
       </div>
       <div className="px-3 py-2.5">
         <div className="truncate text-[13px] font-semibold">{game.title}</div>
-        <div className="mt-0.5 text-[11px] text-muted">
-          {meta}
-          {game.releaseYear ? (
-            <>
-              {meta ? ' · ' : ''}
-              <span className="text-faint">{game.releaseYear}</span>
-            </>
-          ) : null}
+        <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted">
+          <span className="truncate">
+            {meta}
+            {game.releaseYear ? (
+              <>
+                {meta ? ' · ' : ''}
+                <span className="text-faint">{game.releaseYear}</span>
+              </>
+            ) : null}
+          </span>
+          {game.weight != null && (
+            <span
+              className="ml-auto flex flex-none items-center gap-0.5 text-muted2"
+              title={t.gameDetail.complexity}
+            >
+              <Icon name="scale" size={12} />
+              {game.weight.toFixed(1)}
+            </span>
+          )}
         </div>
       </div>
     </Link>

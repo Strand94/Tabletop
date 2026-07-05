@@ -56,6 +56,16 @@ describe('GameCard', () => {
     expect(screen.getByText('ØNSKE')).toBeInTheDocument();
   });
 
+  it('shows the game weight (complexity) to one decimal', () => {
+    renderCard(game);
+    expect(screen.getByText('3.4')).toBeInTheDocument();
+  });
+
+  it('hides the weight when absent', () => {
+    renderCard({ ...game, weight: null });
+    expect(screen.queryByText('3.4')).not.toBeInTheDocument();
+  });
+
   it('shows the user rating badge when present', () => {
     renderCard({ ...game, myRating: 8.6 });
     const badge = screen.getByTestId('card-rating');

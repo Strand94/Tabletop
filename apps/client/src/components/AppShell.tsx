@@ -15,24 +15,28 @@ interface NavItem {
   subtitle: string;
 }
 
-const NAV: NavItem[] = [
-  { to: '/', icon: 'space_dashboard', label: t.nav.dashboard, subtitle: 'Oversikt over samlingen' },
-  {
-    to: '/collection',
-    icon: 'grid_view',
-    label: t.nav.collection,
-    subtitle: 'Spill og ønskeliste',
-  },
-  { to: '/sessions', icon: 'casino', label: t.nav.sessions, subtitle: 'Loggede partier' },
-  { to: '/players', icon: 'group', label: t.nav.players, subtitle: 'Spillere i husstanden' },
-  {
-    to: '/browse-bgg',
-    icon: 'travel_explore',
-    label: t.nav.browseBgg,
-    subtitle: 'Importer fra BoardGameGeek',
-  },
-  { to: '/settings', icon: 'settings', label: t.nav.settings, subtitle: 'Innstillinger' },
-];
+// Built per render (not at module load) so labels and subtitles follow the
+// active locale — reading `t.*` at import time would freeze them to the default.
+function navItems(): NavItem[] {
+  return [
+    { to: '/', icon: 'space_dashboard', label: t.nav.dashboard, subtitle: t.navSub.dashboard },
+    {
+      to: '/collection',
+      icon: 'grid_view',
+      label: t.nav.collection,
+      subtitle: t.navSub.collection,
+    },
+    { to: '/sessions', icon: 'casino', label: t.nav.sessions, subtitle: t.navSub.sessions },
+    { to: '/players', icon: 'group', label: t.nav.players, subtitle: t.navSub.players },
+    {
+      to: '/browse-bgg',
+      icon: 'travel_explore',
+      label: t.nav.browseBgg,
+      subtitle: t.navSub.browseBgg,
+    },
+    { to: '/settings', icon: 'settings', label: t.nav.settings, subtitle: t.navSub.settings },
+  ];
+}
 
 function avatarStyle(a = 'var(--av1)', b = 'var(--av2)'): React.CSSProperties {
   return {
@@ -49,7 +53,8 @@ export function AppShell(): JSX.Element {
   const { data: shelfPage } = useGames({ neverPlayed: true, pageSize: 1 });
   const shelfCount = shelfPage?.total ?? 0;
   const location = useLocation();
-  const active = NAV.find((n) =>
+  const nav = navItems();
+  const active = nav.find((n) =>
     n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to),
   );
 
@@ -62,7 +67,7 @@ export function AppShell(): JSX.Element {
           <span className="font-display text-[17px] font-semibold tracking-tight">{t.appName}</span>
         </div>
         <nav className="flex flex-col gap-0.5">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

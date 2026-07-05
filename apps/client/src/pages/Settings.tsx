@@ -109,7 +109,7 @@ async function downloadExport(format: 'json' | 'csv'): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
-/** Settings: appearance, language, and v2 seams (BGG sync + export) as stubs. */
+/** Settings: appearance, language, admin catalog refresh, export, and admin management. */
 export function Settings(): JSX.Element {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
@@ -158,18 +158,8 @@ export function Settings(): JSX.Element {
         </Row>
       </Section>
 
-      <Section title={t.settings.bggSync}>
-        <Row title={t.settings.enableSync} hint={t.settings.syncHint} last={!isAdmin}>
-          <div className="flex items-center gap-2">
-            <span className="rounded bg-chip px-2 py-1 text-[9.5px] font-bold text-muted2">
-              {t.settings.offByDefault}
-            </span>
-            <div className="relative h-[25px] w-11 rounded-full bg-track opacity-60">
-              <span className="absolute left-[3px] top-[3px] h-[19px] w-[19px] rounded-full bg-card shadow" />
-            </div>
-          </div>
-        </Row>
-        {isAdmin && (
+      {isAdmin && (
+        <Section title={t.settings.catalog}>
           <Row title={t.settings.refreshCatalog} hint={t.settings.refreshCatalogHint} last>
             <div className="flex items-center gap-3">
               {refreshStatus && <span className="text-[11.5px] text-muted">{refreshStatus}</span>}
@@ -184,8 +174,8 @@ export function Settings(): JSX.Element {
               </button>
             </div>
           </Row>
-        )}
-      </Section>
+        </Section>
+      )}
 
       {isAdmin && (
         <Section title={t.settings.data}>
