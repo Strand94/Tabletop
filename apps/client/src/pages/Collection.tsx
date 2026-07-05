@@ -19,8 +19,10 @@ export function Collection(): JSX.Element {
   const [tab, setTab] = useState<StatusTab>('ALL');
   const [category, setCategory] = useState<number | undefined>();
   const [q, setQ] = useState('');
-  const [sort, setSort] = useState<GameSort>('dateAdded');
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+  // Preserve the prior default collection ordering (title A–Z); the sort control
+  // adds options without silently reordering existing collections.
+  const [sort, setSort] = useState<GameSort>('title');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
 
