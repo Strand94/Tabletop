@@ -29,6 +29,27 @@ export const updateMeSchema = z.object({
 });
 export type UpdateMeInput = z.infer<typeof updateMeSchema>;
 
+/** Admin-driven user creation. Unlike registration, the role is explicit. */
+export const adminCreateUserSchema = z.object({
+  username: z.string().min(3).max(50),
+  password: z.string().min(8).max(200),
+  role: Role,
+  email: z.email().optional(),
+  locale: z.string().min(2).max(10).optional(),
+});
+export type AdminCreateUserInput = z.infer<typeof adminCreateUserSchema>;
+
+/** Admin-driven user update: change role and/or reset the password (at least one). */
+export const updateUserSchema = z
+  .object({
+    role: Role.optional(),
+    password: z.string().min(8).max(200).optional(),
+  })
+  .refine((v) => v.role !== undefined || v.password !== undefined, {
+    message: 'Provide a role or a password',
+  });
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
 /** Public representation of a user (never includes the password hash). */
 export const userPublicSchema = z.object({
   id: z.number().int(),
