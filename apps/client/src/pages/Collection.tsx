@@ -20,6 +20,9 @@ type GameSort =
   | 'bggRank'
   | 'weight';
 
+// Ratings read best-first (desc); rank is best-first ascending (rank 1 on top).
+const DESC_BY_DEFAULT = new Set<GameSort>(['myRating', 'bggRating']);
+
 /** Collection screen: status tabs, category chips, search, and the game grid. */
 export function Collection(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -67,12 +70,9 @@ export function Collection(): JSX.Element {
     { value: 'weight', label: t.collection.sortWeight },
   ];
 
-  // Ratings read best-first (desc); rank is best-first ascending (rank 1 on top).
-  const descByDefault = new Set<GameSort>(['myRating', 'bggRating']);
-
   function changeSort(next: GameSort): void {
     setSort(next);
-    setOrder(descByDefault.has(next) ? 'desc' : 'asc');
+    setOrder(DESC_BY_DEFAULT.has(next) ? 'desc' : 'asc');
     setPage(1);
   }
 

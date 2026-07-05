@@ -19,10 +19,10 @@ export function useCreateExpansion(gameId: number) {
   });
 }
 
-export function useUpdateExpansion(gameId: number, id: number) {
+export function useUpdateExpansion(gameId: number) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: UpdateExpansionInput) =>
+    mutationFn: ({ id, input }: { id: number; input: UpdateExpansionInput }) =>
       apiFetch<ExpansionDto>(`/api/expansions/${id}`, { method: 'PATCH', body: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['expansions', gameId] }),
   });

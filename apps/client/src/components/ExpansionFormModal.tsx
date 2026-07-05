@@ -71,9 +71,12 @@ export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.E
   const [form, setForm] = useState<FormState>(() => initialState(expansion));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Once created, remember the id so a retry after a failed image upload updates
+  // that record instead of creating a duplicate.
+  const [savedId, setSavedId] = useState<number | null>(expansion?.id ?? null);
   const qc = useQueryClient();
   const create = useCreateExpansion(gameId);
-  const update = useUpdateExpansion(gameId, expansion?.id ?? 0);
+  const update = useUpdateExpansion(gameId);
   const pending = create.isPending || update.isPending;
 
   function set(key: keyof FormState, value: string): void {
@@ -101,11 +104,19 @@ export function ExpansionFormModal({ gameId, expansion, onClose }: Props): JSX.E
       imagePath: form.imagePath.trim() || null,
     };
     try {
-      const saved = editing ? await update.mutateAsync(payload) : await create.mutateAsync(payload);
+      // savedId is set for edits and once a create has succeeded; updating it on a
+      // retry avoids creating a duplicate if the image upload below previously failed.
+      let id = savedId;
+      if (id == null) {
+        id = (await create.mutateAsync(payload)).id;
+        setSavedId(id);
+      } else {
+        await update.mutateAsync({ id, input: payload });
+      }
       // A picked file wins over a typed URL: upload it to the now-existing expansion,
       // then refresh the list so the new cover shows.
       if (imageFile) {
-        await uploadExpansionImage(saved.id, imageFile);
+        await uploadExpansionImage(id, imageFile);
         void qc.invalidateQueries({ queryKey: ['expansions', gameId] });
       }
       onClose();
