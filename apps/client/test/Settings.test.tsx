@@ -12,12 +12,13 @@ vi.mock('../src/lib/auth.js', () => ({
 function renderSettings() {
   vi.stubGlobal(
     'fetch',
-    vi.fn().mockResolvedValue({
+    vi.fn(async (url: string) => ({
       ok: true,
       status: 200,
       headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({}),
-    }),
+      // Admin Settings renders user/category/location lists, which expect arrays.
+      json: async () => (/\/api\/(users|categories|locations)/.test(String(url)) ? [] : {}),
+    })),
   );
   const queryClient = new QueryClient();
   return render(

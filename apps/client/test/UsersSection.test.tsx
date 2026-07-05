@@ -36,6 +36,11 @@ function stubFetch() {
     'fetch',
     vi.fn(async (url: string) => {
       if (String(url).includes('/api/users')) return jsonResponse(users);
+      // The admin Settings page also renders category/location sections, which
+      // expect array responses.
+      if (String(url).includes('/api/categories') || String(url).includes('/api/locations')) {
+        return jsonResponse([]);
+      }
       return jsonResponse({});
     }),
   );

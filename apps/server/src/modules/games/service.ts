@@ -84,6 +84,25 @@ function toWritableData(input: Partial<CreateGameInput>): Omit<
   };
 }
 
+/** The user's per-game rating map for a set of game ids (cards show the star). */
+async function ratingMapFor(userId: number, gameIds: number[]): Promise<Map<number, number>> {
+  const rows = await prisma.userGameRating.findMany({
+    where: { userId, gameId: { in: gameIds } },
+  });
+  return new Map(rows.map((r) => [r.gameId, r.rating.toNumber()]));
+}
+
+/** Map games to DTOs attaching each game's rating from the map (list path: no session avg). */
+function toListItems(games: GameWithCategories[], ratingByGame: Map<number, number>): GameDto[] {
+  return games.map((g) =>
+    toGameDto(g, {
+      myRating: ratingByGame.get(g.id) ?? null,
+      avgSessionRating: null,
+      sessionRatingCount: 0,
+    }),
+  );
+}
+
 export async function listGames(query: GameQuery, userId: number): Promise<Paginated<GameDto>> {
   const where: Prisma.GameWhereInput = {};
   if (query.status) where.collectionStatus = query.status;
@@ -93,6 +112,10 @@ export async function listGames(query: GameQuery, userId: number): Promise<Pagin
     // Shelf of shame: owned games with no logged sessions (spec §4.2).
     where.collectionStatus = 'OWNED';
     where.sessions = { none: {} };
+  }
+
+  if (query.sort === 'myRating') {
+    return listGamesByMyRating(query, userId, where);
   }
 
   const [total, games] = await Promise.all([
@@ -106,20 +129,62 @@ export async function listGames(query: GameQuery, userId: number): Promise<Pagin
     }),
   ]);
 
-  // One query for the user's ratings across the listed games (cards show the star).
-  const myRatings = await prisma.userGameRating.findMany({
-    where: { userId, gameId: { in: games.map((g) => g.id) } },
-  });
-  const ratingByGame = new Map(myRatings.map((r) => [r.gameId, r.rating.toNumber()]));
+  const ratingByGame = await ratingMapFor(
+    userId,
+    games.map((g) => g.id),
+  );
 
   return {
-    items: games.map((g) =>
-      toGameDto(g, {
-        myRating: ratingByGame.get(g.id) ?? null,
-        avgSessionRating: null,
-        sessionRatingCount: 0,
-      }),
-    ),
+    items: toListItems(games, ratingByGame),
+    total,
+    page: query.page,
+    pageSize: query.pageSize,
+  };
+}
+
+/**
+ * Sort by the requesting user's per-game rating. `UserGameRating` is per-user, so
+ * Prisma can't `orderBy` it directly — we sort ids in memory (NULL/unrated always
+ * last regardless of order; tie-break by id asc for stability) and page over that.
+ */
+async function listGamesByMyRating(
+  query: GameQuery,
+  userId: number,
+  where: Prisma.GameWhereInput,
+): Promise<Paginated<GameDto>> {
+  const matching = await prisma.game.findMany({ where, select: { id: true } });
+  const ratingByGame = await ratingMapFor(
+    userId,
+    matching.map((g) => g.id),
+  );
+
+  const sortedIds = matching
+    .map((g) => g.id)
+    .sort((a, b) => {
+      const ra = ratingByGame.get(a);
+      const rb = ratingByGame.get(b);
+      if (ra == null && rb == null) return a - b;
+      if (ra == null) return 1; // unrated always last
+      if (rb == null) return -1;
+      if (ra !== rb) return query.order === 'asc' ? ra - rb : rb - ra;
+      return a - b; // stable tie-break
+    });
+
+  const total = sortedIds.length;
+  const pageIds = sortedIds.slice(
+    (query.page - 1) * query.pageSize,
+    (query.page - 1) * query.pageSize + query.pageSize,
+  );
+
+  const games = await prisma.game.findMany({
+    where: { id: { in: pageIds } },
+    include: gameInclude,
+  });
+  const byId = new Map(games.map((g) => [g.id, g]));
+  const ordered = pageIds.map((id) => byId.get(id)).filter((g): g is GameWithCategories => !!g);
+
+  return {
+    items: toListItems(ordered, ratingByGame),
     total,
     page: query.page,
     pageSize: query.pageSize,

@@ -167,6 +167,43 @@ describe('sessions API', () => {
     );
   });
 
+  it('deletes a location (admin only); sessions survive with location nulled; 404 if missing', async () => {
+    // Register a second (member) user; maya is the first-run ADMIN.
+    await request(app)
+      .post('/api/auth/register')
+      .set(auth())
+      .send({ username: 'theo', password: 'anothersecret' });
+    const memberToken = (
+      await request(app)
+        .post('/api/auth/login')
+        .send({ username: 'theo', password: 'anothersecret' })
+    ).body.accessToken;
+
+    const location = (
+      await request(app).post('/api/locations').set(auth()).send({ name: 'Living Room' })
+    ).body;
+    const session = await request(app)
+      .post('/api/sessions')
+      .set(auth())
+      .send({ ...baseSession(), locationId: location.id });
+    expect(session.body.location.id).toBe(location.id);
+
+    const memberDelete = await request(app)
+      .delete(`/api/locations/${location.id}`)
+      .set({ Authorization: `Bearer ${memberToken}` });
+    expect(memberDelete.status).toBe(403);
+
+    const adminDelete = await request(app).delete(`/api/locations/${location.id}`).set(auth());
+    expect(adminDelete.status).toBe(204);
+
+    const after = await request(app).get(`/api/sessions/${session.body.id}`).set(auth());
+    expect(after.status).toBe(200);
+    expect(after.body.location).toBeNull();
+
+    const missing = await request(app).delete(`/api/locations/${location.id}`).set(auth());
+    expect(missing.status).toBe(404);
+  });
+
   it('keeps sessions when a participating person is deleted (only the join goes)', async () => {
     const created = await request(app).post('/api/sessions').set(auth()).send(baseSession());
     // maya is the first-run ADMIN, so she may delete a person.
