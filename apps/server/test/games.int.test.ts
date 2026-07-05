@@ -33,10 +33,12 @@ async function seedUsersAndLogin(): Promise<void> {
 
 beforeAll(() => {
   applyMigrations();
-  app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
 });
 
 beforeEach(async () => {
+  // Fresh app per test so the shared auth rate-limiter's in-memory counter resets;
+  // the whole file otherwise drives >50 auth calls and later logins get throttled.
+  app = createApp({ tokens, defaultLocale: 'en', defaultCurrency: 'NOK' });
   await resetDb();
   await seedUsersAndLogin();
 });
@@ -203,6 +205,83 @@ describe('games API', () => {
     expect(res.status).toBe(200);
     expect(res.body.imagePath).toMatch(/^\/images\/[a-f0-9-]+\.png$/);
     expect(res.body.imagePath).not.toContain('.html');
+  });
+
+  it("sorts by the requesting user's rating (unrated always last)", async () => {
+    const low = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'Low' })
+    ).body.id;
+    const high = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'High' })
+    ).body.id;
+    const unrated = (
+      await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'Unrated' })
+    ).body.id;
+
+    await request(app).put(`/api/games/${low}/rating`).set(auth(memberToken)).send({ rating: 3 });
+    await request(app).put(`/api/games/${high}/rating`).set(auth(memberToken)).send({ rating: 9 });
+
+    const desc = await request(app)
+      .get('/api/games?sort=myRating&order=desc')
+      .set(auth(memberToken));
+    expect(desc.status).toBe(200);
+    expect(desc.body.items.map((g: { id: number }) => g.id)).toEqual([high, low, unrated]);
+    expect(desc.body.items[0].myRating).toBe(9);
+
+    const asc = await request(app).get('/api/games?sort=myRating&order=asc').set(auth(memberToken));
+    expect(asc.body.items.map((g: { id: number }) => g.id)).toEqual([low, high, unrated]);
+  });
+
+  it('paginates correctly under rating sort', async () => {
+    const a = (await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'A' }))
+      .body.id;
+    const b = (await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'B' }))
+      .body.id;
+    const c = (await request(app).post('/api/games').set(auth(memberToken)).send({ title: 'C' }))
+      .body.id;
+    await request(app).put(`/api/games/${a}/rating`).set(auth(memberToken)).send({ rating: 5 });
+    await request(app).put(`/api/games/${b}/rating`).set(auth(memberToken)).send({ rating: 7 });
+    await request(app).put(`/api/games/${c}/rating`).set(auth(memberToken)).send({ rating: 3 });
+
+    const p1 = await request(app)
+      .get('/api/games?sort=myRating&order=desc&pageSize=2&page=1')
+      .set(auth(memberToken));
+    expect(p1.body.total).toBe(3);
+    expect(p1.body.items.map((g: { id: number }) => g.id)).toEqual([b, a]);
+
+    const p2 = await request(app)
+      .get('/api/games?sort=myRating&order=desc&pageSize=2&page=2')
+      .set(auth(memberToken));
+    expect(p2.body.items.map((g: { id: number }) => g.id)).toEqual([c]);
+  });
+
+  it('deletes a category (admin only) and games keep surviving without the tag', async () => {
+    const category = await prisma.category.create({ data: { name: 'Legacy' } });
+    const gameId = (
+      await request(app)
+        .post('/api/games')
+        .set(auth(memberToken))
+        .send({ title: 'Tagged', categoryIds: [category.id] })
+    ).body.id;
+
+    const memberDelete = await request(app)
+      .delete(`/api/categories/${category.id}`)
+      .set(auth(memberToken));
+    expect(memberDelete.status).toBe(403);
+
+    const adminDelete = await request(app)
+      .delete(`/api/categories/${category.id}`)
+      .set(auth(adminToken));
+    expect(adminDelete.status).toBe(204);
+
+    const after = await request(app).get(`/api/games/${gameId}`).set(auth(memberToken));
+    expect(after.status).toBe(200);
+    expect(after.body.categories).toHaveLength(0);
+
+    const missing = await request(app)
+      .delete(`/api/categories/${category.id}`)
+      .set(auth(adminToken));
+    expect(missing.status).toBe(404);
   });
 
   it('rejects a disallowed upload type (svg)', async () => {

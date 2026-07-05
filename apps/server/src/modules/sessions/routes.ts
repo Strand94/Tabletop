@@ -9,7 +9,7 @@ import {
 } from '@tabletop/shared';
 import { prisma } from '../../db.js';
 import { HttpError } from '../../middleware/error.js';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, requireRole } from '../../middleware/auth.js';
 import type { TokenService } from '../auth/service.js';
 import { uploadImage, imageUrl } from '../uploads/image.js';
 import { upsertSessionRating } from '../ratings/service.js';
@@ -106,6 +106,17 @@ export function createLocationsRouter(tokens: TokenService): Router {
         data: { name: input.name, address: input.address ?? null },
       });
       res.status(201).json(location);
+    })().catch(next);
+  });
+
+  router.delete('/:id', requireRole('ADMIN'), (req, res, next) => {
+    void (async () => {
+      const id = parseId(req.params.id);
+      const exists = await prisma.location.findUnique({ where: { id }, select: { id: true } });
+      if (!exists) throw new HttpError(404, 'Location not found');
+      // Session.location is SetNull (schema); sessions survive with locationId nulled.
+      await prisma.location.delete({ where: { id } });
+      res.status(204).end();
     })().catch(next);
   });
 

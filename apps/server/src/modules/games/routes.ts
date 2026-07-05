@@ -112,5 +112,16 @@ export function createCategoriesRouter(tokens: TokenService): Router {
     })().catch(next);
   });
 
+  router.delete('/:id', requireRole('ADMIN'), (req, res, next) => {
+    void (async () => {
+      const id = parseId(req.params.id);
+      const exists = await prisma.category.findUnique({ where: { id }, select: { id: true } });
+      if (!exists) throw new HttpError(404, 'Category not found');
+      // GameCategory rows cascade (schema); games survive with the tag removed.
+      await prisma.category.delete({ where: { id } });
+      res.status(204).end();
+    })().catch(next);
+  });
+
   return router;
 }
