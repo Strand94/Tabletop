@@ -34,20 +34,20 @@
     "prisma": "^7.8.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
-    "@types/node": "^26.1.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.3",
     "@eslint/js": "^10.0.1",
-    "@vitest/coverage-v8": "^4.0.0",
-    "eslint": "^10.6.0",
+    "@vitest/coverage-v8": "^5.0.2",
+    "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.7.0",
+    "globals": "^17.12.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.8",
-    "prettier": "^3.4.2",
-    "tsx": "^4.19.2",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.1",
-    "vitest": "^4.0.0"
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.2"
   },
   "overrides": {
     "c12": {
